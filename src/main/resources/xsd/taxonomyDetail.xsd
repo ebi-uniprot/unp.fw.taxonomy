@@ -5,7 +5,9 @@
 
   <xs:complexType name="taxonomyDetailResponse">
     <xs:annotation>
-      <xs:documentation><![CDATA[Created by lgonzales on 19/02/16.]]></xs:documentation>
+      <xs:documentation><![CDATA[This model class represents a TaxonomyNode with list of children and siblings to help Taxonomy Tree navigation.
+It contains annotations that will be used by Jackson Parser to build XML or JSON response
+Created by lgonzales on 19/02/16.]]></xs:documentation>
     </xs:annotation>
     <xs:sequence>
       <xs:element minOccurs="0" name="children">

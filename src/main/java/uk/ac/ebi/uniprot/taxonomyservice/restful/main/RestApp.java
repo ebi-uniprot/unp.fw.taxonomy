@@ -9,6 +9,9 @@ import com.google.inject.Injector;
 import com.google.inject.Stage;
 import com.mycila.guice.ext.closeable.CloseableModule;
 import com.mycila.guice.ext.jsr250.Jsr250Module;
+import io.swagger.jaxrs.config.BeanConfig;
+import io.swagger.jaxrs.listing.ApiListingResource;
+import io.swagger.jaxrs.listing.SwaggerSerializers;
 import javax.inject.Inject;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -46,6 +49,20 @@ public class RestApp extends ResourceConfig {
 
         RestExceptionMapper exceptionMapper = new RestExceptionMapper();
         register(exceptionMapper);
+
+        BeanConfig beanConfig = new BeanConfig();
+        beanConfig.setVersion("1.0.0");
+        beanConfig.setSchemes(new String[]{"http"});
+        beanConfig.setDescription("Taxonomy Rest Services.");
+        beanConfig.setTitle("Taxonomy Service");
+        beanConfig.setHost("localhost:9090"); //TODO
+        beanConfig.setBasePath(RestAppMain.DEFAULT_TAXONOMY_SERVICE_CONTEXT_PATH);
+        beanConfig.setResourcePackage("uk.ac.ebi.uniprot.taxonomyservice.restful.rest");
+        beanConfig.setScan(true);
+
+        packages("uk.ac.ebi.uniprot.taxonomyservice.restful.rest");
+        register(ApiListingResource.class);
+        register(SwaggerSerializers.class);
 
         logger.info("Starting of RestApp Done");
 

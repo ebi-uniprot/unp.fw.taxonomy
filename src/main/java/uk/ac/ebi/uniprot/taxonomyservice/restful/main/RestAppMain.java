@@ -1,15 +1,21 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.main;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.Servlet;
+import org.glassfish.grizzly.http.server.CLStaticHttpHandler;
+import org.glassfish.grizzly.http.server.HttpHandlerRegistration;
 import org.glassfish.grizzly.http.server.HttpServer;
+import org.glassfish.grizzly.http.server.accesslog.AccessLogBuilder;
 import org.glassfish.grizzly.servlet.ServletRegistration;
 import org.glassfish.grizzly.servlet.WebappContext;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.servlet.ServletContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is the Main project class and is responsible to initialize the application Grizzly Server,setup
@@ -19,8 +25,10 @@ import org.glassfish.jersey.servlet.ServletContainer;
  */
 public class RestAppMain {
 
+    public static final Logger logger = LoggerFactory.getLogger(RestAppMain.class);
+
     public static final String baseUri =
-            "http://0.0.0.0:" + (System.getenv("PORT") != null ? System.getenv("PORT") : "9090");
+            "http://localhost:" + (System.getenv("PORT") != null ? System.getenv("PORT") : "9090");
 
     public static final String DEFAULT_TAXONOMY_SERVICE_CONTEXT_PATH = "/uniprot/services/restful";
 
@@ -75,6 +83,7 @@ public class RestAppMain {
 
         HttpServer server = GrizzlyHttpServerFactory.createHttpServer(baseUri);
 
+        // adding services
         WebappContext context = new WebappContext("GrizzlyContext", taxonomyServiceContextPath);
         ServletRegistration registration;
         if (servletClass != null) {
@@ -84,6 +93,17 @@ public class RestAppMain {
         }
 
         registration.addMapping("/*");
+
+        //adding mapping for docs.
+        HttpHandlerRegistration docHandler = new HttpHandlerRegistration.Builder().contextPath("/uniprot/services/docs")
+                .urlPattern("/*").build();
+        server.getServerConfiguration().addHttpHandler(new CLStaticHttpHandler(RestAppMain.class.getClassLoader()),
+                docHandler);
+
+/*      This sample shows add static folder inside application context
+        server.getServerConfiguration().addHttpHandler(
+                new StaticHttpHandler("/home/lgonzales/UniProtProjects/taxonomy-service-restful/src/main/resources/")
+                ,docHandler);*/
 
         if (contextInitParams != null) {
             for (Map.Entry<String, String> e : contextInitParams.entrySet()) {
@@ -96,7 +116,35 @@ public class RestAppMain {
         }
         context.deploy(server);
 
+        enableAccessLog(server);
+
         return server;
+
+    }
+
+    /** This method configure Grizzly HttpServer accessLog
+     *
+     * @param httpServer GrizzlyHttpServerFactory
+     */
+    //@TODO: This is not working locally, I kept it, may it works in the server... need to check logs in the server
+    private static void enableAccessLog(HttpServer httpServer) {
+        final AccessLogBuilder builder = new AccessLogBuilder(new File("/tmp/access.log"));
+        builder.synchronous(true);
+        builder.rotatedDaily();
+        builder.instrument(httpServer.getServerConfiguration());
+
+/*        try {
+            AccessLogAppender appender = new StreamAppender(new FileOutputStream(new File("/tmp/access.log")));
+            //AccessLogAppender appender = new StreamAppender(System.out);
+            AccessLogFormat format = ApacheLogFormat.COMBINED;
+            int statusThreshold = AccessLogProbe.DEFAULT_STATUS_THRESHOLD;
+            AccessLogProbe alp = new AccessLogProbe(appender, format, statusThreshold);
+            ServerConfiguration sc = httpServer.getServerConfiguration();
+            sc.getMonitoringConfig().getWebServerConfig().addProbes(alp);
+            logger.info("created access log at /tmp/access.log");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }*/
 
     }
 
