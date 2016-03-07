@@ -1,6 +1,5 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.main;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
@@ -28,7 +27,7 @@ public class RestAppMain {
     public static final Logger logger = LoggerFactory.getLogger(RestAppMain.class);
 
     public static final String baseUri =
-            "http://localhost:" + (System.getenv("PORT") != null ? System.getenv("PORT") : "9090");
+            "http://0.0.0.0:" + (System.getenv("PORT") != null ? System.getenv("PORT") : "9090");
 
     public static final String DEFAULT_TAXONOMY_SERVICE_CONTEXT_PATH = "/uniprot/services/restful";
 
@@ -97,13 +96,8 @@ public class RestAppMain {
         //adding mapping for docs.
         HttpHandlerRegistration docHandler = new HttpHandlerRegistration.Builder().contextPath("/uniprot/services/docs")
                 .urlPattern("/*").build();
-        server.getServerConfiguration().addHttpHandler(new CLStaticHttpHandler(RestAppMain.class.getClassLoader()),
-                docHandler);
-
-/*      This sample shows add static folder inside application context
-        server.getServerConfiguration().addHttpHandler(
-                new StaticHttpHandler("/home/lgonzales/UniProtProjects/taxonomy-service-restful/src/main/resources/")
-                ,docHandler);*/
+        server.getServerConfiguration().addHttpHandler(new CLStaticHttpHandler(RestAppMain.class.getClassLoader(),
+                "staticContent/"), docHandler);
 
         if (contextInitParams != null) {
             for (Map.Entry<String, String> e : contextInitParams.entrySet()) {
@@ -128,9 +122,10 @@ public class RestAppMain {
      */
     //@TODO: This is not working locally, I kept it, may it works in the server... need to check logs in the server
     private static void enableAccessLog(HttpServer httpServer) {
-        final AccessLogBuilder builder = new AccessLogBuilder(new File("/tmp/access.log"));
+        //final AccessLogBuilder builder = new AccessLogBuilder(new File("/tmp/access.log"));./logs/access.log
+        final AccessLogBuilder builder = new AccessLogBuilder("./logs/access.log");
         builder.synchronous(true);
-        builder.rotatedDaily();
+        builder.rotatedHourly();
         builder.instrument(httpServer.getServerConfiguration());
 
 /*        try {

@@ -106,6 +106,7 @@
             <version>3.6.ga</version>
         </dependency>
 
+        <!-- test dependencies  -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -113,7 +114,15 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- swagger -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>1.10.19</version>
+            <scope>test</scope>
+            <!-- <scope>test</scope> -->
+        </dependency>
+
+        <!-- swagger dependencies to document rest services-->
         <dependency>
             <groupId>io.swagger</groupId>
             <artifactId>swagger-core</artifactId>
@@ -183,7 +192,7 @@
                     <sources>
                         <source>src/main/java/uk/ac/ebi/uniprot/taxonomyservice/restful/domain</source>
                     </sources>
-                    <outputDirectory>${project.basedir}/src/main/resources/xsd</outputDirectory>
+                    <outputDirectory>${project.basedir}/src/main/resources/staticContent/xsd</outputDirectory>
                     <transformSchemas>
                         <transformSchema>
                             <uri>http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomyRoot</uri>

@@ -23,17 +23,20 @@ public class ServiceLifecycleManager extends AbstractContainerLifecycleListener 
     private final Injector guiceInjector;
 
     public ServiceLifecycleManager(Injector injector) {
+        super();
         this.guiceInjector = injector;
     }
 
     @Override
     public void onReload(Container container) {
+        super.onReload(container);
         guiceInjector.getInstance(CloseableInjector.class).close();
         logger.info("ServiceInitor Reload");
     }
 
     @Override
     public void onShutdown(Container container) {
+        super.onShutdown(container);
         guiceInjector.getInstance(CloseableInjector.class).close();
         logger.info("ServiceInitor Shutdown");
     }
