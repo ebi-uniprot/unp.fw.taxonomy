@@ -57,7 +57,8 @@ public class TaxonomyNode {
                 (that.getScientificName() != null)) {
             return false;
         }
-        if ((getCommonName() != null) ? !getCommonName().equals(that.getCommonName()) : (that.getCommonName() != null)) {
+        if ((getCommonName() != null) ? !getCommonName().equals(that.getCommonName()) :
+                (that.getCommonName() != null)) {
             return false;
         }
         if ((getSynonym() != null) ? !getSynonym().equals(that.getSynonym()) : (that.getSynonym() != null)) {

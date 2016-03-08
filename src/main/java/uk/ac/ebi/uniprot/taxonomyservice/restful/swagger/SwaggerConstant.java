@@ -15,11 +15,13 @@ public class SwaggerConstant {
     public static final String API_RESPONSE_400 = "Invalid request parameters";
 
     //TAXONOMY BY ID
-    public static final String API_OPERATION_TAXONOMY_DETAIL_BY_ID_JSON = "This service return details about a taxonomy " +
-            "element in json format";
+    public static final String API_OPERATION_TAXONOMY_DETAIL_BY_ID_JSON =
+            "This service return details about a taxonomy " +
+                    "element in json format";
 
-    public static final String API_OPERATION_TAXONOMY_DETAIL_BY_ID_XML = "This service return details about a taxonomy " +
-            "element in xml format";
+    public static final String API_OPERATION_TAXONOMY_DETAIL_BY_ID_XML =
+            "This service return details about a taxonomy " +
+                    "element in xml format";
 
     public static final String NOTE_TAXONOMY_DETAIL_BY_ID = "with taxonomy identification";
 
@@ -49,6 +51,5 @@ public class SwaggerConstant {
 
     public static final String API_OPERATION_TAXONOMY_PATH_XML = "This service return details about " +
             "taxonomies with a specific name in xml format";
-
 
 }

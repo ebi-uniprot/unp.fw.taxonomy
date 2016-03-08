@@ -209,54 +209,69 @@
                             <toPrefix>tax</toPrefix>
                             <toFile>taxonomyNode.xsd</toFile>
                         </transformSchema>
+                        <transformSchema>
+                            <uri>http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomyNames</uri>
+                            <toPrefix>taxNames</toPrefix>
+                            <toFile>taxonomyNames.xsd</toFile>
+                        </transformSchema>
+                        <transformSchema>
+                            <uri>http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomyRelationship</uri>
+                            <toPrefix>taxRel</toPrefix>
+                            <toFile>taxonomyRelationship.xsd</toFile>
+                        </transformSchema>
+                        <transformSchema>
+                            <uri>http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomyPath</uri>
+                            <toPrefix>taxPath</toPrefix>
+                            <toFile>taxonomyPath.xsd</toFile>
+                        </transformSchema>
                     </transformSchemas>
                 </configuration>
             </plugin>
-<!--            <plugin>
-                <groupId>org.jvnet.jaxb2.maven2</groupId>
-                <artifactId>maven-jaxb2-plugin</artifactId>
-                &lt;!&ndash;<version>0.12.3</version> &ndash;&gt;
-                <version>0.13.1</version>
-                <executions>
-                    <execution>
-                        <id>generate-jaxb-feature</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>generate</goal>
-                        </goals>
-                        <configuration>
-                            <schemaDirectory>${project.basedir}/src/main/resources/xsd</schemaDirectory>
-                            <generatePackage>uk.ac.ebi.uniprot.taxonomyservice.restful.domain.jaxb
-                            </generatePackage>
-                            <schemaIncludes>
-                                <include>taxonomyDetail.xsd</include>
-                            </schemaIncludes>
-                            <generateDirectory>${project.build.directory}/generated-sources/taxonomy</generateDirectory>
-                            <extension>true</extension>
-                            <args>
-                                <arg>-no-header</arg>
-                                <arg>-Xxew</arg>
-                                <arg>-Xxew:instantiate lazy</arg>
-                                <arg>-XtoString</arg>
-                                <arg>-Xequals</arg>
-                                <arg>-XhashCode</arg>
-                            </args>
-                            <plugins>
-                                <plugin>
-                                    <groupId>org.jvnet.jaxb2_commons</groupId>
-                                    <artifactId>jaxb2-basics</artifactId>
-                                    <version>0.9.4</version>
-                                </plugin>
-                                <plugin>
-                                    <groupId>com.github.jaxb-xew-plugin</groupId>
-                                    <artifactId>jaxb-xew-plugin</artifactId>
-                                    <version>1.5</version>
-                                </plugin>
-                            </plugins>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>-->
+            <!--            <plugin>
+                            <groupId>org.jvnet.jaxb2.maven2</groupId>
+                            <artifactId>maven-jaxb2-plugin</artifactId>
+                            &lt;!&ndash;<version>0.12.3</version> &ndash;&gt;
+                            <version>0.13.1</version>
+                            <executions>
+                                <execution>
+                                    <id>generate-jaxb-feature</id>
+                                    <phase>generate-sources</phase>
+                                    <goals>
+                                        <goal>generate</goal>
+                                    </goals>
+                                    <configuration>
+                                        <schemaDirectory>${project.basedir}/src/main/resources/xsd</schemaDirectory>
+                                        <generatePackage>uk.ac.ebi.uniprot.taxonomyservice.restful.domain.jaxb
+                                        </generatePackage>
+                                        <schemaIncludes>
+                                            <include>taxonomyDetail.xsd</include>
+                                        </schemaIncludes>
+                                        <generateDirectory>${project.build.directory}/generated-sources/taxonomy</generateDirectory>
+                                        <extension>true</extension>
+                                        <args>
+                                            <arg>-no-header</arg>
+                                            <arg>-Xxew</arg>
+                                            <arg>-Xxew:instantiate lazy</arg>
+                                            <arg>-XtoString</arg>
+                                            <arg>-Xequals</arg>
+                                            <arg>-XhashCode</arg>
+                                        </args>
+                                        <plugins>
+                                            <plugin>
+                                                <groupId>org.jvnet.jaxb2_commons</groupId>
+                                                <artifactId>jaxb2-basics</artifactId>
+                                                <version>0.9.4</version>
+                                            </plugin>
+                                            <plugin>
+                                                <groupId>com.github.jaxb-xew-plugin</groupId>
+                                                <artifactId>jaxb-xew-plugin</artifactId>
+                                                <version>1.5</version>
+                                            </plugin>
+                                        </plugins>
+                                    </configuration>
+                                </execution>
+                            </executions>
+                        </plugin>-->
         </plugins>
     </build>
 

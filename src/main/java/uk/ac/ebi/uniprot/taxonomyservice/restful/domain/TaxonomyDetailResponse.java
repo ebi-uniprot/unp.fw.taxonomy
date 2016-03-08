@@ -42,7 +42,8 @@ public class TaxonomyDetailResponse {
                 (response.getParentLink() != null)) {
             return false;
         }
-        if ((getChildren() != null) ? !getChildren().equals(response.getChildren()) : (response.getChildren() != null)) {
+        if ((getChildren() != null) ? !getChildren().equals(response.getChildren()) :
+                (response.getChildren() != null)) {
             return false;
         }
         return getSiblings() != null ? getSiblings().equals(response.getSiblings()) : response.getSiblings() == null;
@@ -73,8 +74,8 @@ public class TaxonomyDetailResponse {
         this.parentLink = parentLink;
     }
 
-    @XmlElement( name="child", namespace="http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomy")
-    @XmlElementWrapper( name="children" )
+    @XmlElement(name = "child", namespace = "http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomy")
+    @XmlElementWrapper(name = "children")
     @JsonGetter(value = "children")
     public List<TaxonomyNode> getChildren() {
         return children;
@@ -84,8 +85,8 @@ public class TaxonomyDetailResponse {
         this.children = children;
     }
 
-    @XmlElement( name="sibling", namespace="http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomy")
-    @XmlElementWrapper( name="siblings" )
+    @XmlElement(name = "sibling", namespace = "http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomy")
+    @XmlElementWrapper(name = "siblings")
     @JsonGetter(value = "siblings")
     public List<TaxonomyNode> getSiblings() {
         return siblings;

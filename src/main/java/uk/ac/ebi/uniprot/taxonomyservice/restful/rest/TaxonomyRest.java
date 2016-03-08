@@ -2,16 +2,17 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.rest;
 
 import uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.TaxonomyDataAccess;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyDetailResponse;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNamesResponse;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyPathResponse;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyRelationshipResponse;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant;
 
 import io.swagger.annotations.*;
-import java.util.List;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
@@ -68,7 +69,7 @@ public class TaxonomyRest {
                 .build();
     }
 
-   @GET
+    @GET
     @ApiOperation(value = SwaggerConstant.API_OPERATION_TAXONOMY_DETAIL_BY_NAME_XML,
             notes = SwaggerConstant.NOTE_TAXONOMY_DETAIL_BY_NAME,
             response = TaxonomyDetailResponse.class)
@@ -77,12 +78,11 @@ public class TaxonomyRest {
     @Path("/name/{taxonomyName}.xml")
     @Produces({MediaType.APPLICATION_XML})
     public Response getTaxonomyDetailsByNameXml(@ApiParam(value = "taxonomyName", required = true)
-    @PathParam("taxonomyName") String taxonomyName){
+    @PathParam("taxonomyName") String taxonomyName) {
 
-       List<TaxonomyDetailResponse> response = dataAccess.getTaxonomyDetailsByName(taxonomyName);
-       GenericEntity<List<TaxonomyDetailResponse>> bodyResponse = new GenericEntity<List<TaxonomyDetailResponse>>
-               (response){};
-        return Response.ok(bodyResponse).type(MediaType.APPLICATION_XML_TYPE).status(Response.Status.OK)
+        TaxonomyNamesResponse response = dataAccess.getTaxonomyDetailsByName(taxonomyName);
+
+        return Response.ok(response).type(MediaType.APPLICATION_XML_TYPE).status(Response.Status.OK)
                 .build();
     }
 
@@ -95,25 +95,29 @@ public class TaxonomyRest {
     @Path("/name/{taxonomyName}.json")
     @Produces({MediaType.APPLICATION_JSON})
     public Response getTaxonomyDetailsByNameJson(@ApiParam(value = "taxonomyName", required = true)
-    @PathParam("taxonomyName") String taxonomyName){
+    @PathParam("taxonomyName") String taxonomyName) {
 
-        List<TaxonomyDetailResponse> response = dataAccess.getTaxonomyDetailsByName(taxonomyName);
+        TaxonomyNamesResponse response = dataAccess.getTaxonomyDetailsByName(taxonomyName);
 
         return Response.ok(response).type(MediaType.APPLICATION_JSON_TYPE).status(Response.Status.OK)
                 .build();
     }
 
-/*
     @GET
     @ApiOperation(value = SwaggerConstant.API_OPERATION_TAXONOMY_RELATIONSHIP_XML,
             notes = SwaggerConstant.NOTE_TAXONOMY_RELATIONSHIP,
             response = TaxonomyDetailResponse.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = SwaggerConstant.API_RESPONSE_404),
             @ApiResponse(code = 400, message = SwaggerConstant.API_RESPONSE_400)})
-    @Path("/{taxonomyId}.xml")
+    @Path("/id/{taxonomyId1}/id/{taxonomyId2}.xml")
     @Produces({MediaType.APPLICATION_XML})
-    public Response checkRelationshipBetweenTaxonomiesXml(long taxonomyId1, long taxonomyId2){
-        return Response.ok(null).type(MediaType.APPLICATION_XML_TYPE).status(Response.Status.OK)
+    public Response checkRelationshipBetweenTaxonomiesXml(@ApiParam(value = "taxonomyId1", required = true)
+    @PathParam("taxonomyId1") long taxonomyId1, @ApiParam(value = "taxonomyId2", required = true)
+    @PathParam("taxonomyId2") long taxonomyId2) {
+
+        TaxonomyRelationshipResponse response = dataAccess.checkRelationshipBetweenTaxonomies(taxonomyId1, taxonomyId2);
+
+        return Response.ok(response).type(MediaType.APPLICATION_XML_TYPE).status(Response.Status.OK)
                 .build();
     }
 
@@ -123,10 +127,15 @@ public class TaxonomyRest {
             response = TaxonomyDetailResponse.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = SwaggerConstant.API_RESPONSE_404),
             @ApiResponse(code = 400, message = SwaggerConstant.API_RESPONSE_400)})
-    @Path("/{taxonomyId}.json")
+    @Path("/id/{taxonomyId1}/id/{taxonomyId2}.json")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response checkRelationshipBetweenTaxonomiesJson(long taxonomyId1, long taxonomyId2){
-        return Response.ok(null).type(MediaType.APPLICATION_JSON_TYPE).status(Response.Status.OK)
+    public Response checkRelationshipBetweenTaxonomiesJson(@ApiParam(value = "taxonomyId1", required = true)
+    @PathParam("taxonomyId1") long taxonomyId1, @ApiParam(value = "taxonomyId2", required = true)
+    @PathParam("taxonomyId2") long taxonomyId2) {
+
+        TaxonomyRelationshipResponse response = dataAccess.checkRelationshipBetweenTaxonomies(taxonomyId1, taxonomyId2);
+
+        return Response.ok(response).type(MediaType.APPLICATION_JSON_TYPE).status(Response.Status.OK)
                 .build();
     }
 
@@ -137,10 +146,16 @@ public class TaxonomyRest {
             response = TaxonomyDetailResponse.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = SwaggerConstant.API_RESPONSE_404),
             @ApiResponse(code = 400, message = SwaggerConstant.API_RESPONSE_400)})
-    @Path("/{taxonomyId}.xml")
+    @Path("/id/{taxonomyId}/direction/{direction}/depth/{depth}.xml")
     @Produces({MediaType.APPLICATION_XML})
-    public Response getTaxonomyPathXml(long taxonomyId, String direction, int depth){
-        return Response.ok(null).type(MediaType.APPLICATION_XML_TYPE).status(Response.Status.OK)
+    public Response getTaxonomyPathXml(@ApiParam(value = "taxonomyId", required = true)
+    @PathParam("taxonomyId") long taxonomyId, @ApiParam(value = "direction", required = true)
+    @PathParam("direction") String direction, @ApiParam(value = "depth", required = true)
+    @PathParam("depth") int depth){
+
+        TaxonomyPathResponse response = dataAccess.getTaxonomyPath(taxonomyId, direction, depth);
+
+        return Response.ok(response).type(MediaType.APPLICATION_XML_TYPE).status(Response.Status.OK)
                 .build();
     }
 
@@ -151,14 +166,17 @@ public class TaxonomyRest {
             response = TaxonomyDetailResponse.class)
     @ApiResponses(value = {@ApiResponse(code = 404, message = SwaggerConstant.API_RESPONSE_404),
             @ApiResponse(code = 400, message = SwaggerConstant.API_RESPONSE_400)})
-    @Path("/{taxonomyId}.json")
+    @Path("/id/{taxonomyId}/direction/{direction}/depth/{depth}.json")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response getTaxonomyPathJson(long taxonomyId, String direction, int depth){
-        return Response.ok(null).type(MediaType.APPLICATION_JSON_TYPE).status(Response.Status.OK)
+    public Response getTaxonomyPathJson(@ApiParam(value = "taxonomyId", required = true)
+    @PathParam("taxonomyId") long taxonomyId, @ApiParam(value = "direction", required = true)
+    @PathParam("direction") String direction, @ApiParam(value = "depth", required = true)
+    @PathParam("depth") int depth){
+
+        TaxonomyPathResponse response = dataAccess.getTaxonomyPath(taxonomyId, direction, depth);
+
+        return Response.ok(response).type(MediaType.APPLICATION_JSON_TYPE).status(Response.Status.OK)
                 .build();
-    }*/
-
-
-
+    }
 
 }

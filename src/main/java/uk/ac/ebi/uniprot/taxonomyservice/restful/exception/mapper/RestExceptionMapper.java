@@ -20,7 +20,7 @@ public class RestExceptionMapper implements
 
     @Override
     public Response toResponse(Exception exception) {
-        logger.error("Http Request Error has occured with error message: ",exception.getMessage(),exception);
+        logger.error("Http Request Error has occured with error message: ", exception.getMessage(), exception);
         if (exception instanceof org.glassfish.jersey.server.ParamException) {
             return Response.status(Response.Status.BAD_REQUEST)
                     .build();

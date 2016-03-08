@@ -28,6 +28,11 @@ public class ServiceLifecycleManager extends AbstractContainerLifecycleListener 
     }
 
     @Override
+    public void onStartup(Container container) {
+
+    }
+
+    @Override
     public void onReload(Container container) {
         super.onReload(container);
         guiceInjector.getInstance(CloseableInjector.class).close();

@@ -42,7 +42,7 @@ public class RestApp extends ResourceConfig {
         Injector injector = Guice.createInjector(Stage.PRODUCTION, new CloseableModule(), new Jsr250Module(),
                 abstractModule);
         bindingGuice(serviceLocator, injector);
-        register(new ServiceLifecycleManager(injector));
+        //register(new ServiceLifecycleManager(injector));
 
         JacksonJaxbJsonProvider jacksonJaxbJsonProvider = new JacksonJaxbJsonProvider();
         register(jacksonJaxbJsonProvider);
