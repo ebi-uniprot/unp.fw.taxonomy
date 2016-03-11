@@ -1,6 +1,7 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.main;
 
-import uk.ac.ebi.uniprot.taxonomyservice.restful.exception.mapper.RestExceptionMapper;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.exception.RestExceptionMapper;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.filter.FilterResourceURL;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import com.google.inject.AbstractModule;
@@ -42,7 +43,7 @@ public class RestApp extends ResourceConfig {
         Injector injector = Guice.createInjector(Stage.PRODUCTION, new CloseableModule(), new Jsr250Module(),
                 abstractModule);
         bindingGuice(serviceLocator, injector);
-        //register(new ServiceLifecycleManager(injector));
+        register(new ServiceLifecycleManager(injector));
 
         JacksonJaxbJsonProvider jacksonJaxbJsonProvider = new JacksonJaxbJsonProvider();
         register(jacksonJaxbJsonProvider);
@@ -61,6 +62,7 @@ public class RestApp extends ResourceConfig {
         beanConfig.setScan(true);
 
         packages("uk.ac.ebi.uniprot.taxonomyservice.restful.rest");
+        register(FilterResourceURL.class);
         register(ApiListingResource.class);
         register(SwaggerSerializers.class);
 

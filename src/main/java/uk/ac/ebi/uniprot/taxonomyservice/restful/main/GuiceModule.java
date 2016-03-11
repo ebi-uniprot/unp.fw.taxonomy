@@ -1,7 +1,7 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.main;
 
 import uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.TaxonomyDataAccess;
-import uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.impl.NeoTaxonomyDataAccess;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.impl.MockTaxonomyDataAccess;
 
 import com.google.inject.AbstractModule;
 import java.io.FileInputStream;
@@ -38,7 +38,7 @@ public class GuiceModule extends AbstractModule {
         Properties configProperties = loadProperties();
 
         logger.info("Registering data neo4j access service");
-        this.bind(TaxonomyDataAccess.class).to(NeoTaxonomyDataAccess.class);
+        this.bind(TaxonomyDataAccess.class).to(MockTaxonomyDataAccess.class);
         app.packages(PACKAGE_SCAN);
 
     }

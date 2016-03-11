@@ -1,4 +1,4 @@
-package uk.ac.ebi.uniprot.taxonomyservice.restful.exception.mapper;
+package uk.ac.ebi.uniprot.taxonomyservice.restful.exception;
 
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
@@ -20,6 +20,7 @@ public class RestExceptionMapper implements
 
     @Override
     public Response toResponse(Exception exception) {
+        exception.printStackTrace();
         logger.error("Http Request Error has occured with error message: ", exception.getMessage(), exception);
         if (exception instanceof org.glassfish.jersey.server.ParamException) {
             return Response.status(Response.Status.BAD_REQUEST)

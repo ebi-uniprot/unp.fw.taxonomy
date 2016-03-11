@@ -17,7 +17,7 @@
         <servlet-api.version>3.1.0</servlet-api.version>
         <swagger.version>1.5.7</swagger.version>
         <jersey-container-servlet.version>2.22.2</jersey-container-servlet.version>
-
+        <rest-assured.version>2.8.0</rest-assured.version>
         <rest.host.url>www.ebi.ac.uk</rest.host.url>
         <rest.basePath>/uniprot/services/restful</rest.basePath>
 
@@ -27,6 +27,7 @@
     </properties>
 
     <dependencies>
+        <!-- Log dependencies  -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -53,6 +54,7 @@
             <version>${servlet-api.version}</version>
         </dependency>
 
+        <!-- "Application server" dependencies  -->
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-grizzly2-servlet</artifactId>
@@ -74,7 +76,6 @@
             <artifactId>hk2-metadata-generator</artifactId>
             <version>${glassfish-hk2.version}</version>
         </dependency>
-
 
         <dependency>
             <groupId>com.fasterxml.jackson.jaxrs</groupId>
@@ -119,7 +120,27 @@
             <artifactId>mockito-core</artifactId>
             <version>1.10.19</version>
             <scope>test</scope>
-            <!-- <scope>test</scope> -->
+        </dependency>
+
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <version>1.3</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jayway.restassured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>${rest-assured.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.jayway.restassured</groupId>
+            <artifactId>json-path</artifactId>
+            <version>${rest-assured.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- swagger dependencies to document rest services-->
@@ -176,6 +197,7 @@
 
             </plugin>
 
+            <!-- Generate XSD files based on Model classes -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jaxb2-maven-plugin</artifactId>
@@ -190,6 +212,7 @@
                 </executions>
                 <configuration>
                     <sources>
+                        <source>src/main/java/uk/ac/ebi/uniprot/taxonomyservice/restful/rest/response</source>
                         <source>src/main/java/uk/ac/ebi/uniprot/taxonomyservice/restful/domain</source>
                     </sources>
                     <outputDirectory>${project.basedir}/src/main/resources/staticContent/xsd</outputDirectory>
@@ -200,9 +223,9 @@
                             <toFile>taxonomy.xsd</toFile>
                         </transformSchema>
                         <transformSchema>
-                            <uri>http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomyDetail</uri>
-                            <toPrefix>taxDetail</toPrefix>
-                            <toFile>taxonomyDetail.xsd</toFile>
+                            <uri>http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomies</uri>
+                            <toPrefix>taxies</toPrefix>
+                            <toFile>taxonomies.xsd</toFile>
                         </transformSchema>
                         <transformSchema>
                             <uri>http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomy</uri>
@@ -210,68 +233,13 @@
                             <toFile>taxonomyNode.xsd</toFile>
                         </transformSchema>
                         <transformSchema>
-                            <uri>http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomyNames</uri>
-                            <toPrefix>taxNames</toPrefix>
-                            <toFile>taxonomyNames.xsd</toFile>
-                        </transformSchema>
-                        <transformSchema>
-                            <uri>http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomyRelationship</uri>
-                            <toPrefix>taxRel</toPrefix>
-                            <toFile>taxonomyRelationship.xsd</toFile>
-                        </transformSchema>
-                        <transformSchema>
-                            <uri>http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomyPath</uri>
-                            <toPrefix>taxPath</toPrefix>
-                            <toFile>taxonomyPath.xsd</toFile>
+                            <uri>http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomyError</uri>
+                            <toPrefix>err</toPrefix>
+                            <toFile>taxonomyError.xsd</toFile>
                         </transformSchema>
                     </transformSchemas>
                 </configuration>
             </plugin>
-            <!--            <plugin>
-                            <groupId>org.jvnet.jaxb2.maven2</groupId>
-                            <artifactId>maven-jaxb2-plugin</artifactId>
-                            &lt;!&ndash;<version>0.12.3</version> &ndash;&gt;
-                            <version>0.13.1</version>
-                            <executions>
-                                <execution>
-                                    <id>generate-jaxb-feature</id>
-                                    <phase>generate-sources</phase>
-                                    <goals>
-                                        <goal>generate</goal>
-                                    </goals>
-                                    <configuration>
-                                        <schemaDirectory>${project.basedir}/src/main/resources/xsd</schemaDirectory>
-                                        <generatePackage>uk.ac.ebi.uniprot.taxonomyservice.restful.domain.jaxb
-                                        </generatePackage>
-                                        <schemaIncludes>
-                                            <include>taxonomyDetail.xsd</include>
-                                        </schemaIncludes>
-                                        <generateDirectory>${project.build.directory}/generated-sources/taxonomy</generateDirectory>
-                                        <extension>true</extension>
-                                        <args>
-                                            <arg>-no-header</arg>
-                                            <arg>-Xxew</arg>
-                                            <arg>-Xxew:instantiate lazy</arg>
-                                            <arg>-XtoString</arg>
-                                            <arg>-Xequals</arg>
-                                            <arg>-XhashCode</arg>
-                                        </args>
-                                        <plugins>
-                                            <plugin>
-                                                <groupId>org.jvnet.jaxb2_commons</groupId>
-                                                <artifactId>jaxb2-basics</artifactId>
-                                                <version>0.9.4</version>
-                                            </plugin>
-                                            <plugin>
-                                                <groupId>com.github.jaxb-xew-plugin</groupId>
-                                                <artifactId>jaxb-xew-plugin</artifactId>
-                                                <version>1.5</version>
-                                            </plugin>
-                                        </plugins>
-                                    </configuration>
-                                </execution>
-                            </executions>
-                        </plugin>-->
         </plugins>
     </build>
 

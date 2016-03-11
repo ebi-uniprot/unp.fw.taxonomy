@@ -118,7 +118,7 @@ public class RestAppMain {
 
     /** This method configure Grizzly HttpServer accessLog
      *
-     * @param httpServer GrizzlyHttpServerFactory
+     * @param httpServer GrizzlyHttpServer
      */
     //@TODO: This is not working locally, I kept it, may it works in the server... need to check logs in the server
     private static void enableAccessLog(HttpServer httpServer) {
