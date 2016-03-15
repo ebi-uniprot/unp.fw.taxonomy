@@ -4,11 +4,9 @@ import uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.TaxonomyDataAccess;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.impl.MockTaxonomyDataAccess;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.main.GuiceModule;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.main.RestApp;
-import uk.ac.ebi.uniprot.taxonomyservice.restful.main.RestAppMain;
 
 import com.google.inject.AbstractModule;
 import com.jayway.restassured.RestAssured;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -17,7 +15,6 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.grizzly2.servlet.GrizzlyWebContainerFactory;
-import org.glassfish.jersey.servlet.ServletContainer;
 import org.junit.rules.ExternalResource;
 
 /**

@@ -2,7 +2,7 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.impl;
 
 import uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.TaxonomyDataAccess;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode;
-import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.NodePathParams;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.PathRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
 
 import java.util.ArrayList;
@@ -17,14 +17,14 @@ import java.util.List;
  */
 public class MockTaxonomyDataAccess implements TaxonomyDataAccess {
 
-    private static final long[] validIds = {11111,12345,22222};
-    private static final String[] validNames = {"NAME1","NAME2","NAME3"};
+    private static final long[] validIds = {11111,12121, 12345, 22222};//{12121, 12345, 22222};
+    private static final String[] validNames = {"gnathostomata", "human", "metazoa"};
 
     private static final String TAXONOMY_BASE_LINK = "https://localhost:9090/uniprot/services/restful/taxonomy/id/";
 
     @Override public TaxonomyNode getTaxonomyDetailsById(long taxonomyId) {
         TaxonomyNode node = null;
-        if(Arrays.binarySearch(validIds,taxonomyId) > 0) {
+        if (Arrays.binarySearch(validIds, taxonomyId) > 0) {
             node = getTaxonomyMockedNodeBase(taxonomyId, "node");
 
             node.setParentLink(TAXONOMY_BASE_LINK + "56789");
@@ -42,7 +42,7 @@ public class MockTaxonomyDataAccess implements TaxonomyDataAccess {
 
     @Override public Taxonomies getTaxonomySiblingsById(long taxonomyId) {
         Taxonomies response = null;
-        if(Arrays.binarySearch(validIds,taxonomyId) > 0) {
+        if (Arrays.binarySearch(validIds, taxonomyId) > 0) {
             List<TaxonomyNode> detailList = new ArrayList<>();
             detailList.add(getTaxonomyMockedNodeBase(1000, " Sibling 1"));
             detailList.add(getTaxonomyMockedNodeBase(2000, "Sibling 2"));
@@ -54,16 +54,16 @@ public class MockTaxonomyDataAccess implements TaxonomyDataAccess {
     }
 
     @Override public TaxonomyNode getTaxonomyParentById(long taxonomyId) {
-        if(Arrays.binarySearch(validIds,taxonomyId) > 0) {
+        if (Arrays.binarySearch(validIds, taxonomyId) > 0) {
             return getTaxonomyMockedNodeBase(999, "parent");
-        }else{
+        } else {
             return null;
         }
     }
 
     @Override public Taxonomies getTaxonomyChildrenById(long taxonomyId) {
         Taxonomies response = null;
-        if(Arrays.binarySearch(validIds,taxonomyId) > 0) {
+        if (Arrays.binarySearch(validIds, taxonomyId) > 0) {
             List<TaxonomyNode> detailList = new ArrayList<>();
             detailList.add(getTaxonomyMockedNodeBase(1000, " Children 1"));
             detailList.add(getTaxonomyMockedNodeBase(2000, "Children 2"));
@@ -76,11 +76,11 @@ public class MockTaxonomyDataAccess implements TaxonomyDataAccess {
 
     @Override public Taxonomies getTaxonomyDetailsByName(String taxonomyName) {
         Taxonomies response = null;
-        if(Arrays.binarySearch(validNames,taxonomyName) > 0) {
+        if (Arrays.binarySearch(validNames, taxonomyName.toLowerCase()) > 0) {
             List<TaxonomyNode> detailList = new ArrayList<>();
-            detailList.add(getTaxonomyDetailsById(1000));
-            detailList.add(getTaxonomyDetailsById(2000));
-            detailList.add(getTaxonomyDetailsById(3000));
+            detailList.add(getTaxonomyDetailsById(validIds[1]));
+            detailList.add(getTaxonomyDetailsById(validIds[2]));
+            detailList.add(getTaxonomyDetailsById(validIds[3]));
 
             response = new Taxonomies(detailList);
         }
@@ -89,7 +89,7 @@ public class MockTaxonomyDataAccess implements TaxonomyDataAccess {
 
     @Override
     public TaxonomyNode checkRelationshipBetweenTaxonomies(long taxonomyId1, long taxonomyId2) {
-        if(Arrays.binarySearch(validIds,taxonomyId1) > 0 && Arrays.binarySearch(validIds,taxonomyId2) > 0) {
+        if (Arrays.binarySearch(validIds, taxonomyId1) > 0 && Arrays.binarySearch(validIds, taxonomyId2) > 0) {
             TaxonomyNode taxonomy1 = getTaxonomyMockedNodeBase(taxonomyId1, "Taxonomy " + taxonomyId1);
             TaxonomyNode taxonomy2 = getTaxonomyMockedNodeBase(taxonomyId1 + 10, "Taxonomy 2");
             TaxonomyNode taxonomy3 = getTaxonomyMockedNodeBase(taxonomyId1 + 20, "Taxonomy 3");
@@ -104,13 +104,13 @@ public class MockTaxonomyDataAccess implements TaxonomyDataAccess {
             taxonomy1.setParent(taxonomy2);
 
             return taxonomy1;
-        }else{
+        } else {
             return null;
         }
     }
 
-    @Override public TaxonomyNode getTaxonomyPath(NodePathParams nodePathParams) {
-        if(Arrays.binarySearch(validIds,nodePathParams.getId()) > 0) {
+    @Override public TaxonomyNode getTaxonomyPath(PathRequestParams nodePathParams) {
+        if (Arrays.binarySearch(validIds, nodePathParams.getId()) > 0) {
             switch (nodePathParams.getDirection()) {
                 case TOP:
                     TaxonomyNode levelNode =
@@ -143,7 +143,6 @@ public class MockTaxonomyDataAccess implements TaxonomyDataAccess {
         }
         return null;
     }
-
 
     private TaxonomyNode getTaxonomyMockedNodeBase(long id, String nodeName) {
         TaxonomyNode node = new TaxonomyNode();

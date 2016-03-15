@@ -14999,7 +14999,14 @@
                     // target.  The three productions have the relationship:  BindingElements ⊆ AssignmentTargets ⊆
                     // AssignmentExpression  with a single exception that CoverInitializedName when used directly in an
                     // Expression, generates an early error. Therefore, we need the third state,
-                    // firstCoverInitializedNameError, to track the first usage of CoverInitializedName and report it when we reached the end of the parentheses pair.  isolateCoverGrammar function runs the given parser function with a new cover grammar context, and it does not effect the current flags. This means the production the parser parses is only used as an expression. Therefore the CoverInitializedName check is conducted.  inheritCoverGrammar function runs the given parse function with a new cover grammar context, and it propagates the flags outside of the parser. This means the production the parser parses is used as a part of a potential pattern. The CoverInitializedName check is deferred.
+                    // firstCoverInitializedNameError, to track the first usage of CoverInitializedName and report it
+                    // when we reached the end of the parentheses pair.  isolateCoverGrammar function runs the given
+                    // parser function with a new cover grammar context, and it does not effect the current flags. This
+                    // means the production the parser parses is only used as an expression. Therefore the
+                    // CoverInitializedName check is conducted.  inheritCoverGrammar function runs the given parse
+                    // function with a new cover grammar context, and it propagates the flags outside of the parser.
+                    // This means the production the parser parses is used as a part of a potential pattern. The
+                    // CoverInitializedName check is deferred.
                     function isolateCoverGrammar(parser) {
                         var oldIsBindingElement = isBindingElement,
                             oldIsAssignmentTarget = isAssignmentTarget,

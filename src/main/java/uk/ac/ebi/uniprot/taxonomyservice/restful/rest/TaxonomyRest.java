@@ -2,16 +2,15 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.rest;
 
 import uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.TaxonomyDataAccess;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.PathRequestParams;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.RelationshipRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.ErrorMessage;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant;
 
 import io.swagger.annotations.*;
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
@@ -29,7 +28,7 @@ import org.slf4j.LoggerFactory;
 public class TaxonomyRest {
     public static final Logger logger = LoggerFactory.getLogger(TaxonomyRest.class);
 
-    public TaxonomyRest(){
+    public TaxonomyRest() {
         logger.debug("created instance of TaxonomyRest");
     }
 
@@ -122,11 +121,9 @@ public class TaxonomyRest {
     @ApiResponses(value = {@ApiResponse(code = 404, message = SwaggerConstant.API_RESPONSE_404),
             @ApiResponse(code = 400, message = SwaggerConstant.API_RESPONSE_400)})
     @Path("/relationship")
-    public Response checkRelationshipBetweenTaxonomies(@ApiParam(value = "taxonomyId1", required = true)
-    @PathParam("taxonomyId1") long taxonomyId1, @ApiParam(value = "taxonomyId2", required = true)
-    @PathParam("taxonomyId2") long taxonomyId2) {
+    public Response checkRelationshipBetweenTaxonomies(@BeanParam RelationshipRequestParams params) {
 
-        TaxonomyNode response = dataAccess.checkRelationshipBetweenTaxonomies(taxonomyId1, taxonomyId2);
+        TaxonomyNode response = dataAccess.checkRelationshipBetweenTaxonomies(params.getTo(), params.getTo());
 
         return returnTaxonomyNodeResponse(response);
     }
@@ -138,38 +135,33 @@ public class TaxonomyRest {
     @ApiResponses(value = {@ApiResponse(code = 404, message = SwaggerConstant.API_RESPONSE_404),
             @ApiResponse(code = 400, message = SwaggerConstant.API_RESPONSE_400)})
     @Path("/path")
-    public Response getTaxonomyPath(@ApiParam(value = "taxonomyId", required = true)
-    @PathParam("taxonomyId") long taxonomyId, @ApiParam(value = "direction", required = true)
-    @PathParam("direction") String direction, @ApiParam(value = "depth", required = true)
-    @PathParam("depth") int depth){
+    public Response getTaxonomyPath(@BeanParam PathRequestParams pathRequestParam) {
 
-        TaxonomyNode response = null;//dataAccess.getTaxonomyPath(taxonomyId, direction, depth);
+        TaxonomyNode response = dataAccess.getTaxonomyPath(pathRequestParam);
 
         return returnTaxonomyNodeResponse(response);
     }
-    
-	private Response returnTaxonomyNodeResponse(TaxonomyNode response) {
-		if(response != null){
-        	return Response.ok(response).build();
-        }else{
-        	return returnNotFoundResponse();
-        }
-	}
 
-	private Response returnTaxonomiesResponse(Taxonomies response) {
-		if(response != null){
-        	return Response.ok(response).build();
-        }else{
-        	return returnNotFoundResponse();
+    private Response returnTaxonomyNodeResponse(TaxonomyNode response) {
+        if (response != null) {
+            return Response.ok(response).build();
+        } else {
+            return returnNotFoundResponse();
         }
-	}
-	
-	private Response returnNotFoundResponse() {
-		ErrorMessage error = new ErrorMessage();
-		error.setErrorMessage(SwaggerConstant.API_RESPONSE_404);
-		return Response.status(Response.Status.NOT_FOUND).entity(error).build();
-	}
+    }
 
-	
-	
+    private Response returnTaxonomiesResponse(Taxonomies response) {
+        if (response != null) {
+            return Response.ok(response).build();
+        } else {
+            return returnNotFoundResponse();
+        }
+    }
+
+    private Response returnNotFoundResponse() {
+        ErrorMessage error = new ErrorMessage();
+        error.setErrorMessage(SwaggerConstant.API_RESPONSE_404);
+        return Response.status(Response.Status.NOT_FOUND).entity(error).build();
+    }
+
 }

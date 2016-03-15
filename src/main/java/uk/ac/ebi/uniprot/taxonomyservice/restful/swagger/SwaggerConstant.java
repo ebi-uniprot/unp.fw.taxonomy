@@ -50,5 +50,4 @@ public class SwaggerConstant {
 
     public static final String NOTE_TAXONOMY_PATH = "";
 
-
 }

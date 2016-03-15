@@ -5,6 +5,6 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request;
  *
  * Created by lgonzales on 10/03/16.
  */
-public enum NodePathDirections {
-    TOP,BOTTOM
+public enum PathDirections {
+    TOP, BOTTOM
 }

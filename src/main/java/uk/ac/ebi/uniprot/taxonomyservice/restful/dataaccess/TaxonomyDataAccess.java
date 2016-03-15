@@ -1,7 +1,7 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess;
 
 import uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode;
-import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.NodePathParams;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.PathRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
 
 /**
@@ -18,8 +18,6 @@ public interface TaxonomyDataAccess {
      */
     TaxonomyNode getTaxonomyDetailsById(long taxonomyId);
 
-
-
     /**
      * This method return list of siblings of a searched {@param taxonomyId}.
      *
@@ -28,7 +26,6 @@ public interface TaxonomyDataAccess {
      */
     Taxonomies getTaxonomySiblingsById(long taxonomyId);
 
-
     /**
      * This method return the parent of a searched {@param taxonomyId}.
      *
@@ -36,7 +33,6 @@ public interface TaxonomyDataAccess {
      * @return details about searched taxonomy parent
      */
     TaxonomyNode getTaxonomyParentById(long taxonomyId);
-
 
     /**
      * This method return list of children of a searched {@param taxonomyId}.
@@ -67,9 +63,9 @@ public interface TaxonomyDataAccess {
      * This method return all nodes that has relationship with taxonomyId in a specific direction
      * and only depth levels.
      *
-     * @param nodePathParams {@link NodePathParams} are taxonomyId, direction and depth
+     * @param nodePathParams {@link PathRequestParams} are taxonomyId, direction and depth
      * @return List of taxonomies
      */
-    TaxonomyNode getTaxonomyPath(NodePathParams nodePathParams);
+    TaxonomyNode getTaxonomyPath(PathRequestParams nodePathParams);
 
 }

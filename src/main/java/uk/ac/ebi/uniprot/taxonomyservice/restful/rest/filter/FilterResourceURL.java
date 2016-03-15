@@ -26,18 +26,18 @@ public class FilterResourceURL implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
-        logger.debug("FilterResourceURL: " +requestContext.getUriInfo().getRequestUri().toString());
-        if(requestContext.getUriInfo() != null && requestContext.getUriInfo().getPath() != null){
+        logger.debug("FilterResourceURL: " + requestContext.getUriInfo().getRequestUri().toString());
+        if (requestContext.getUriInfo() != null && requestContext.getUriInfo().getPath() != null) {
             String path = requestContext.getUriInfo().getRequestUri().toString();
             try {
-                if(requestContext.getUriInfo().getPath().endsWith(".xml")){
-                    path = path.substring(0,path.indexOf(".xml"));
-                    logger.debug("new path: "+path);
+                if (requestContext.getUriInfo().getPath().endsWith(".xml")) {
+                    path = path.substring(0, path.indexOf(".xml"));
+                    logger.debug("new path: " + path);
                     requestContext.getHeaders().add(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML);
                     requestContext.setRequestUri(new URI(path));
-                }else if(requestContext.getUriInfo().getPath().endsWith(".json")){
-                    path = path.substring(0,path.indexOf(".json"));
-                    logger.debug("new path: "+path);
+                } else if (requestContext.getUriInfo().getPath().endsWith(".json")) {
+                    path = path.substring(0, path.indexOf(".json"));
+                    logger.debug("new path: " + path);
                     requestContext.getHeaders().add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
                     requestContext.setRequestUri(new URI(path));
                 }

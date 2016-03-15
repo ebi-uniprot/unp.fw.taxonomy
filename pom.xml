@@ -203,48 +203,48 @@
             </plugin>
 
             <!-- Generate XSD files based on Model classes -->
-<!--             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>jaxb2-maven-plugin</artifactId>
-                <version>2.2</version>
-                <executions>
-                    <execution>
-                        <id>schemagen</id>
-                        <goals>
-                            <goal>schemagen</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <sources>
-                        <source>src/main/java/uk/ac/ebi/uniprot/taxonomyservice/restful/rest/response</source>
-                        <source>src/main/java/uk/ac/ebi/uniprot/taxonomyservice/restful/domain</source>
-                    </sources>
-                    <outputDirectory>${project.basedir}/src/main/resources/staticContent/xsd</outputDirectory>
-                    <transformSchemas>
-                        <transformSchema>
-                            <uri>http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomyRoot</uri>
-                            <toPrefix>taxRoot</toPrefix>
-                            <toFile>taxonomy.xsd</toFile>
-                        </transformSchema>
-                        <transformSchema>
-                            <uri>http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomies</uri>
-                            <toPrefix>taxies</toPrefix>
-                            <toFile>taxonomies.xsd</toFile>
-                        </transformSchema>
-                        <transformSchema>
-                            <uri>http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomy</uri>
-                            <toPrefix>tax</toPrefix>
-                            <toFile>taxonomyNode.xsd</toFile>
-                        </transformSchema>
-                        <transformSchema>
-                            <uri>http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomyError</uri>
-                            <toPrefix>err</toPrefix>
-                            <toFile>taxonomyError.xsd</toFile>
-                        </transformSchema>
-                    </transformSchemas>
-                </configuration>
-            </plugin> -->
+            <!--             <plugin>
+                            <groupId>org.codehaus.mojo</groupId>
+                            <artifactId>jaxb2-maven-plugin</artifactId>
+                            <version>2.2</version>
+                            <executions>
+                                <execution>
+                                    <id>schemagen</id>
+                                    <goals>
+                                        <goal>schemagen</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                            <configuration>
+                                <sources>
+                                    <source>src/main/java/uk/ac/ebi/uniprot/taxonomyservice/restful/rest/response</source>
+                                    <source>src/main/java/uk/ac/ebi/uniprot/taxonomyservice/restful/domain</source>
+                                </sources>
+                                <outputDirectory>${project.basedir}/src/main/resources/staticContent/xsd</outputDirectory>
+                                <transformSchemas>
+                                    <transformSchema>
+                                        <uri>http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomyRoot</uri>
+                                        <toPrefix>taxRoot</toPrefix>
+                                        <toFile>taxonomy.xsd</toFile>
+                                    </transformSchema>
+                                    <transformSchema>
+                                        <uri>http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomies</uri>
+                                        <toPrefix>taxies</toPrefix>
+                                        <toFile>taxonomies.xsd</toFile>
+                                    </transformSchema>
+                                    <transformSchema>
+                                        <uri>http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomy</uri>
+                                        <toPrefix>tax</toPrefix>
+                                        <toFile>taxonomyNode.xsd</toFile>
+                                    </transformSchema>
+                                    <transformSchema>
+                                        <uri>http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomyError</uri>
+                                        <toPrefix>err</toPrefix>
+                                        <toFile>taxonomyError.xsd</toFile>
+                                    </transformSchema>
+                                </transformSchemas>
+                            </configuration>
+                        </plugin> -->
         </plugins>
     </build>
 

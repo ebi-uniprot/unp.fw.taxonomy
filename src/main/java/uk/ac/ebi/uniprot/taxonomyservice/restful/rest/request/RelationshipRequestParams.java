@@ -1,12 +1,26 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request;
 
+import io.swagger.annotations.ApiParam;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.QueryParam;
+import org.glassfish.jersey.process.internal.RequestScoped;
+
 /**
  * Created by lgonzales on 10/03/16.
  */
-public class NodeRelationshipParams {
+@RequestScoped
+public class RelationshipRequestParams {
 
+    @NotNull
+    @QueryParam(value = "from")
+    @ApiParam(value = "from", required = true)
     private long from;
+
+    @NotNull
+    @QueryParam(value = "to")
+    @ApiParam(value = "to", required = true)
     private long to;
+
 
     public long getFrom() {
         return from;
@@ -39,7 +53,7 @@ public class NodeRelationshipParams {
             return false;
         }
 
-        NodeRelationshipParams that = (NodeRelationshipParams) o;
+        RelationshipRequestParams that = (RelationshipRequestParams) o;
 
         if (getFrom() != that.getFrom()) {
             return false;

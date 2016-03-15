@@ -60,7 +60,8 @@ public class RestApp extends ResourceConfig {
         beanConfig.setResourcePackage("uk.ac.ebi.uniprot.taxonomyservice.restful.rest");
         beanConfig.setScan(true);
 
-        packages("uk.ac.ebi.uniprot.taxonomyservice.restful.rest");
+        packages("uk.ac.ebi.uniprot.taxonomyservice.restful.rest",
+                "uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request");
         register(FilterResourceURL.class);
         register(ApiListingResource.class);
         register(SwaggerSerializers.class);
