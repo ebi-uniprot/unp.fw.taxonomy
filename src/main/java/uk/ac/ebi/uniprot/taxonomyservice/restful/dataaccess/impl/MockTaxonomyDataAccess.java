@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class MockTaxonomyDataAccess implements TaxonomyDataAccess {
 
-    private static final long[] validIds = {12345,11111,22222};
+    private static final long[] validIds = {11111,12345,22222};
     private static final String[] validNames = {"NAME1","NAME2","NAME3"};
 
     private static final String TAXONOMY_BASE_LINK = "https://localhost:9090/uniprot/services/restful/taxonomy/id/";

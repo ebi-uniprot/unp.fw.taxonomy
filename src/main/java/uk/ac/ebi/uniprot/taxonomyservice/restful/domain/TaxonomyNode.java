@@ -2,6 +2,8 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.domain;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSetter;
+
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -115,6 +117,7 @@ public class TaxonomyNode {
         return children;
     }
 
+    @JsonSetter(value = "children")
     public void setChildren(List<TaxonomyNode> children) {
         this.children = children;
     }
@@ -126,6 +129,7 @@ public class TaxonomyNode {
         return childrenLinks;
     }
 
+    @JsonSetter(value = "childrenLinks")
     public void setChildrenLinks(List<String> childrenLinks) {
         this.childrenLinks = childrenLinks;
     }
@@ -137,6 +141,7 @@ public class TaxonomyNode {
         return siblings;
     }
 
+    @JsonSetter(value = "siblings")
     public void setSiblings(List<TaxonomyNode> siblings) {
         this.siblings = siblings;
     }
@@ -148,6 +153,7 @@ public class TaxonomyNode {
         return siblingsLinks;
     }
 
+    @JsonSetter(value = "siblingsLinks")
     public void setSiblingsLinks(List<String> siblingsLinks) {
         this.siblingsLinks = siblingsLinks;
     }

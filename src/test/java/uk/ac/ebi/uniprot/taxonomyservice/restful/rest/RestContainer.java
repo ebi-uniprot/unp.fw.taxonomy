@@ -16,11 +16,12 @@ import javax.inject.Inject;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.jersey.filter.LoggingFilter;
+import org.glassfish.jersey.grizzly2.servlet.GrizzlyWebContainerFactory;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.junit.rules.ExternalResource;
 
 /**
- * External resource tha starts up and shuts down a grizzly
+ * External resource that starts up and shuts down a grizzly
  *
  * @author Leonardo Gonzales
  */
@@ -41,9 +42,7 @@ public class RestContainer extends ExternalResource {
         RestAssured.port = 12345;
         RestAssured.basePath = basePath;
 
-        //httpServer = GrizzlyWebContainerFactory.create(getServerURL(), containerInitParams());
-        httpServer = RestAppMain.create(URI.create(getServerURL()), ServletContainer.class, null, containerInitParams(),
-                null, basePath);
+        httpServer = GrizzlyWebContainerFactory.create(getServerURL(), containerInitParams());
         httpServer.start();
     }
 
@@ -79,7 +78,7 @@ public class RestContainer extends ExternalResource {
             return new AbstractModule() {
                 @Override
                 protected void configure() {
-                    this.bind(TaxonomyDataAccess.class).to(MockTaxonomyDataAccess.class);
+                    bind(TaxonomyDataAccess.class).to(MockTaxonomyDataAccess.class);
                     packages(GuiceModule.PACKAGE_SCAN);
                 }
             };

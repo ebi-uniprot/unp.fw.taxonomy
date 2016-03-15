@@ -114,7 +114,12 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>xmlunit</groupId>
+            <artifactId>xmlunit</artifactId>
+            <version>1.6</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
@@ -198,7 +203,7 @@
             </plugin>
 
             <!-- Generate XSD files based on Model classes -->
-            <plugin>
+<!--             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>jaxb2-maven-plugin</artifactId>
                 <version>2.2</version>
@@ -239,7 +244,7 @@
                         </transformSchema>
                     </transformSchemas>
                 </configuration>
-            </plugin>
+            </plugin> -->
         </plugins>
     </build>
 

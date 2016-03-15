@@ -15,17 +15,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(namespace = "http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomyError")
 public class ErrorMessage {
 
-    private int internalCode;
     private String errorMessage;
-
-    @XmlElement(required = true)
-    public int getInternalCode() {
-        return internalCode;
-    }
-
-    public void setInternalCode(int internalCode) {
-        this.internalCode = internalCode;
-    }
 
     @XmlElement(required = true)
     public String getErrorMessage() {
@@ -38,7 +28,6 @@ public class ErrorMessage {
 
     @Override public String toString() {
         return "ErrorMessage{" +
-                "internalCode=" + internalCode +
                 ", errorMessage='" + errorMessage + '\'' +
                 '}';
     }
@@ -53,17 +42,12 @@ public class ErrorMessage {
 
         ErrorMessage that = (ErrorMessage) o;
 
-        if (getInternalCode() != that.getInternalCode()) {
-            return false;
-        }
         return getErrorMessage() != null ? getErrorMessage().equals(that.getErrorMessage()) :
                 that.getErrorMessage() == null;
 
     }
 
     @Override public int hashCode() {
-        int result = getInternalCode();
-        result = 31 * result + (getErrorMessage() != null ? getErrorMessage().hashCode() : 0);
-        return result;
+        return (getErrorMessage() != null ? getErrorMessage().hashCode() : 0);
     }
 }

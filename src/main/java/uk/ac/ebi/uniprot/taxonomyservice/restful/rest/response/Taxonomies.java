@@ -4,6 +4,8 @@ import uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonSetter;
+
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -39,6 +41,7 @@ public class Taxonomies {
         return taxonomies;
     }
 
+    @JsonSetter(value = "taxonomies")
     public void setTaxonomies(
             List<TaxonomyNode> taxonomies) {
         this.taxonomies = taxonomies;

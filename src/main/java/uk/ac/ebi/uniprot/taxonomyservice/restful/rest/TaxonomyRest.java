@@ -2,6 +2,7 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.rest;
 
 import uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.TaxonomyDataAccess;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.ErrorMessage;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant;
 
@@ -44,11 +45,11 @@ public class TaxonomyRest {
     @Path("/id/{taxonomyId}")
     public Response getTaxonomyDetailsById(@ApiParam(value = "taxonomyId", required = true)
     @PathParam("taxonomyId") long taxonomyId) {
-        logger.debug(">>TaxonomyRest.getTaxonomyDetailsByIdXml");
+        logger.debug(">>TaxonomyRest.getTaxonomyDetailsById");
 
         TaxonomyNode response = dataAccess.getTaxonomyDetailsById(taxonomyId);
 
-        return Response.ok(response).build();
+        return returnTaxonomyNodeResponse(response);
     }
 
     @GET
@@ -64,7 +65,7 @@ public class TaxonomyRest {
 
         Taxonomies response = dataAccess.getTaxonomySiblingsById(taxonomyId);
 
-        return Response.ok(response).build();
+        return returnTaxonomiesResponse(response);
     }
 
     @GET
@@ -80,7 +81,7 @@ public class TaxonomyRest {
 
         Taxonomies response = dataAccess.getTaxonomyChildrenById(taxonomyId);
 
-        return Response.ok(response).build();
+        return returnTaxonomiesResponse(response);
     }
 
     @GET
@@ -96,7 +97,7 @@ public class TaxonomyRest {
 
         TaxonomyNode response = dataAccess.getTaxonomyParentById(taxonomyId);
 
-        return Response.ok(response).build();
+        return returnTaxonomyNodeResponse(response);
     }
 
     @GET
@@ -111,7 +112,7 @@ public class TaxonomyRest {
 
         Taxonomies response = dataAccess.getTaxonomyDetailsByName(taxonomyName);
 
-        return Response.ok(response).build();
+        return returnTaxonomiesResponse(response);
     }
 
     @GET
@@ -127,7 +128,7 @@ public class TaxonomyRest {
 
         TaxonomyNode response = dataAccess.checkRelationshipBetweenTaxonomies(taxonomyId1, taxonomyId2);
 
-        return Response.ok(response).build();
+        return returnTaxonomyNodeResponse(response);
     }
 
     @GET
@@ -144,8 +145,31 @@ public class TaxonomyRest {
 
         TaxonomyNode response = null;//dataAccess.getTaxonomyPath(taxonomyId, direction, depth);
 
-        return Response.ok(response).build();
+        return returnTaxonomyNodeResponse(response);
     }
+    
+	private Response returnTaxonomyNodeResponse(TaxonomyNode response) {
+		if(response != null){
+        	return Response.ok(response).build();
+        }else{
+        	return returnNotFoundResponse();
+        }
+	}
 
+	private Response returnTaxonomiesResponse(Taxonomies response) {
+		if(response != null){
+        	return Response.ok(response).build();
+        }else{
+        	return returnNotFoundResponse();
+        }
+	}
+	
+	private Response returnNotFoundResponse() {
+		ErrorMessage error = new ErrorMessage();
+		error.setErrorMessage(SwaggerConstant.API_RESPONSE_404);
+		return Response.status(Response.Status.NOT_FOUND).entity(error).build();
+	}
 
+	
+	
 }

@@ -48,8 +48,7 @@ public class RestApp extends ResourceConfig {
         JacksonJaxbJsonProvider jacksonJaxbJsonProvider = new JacksonJaxbJsonProvider();
         register(jacksonJaxbJsonProvider);
 
-        RestExceptionMapper exceptionMapper = new RestExceptionMapper();
-        register(exceptionMapper);
+        register(RestExceptionMapper.class);
 
         BeanConfig beanConfig = new BeanConfig();
         beanConfig.setVersion("1.0.0");
