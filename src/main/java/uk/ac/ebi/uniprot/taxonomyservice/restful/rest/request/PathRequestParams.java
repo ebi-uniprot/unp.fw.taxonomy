@@ -54,9 +54,9 @@ public class PathRequestParams {
     public void setDirection(String direction) {
         try {
             this.direction = PathDirections.valueOf(direction);
-        }catch (Exception e){
-            throw new BadRequestException("direction parameter must be "+ PathDirections.TOP+" or " +
-                    ""+ PathDirections.BOTTOM);
+        } catch (Exception e) {
+            throw new BadRequestException("direction parameter must be " + PathDirections.TOP + " or " +
+                    "" + PathDirections.BOTTOM);
         }
     }
 
