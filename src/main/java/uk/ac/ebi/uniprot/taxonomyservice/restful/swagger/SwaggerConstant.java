@@ -10,9 +10,9 @@ public class SwaggerConstant {
             "it parent, siblings and children. There are also services that return the relationship between 2 " +
             "taxonomy elements, and the path between them. Services can return JSON or XML format";
 
-    public static final String API_RESPONSE_404 = "Taxonomy entry is not found";
+    public static final String API_RESPONSE_404 = "Taxonomy entry is not found.";
 
-    public static final String API_RESPONSE_400 = "Invalid request parameters";
+    public static final String API_RESPONSE_400 = "Invalid request parameters.";
 
     //TAXONOMY BY ID
     public static final String API_OPERATION_TAXONOMY_DETAIL_BY_ID = "This service return details about a taxonomy " +

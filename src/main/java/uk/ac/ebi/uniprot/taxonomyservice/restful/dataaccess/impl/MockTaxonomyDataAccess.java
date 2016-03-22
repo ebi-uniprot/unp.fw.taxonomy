@@ -10,8 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Mock taxonomy data access that create and return mock results based on {@value #validIds} and  {@value
- * #validNames}  attributes.
+ * Mock taxonomy data access that create and return mock results based on {@values #validIds} and  {@values
+ * validNames}  attributes.
  *
  * Created by lgonzales on 19/02/16.
  */
@@ -111,7 +111,7 @@ public class MockTaxonomyDataAccess implements TaxonomyDataAccess {
 
     @Override public TaxonomyNode getTaxonomyPath(PathRequestParams nodePathParams) {
         if (Arrays.binarySearch(validIds, nodePathParams.getId()) > 0) {
-            switch (nodePathParams.getDirection()) {
+            switch (nodePathParams.getPathDirection()) {
                 case TOP:
                     TaxonomyNode levelNode =
                             getTaxonomyMockedNodeBase(nodePathParams.getId() + nodePathParams.getDepth(), "Level " +

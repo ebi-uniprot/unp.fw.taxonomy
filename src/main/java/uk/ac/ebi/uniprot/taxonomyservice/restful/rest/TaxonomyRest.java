@@ -10,6 +10,8 @@ import uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant;
 
 import io.swagger.annotations.*;
 import javax.inject.Inject;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -43,7 +45,7 @@ public class TaxonomyRest {
             @ApiResponse(code = 400, message = SwaggerConstant.API_RESPONSE_400)})
     @Path("/id/{taxonomyId}")
     public Response getTaxonomyDetailsById(@ApiParam(value = "taxonomyId", required = true)
-    @PathParam("taxonomyId") long taxonomyId) {
+    @NotNull @PathParam("taxonomyId") Long taxonomyId) {
         logger.debug(">>TaxonomyRest.getTaxonomyDetailsById");
 
         TaxonomyNode response = dataAccess.getTaxonomyDetailsById(taxonomyId);
@@ -59,7 +61,7 @@ public class TaxonomyRest {
             @ApiResponse(code = 400, message = SwaggerConstant.API_RESPONSE_400)})
     @Path("/id/{taxonomyId}/siblings")
     public Response getTaxonomyNodesSiblingsById(@ApiParam(value = "taxonomyId", required = true)
-    @PathParam("taxonomyId") long taxonomyId) {
+    @NotNull @PathParam("taxonomyId") Long taxonomyId) {
         logger.debug(">>TaxonomyRest.getTaxonomyDetailsByIdXml");
 
         Taxonomies response = dataAccess.getTaxonomySiblingsById(taxonomyId);
@@ -75,7 +77,7 @@ public class TaxonomyRest {
             @ApiResponse(code = 400, message = SwaggerConstant.API_RESPONSE_400)})
     @Path("/id/{taxonomyId}/children")
     public Response getTaxonomyNodesChildrenById(@ApiParam(value = "taxonomyId", required = true)
-    @PathParam("taxonomyId") long taxonomyId) {
+    @NotNull @PathParam("taxonomyId") Long taxonomyId) {
         logger.debug(">>TaxonomyRest.getTaxonomyDetailsByIdXml");
 
         Taxonomies response = dataAccess.getTaxonomyChildrenById(taxonomyId);
@@ -91,7 +93,7 @@ public class TaxonomyRest {
             @ApiResponse(code = 400, message = SwaggerConstant.API_RESPONSE_400)})
     @Path("/id/{taxonomyId}/parent")
     public Response getTaxonomyNodeParentById(@ApiParam(value = "taxonomyId", required = true)
-    @PathParam("taxonomyId") long taxonomyId) {
+    @NotNull @PathParam("taxonomyId") Long taxonomyId) {
         logger.debug(">>TaxonomyRest.getTaxonomyDetailsByIdXml");
 
         TaxonomyNode response = dataAccess.getTaxonomyParentById(taxonomyId);
@@ -107,7 +109,7 @@ public class TaxonomyRest {
             @ApiResponse(code = 400, message = SwaggerConstant.API_RESPONSE_400)})
     @Path("/name/{taxonomyName}")
     public Response getTaxonomiesDetailsByName(@ApiParam(value = "taxonomyName", required = true)
-    @PathParam("taxonomyName") String taxonomyName) {
+    @NotNull @PathParam("taxonomyName") String taxonomyName) {
 
         Taxonomies response = dataAccess.getTaxonomyDetailsByName(taxonomyName);
 
@@ -121,7 +123,7 @@ public class TaxonomyRest {
     @ApiResponses(value = {@ApiResponse(code = 404, message = SwaggerConstant.API_RESPONSE_404),
             @ApiResponse(code = 400, message = SwaggerConstant.API_RESPONSE_400)})
     @Path("/relationship")
-    public Response checkRelationshipBetweenTaxonomies(@BeanParam RelationshipRequestParams params) {
+    public Response checkRelationshipBetweenTaxonomies(@Valid @BeanParam RelationshipRequestParams params) {
 
         TaxonomyNode response = dataAccess.checkRelationshipBetweenTaxonomies(params.getTo(), params.getTo());
 
@@ -135,7 +137,8 @@ public class TaxonomyRest {
     @ApiResponses(value = {@ApiResponse(code = 404, message = SwaggerConstant.API_RESPONSE_404),
             @ApiResponse(code = 400, message = SwaggerConstant.API_RESPONSE_400)})
     @Path("/path")
-    public Response getTaxonomyPath(@BeanParam PathRequestParams pathRequestParam) {
+    public Response getTaxonomyPath(
+    @Valid @BeanParam PathRequestParams pathRequestParam) {
 
         TaxonomyNode response = dataAccess.getTaxonomyPath(pathRequestParam);
 
@@ -160,7 +163,7 @@ public class TaxonomyRest {
 
     private Response returnNotFoundResponse() {
         ErrorMessage error = new ErrorMessage();
-        error.setErrorMessage(SwaggerConstant.API_RESPONSE_404);
+        error.addErrorMessage(SwaggerConstant.API_RESPONSE_404);
         return Response.status(Response.Status.NOT_FOUND).entity(error).build();
     }
 

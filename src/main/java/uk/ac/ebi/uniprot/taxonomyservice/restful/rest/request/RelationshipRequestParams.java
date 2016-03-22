@@ -6,6 +6,8 @@ import javax.ws.rs.QueryParam;
 import org.glassfish.jersey.process.internal.RequestScoped;
 
 /**
+ * This class contains request parameter for /taxonomy/relationship requests
+ *
  * Created by lgonzales on 10/03/16.
  */
 @RequestScoped
@@ -14,27 +16,27 @@ public class RelationshipRequestParams {
     @NotNull
     @QueryParam(value = "from")
     @ApiParam(value = "from", required = true)
-    private long from;
+    private Long from;
 
     @NotNull
     @QueryParam(value = "to")
     @ApiParam(value = "to", required = true)
-    private long to;
+    private Long to;
 
 
-    public long getFrom() {
+    public Long getFrom() {
         return from;
     }
 
-    public void setFrom(long from) {
+    public void setFrom(Long from) {
         this.from = from;
     }
 
-    public long getTo() {
+    public Long getTo() {
         return to;
     }
 
-    public void setTo(long to) {
+    public void setTo(Long to) {
         this.to = to;
     }
 
@@ -55,16 +57,16 @@ public class RelationshipRequestParams {
 
         RelationshipRequestParams that = (RelationshipRequestParams) o;
 
-        if (getFrom() != that.getFrom()) {
+        if (getFrom() != null ? !getFrom().equals(that.getFrom()) : that.getFrom() != null) {
             return false;
         }
-        return getTo() == that.getTo();
+        return getTo() != null ? getTo().equals(that.getTo()) : that.getTo() == null;
 
     }
 
     @Override public int hashCode() {
-        int result = (int) (getFrom() ^ (getFrom() >>> 32));
-        result = 31 * result + (int) (getTo() ^ (getTo() >>> 32));
+        int result = getFrom() != null ? getFrom().hashCode() : 0;
+        result = 31 * result + (getTo() != null ? getTo().hashCode() : 0);
         return result;
     }
 }

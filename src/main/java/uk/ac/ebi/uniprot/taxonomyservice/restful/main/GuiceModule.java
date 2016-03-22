@@ -40,6 +40,7 @@ public class GuiceModule extends AbstractModule {
         logger.info("Registering data neo4j access service");
         this.bind(TaxonomyDataAccess.class).to(MockTaxonomyDataAccess.class);
         app.packages(PACKAGE_SCAN);
+        app.packages(PACKAGE_SCAN+".request");
 
     }
 

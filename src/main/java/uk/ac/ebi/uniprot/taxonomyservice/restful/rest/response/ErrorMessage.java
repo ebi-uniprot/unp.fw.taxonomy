@@ -1,7 +1,11 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
@@ -15,20 +19,47 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(namespace = "http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomyError")
 public class ErrorMessage {
 
-    private String errorMessage;
+    private String requestedURL;
+    private List<String> errorMessages;
 
-    @XmlElement(required = true)
-    public String getErrorMessage() {
-        return errorMessage;
+    @XmlElement
+    public String getRequestedURL() {
+        return requestedURL;
     }
 
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
+    public void setRequestedURL(String requestedURL) {
+        this.requestedURL = requestedURL;
+    }
+
+    public void setRequestedURL(String requestURL,String queryString) {
+        if (queryString != null && !queryString.isEmpty()) {
+            requestURL+= "?"+(queryString);
+        }
+        this.requestedURL = requestURL.toString();
+    }
+
+    @XmlElement(name = "errorMessage")
+    @XmlElementWrapper(name = "errorMessages")
+    @JsonGetter(value = "errorMessages")
+    public List<String> getErrorMessages() {
+        return errorMessages;
+    }
+
+    public void setErrorMessages(List<String> errorMessages) {
+        this.errorMessages = errorMessages;
+    }
+
+    public void addErrorMessage(String errorMessage){
+        if(errorMessages == null){
+            errorMessages = new ArrayList<>();
+        }
+        errorMessages.add(errorMessage);
     }
 
     @Override public String toString() {
         return "ErrorMessage{" +
-                ", errorMessage='" + errorMessage + '\'' +
+                "requestedURL='" + requestedURL + '\'' +
+                ", errorMessages=" + errorMessages +
                 '}';
     }
 
@@ -42,12 +73,18 @@ public class ErrorMessage {
 
         ErrorMessage that = (ErrorMessage) o;
 
-        return getErrorMessage() != null ? getErrorMessage().equals(that.getErrorMessage()) :
-                that.getErrorMessage() == null;
+        if (getRequestedURL() != null ? !getRequestedURL().equals(that.getRequestedURL()) :
+                that.getRequestedURL() != null) {
+            return false;
+        }
+        return getErrorMessages() != null ? getErrorMessages().equals(that.getErrorMessages()) :
+                that.getErrorMessages() == null;
 
     }
 
     @Override public int hashCode() {
-        return (getErrorMessage() != null ? getErrorMessage().hashCode() : 0);
+        int result = getRequestedURL() != null ? getRequestedURL().hashCode() : 0;
+        result = 31 * result + (getErrorMessages() != null ? getErrorMessages().hashCode() : 0);
+        return result;
     }
 }
