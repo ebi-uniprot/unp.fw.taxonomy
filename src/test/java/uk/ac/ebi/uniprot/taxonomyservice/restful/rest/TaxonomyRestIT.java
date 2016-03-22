@@ -91,7 +91,7 @@ public class TaxonomyRestIT {
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response, ContentType.JSON,12345,true);
+        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response, ContentType.JSON, 12345, true);
     }
 
     @Test
@@ -101,7 +101,7 @@ public class TaxonomyRestIT {
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response,ContentType.JSON,12345,true);
+        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response, ContentType.JSON, 12345, true);
     }
 
     @Test
@@ -111,11 +111,11 @@ public class TaxonomyRestIT {
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response, ContentType.XML,12345,true);
+        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response, ContentType.XML, 12345, true);
     }
 
     @Test
-    public void lookupTaxonomyIChildrendWithInvalidChildPathReturnsNotFoundStatus() {
+    public void lookupTaxonomyIdWithInvalidSubResourcePathReturnsNotFoundStatus() {
         ExtractableResponse<Response> response = when()
                 .get(TAXONOMY_BASE_PATH + "/id/12345/invalid")
                 .then()
@@ -125,7 +125,7 @@ public class TaxonomyRestIT {
     }
 
     @Test
-    public void lookupTaxonomyIChildrendWithInvalidTaxonomyIdReturnsNotFoundStatus() {
+    public void lookupTaxonomyChildrenWithInvalidTaxonomyIdReturnsNotFoundStatus() {
         ExtractableResponse<Response> response = when()
                 .get(TAXONOMY_BASE_PATH + "/id/99999/children")
                 .then()
@@ -141,7 +141,8 @@ public class TaxonomyRestIT {
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response,ContentType.JSON,false);
+        assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.JSON,
+                false);
     }
 
     @Test
@@ -151,7 +152,8 @@ public class TaxonomyRestIT {
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response,ContentType.JSON,false);
+        assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.JSON,
+                false);
     }
 
     @Test
@@ -161,7 +163,8 @@ public class TaxonomyRestIT {
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response,ContentType.XML,false);
+        assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.XML,
+                false);
     }
 
     @Test
@@ -171,7 +174,8 @@ public class TaxonomyRestIT {
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.JSON,false);
+        assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.JSON,
+                false);
     }
 
     @Test
@@ -181,7 +185,8 @@ public class TaxonomyRestIT {
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response,ContentType.JSON,false);
+        assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.JSON,
+                false);
     }
 
     @Test
@@ -191,7 +196,8 @@ public class TaxonomyRestIT {
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response,ContentType.XML,false);
+        assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.XML,
+                false);
     }
 
     @Test
@@ -201,7 +207,7 @@ public class TaxonomyRestIT {
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response, ContentType.JSON, 999,false);
+        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response, ContentType.JSON, 999, false);
     }
 
     @Test
@@ -211,7 +217,7 @@ public class TaxonomyRestIT {
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response, ContentType.JSON, 999,false);
+        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response, ContentType.JSON, 999, false);
     }
 
     @Test
@@ -221,7 +227,7 @@ public class TaxonomyRestIT {
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(xmlResponse, ContentType.XML, 999,false);
+        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(xmlResponse, ContentType.XML, 999, false);
     }
 
     @Test
@@ -251,7 +257,8 @@ public class TaxonomyRestIT {
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.JSON,true);
+        assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.JSON,
+                true);
     }
 
     @Test
@@ -261,7 +268,8 @@ public class TaxonomyRestIT {
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.JSON,true);
+        assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.JSON,
+                true);
     }
 
     @Test
@@ -271,7 +279,7 @@ public class TaxonomyRestIT {
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.XML,true);
+        assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.XML, true);
     }
 
     @Test
@@ -281,7 +289,8 @@ public class TaxonomyRestIT {
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.JSON,true);
+        assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.JSON,
+                true);
     }
 
     @Test
@@ -328,7 +337,7 @@ public class TaxonomyRestIT {
 
         TaxonomyNode node = response.as(TaxonomyNode.class);
         assertThat(node, notNullValue());
-        assertTaxonomyNodeAttributesHasValues(node,taxonomyId,checkLinks);
+        assertTaxonomyNodeAttributesHasValues(node, taxonomyId, checkLinks);
     }
 
     private void assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(
@@ -342,7 +351,7 @@ public class TaxonomyRestIT {
 
         TaxonomyNode node = taxonomies.getTaxonomies().get(0);
         assertThat(node, notNullValue());
-        assertTaxonomyNodeAttributesHasValues(node,node.getTaxonomyId(),checkLinks);
+        assertTaxonomyNodeAttributesHasValues(node, node.getTaxonomyId(), checkLinks);
     }
 
     private void assertTaxonomyNodeAttributesHasValues(TaxonomyNode node, long taxonomyId, boolean checkLinks) {
@@ -352,7 +361,7 @@ public class TaxonomyRestIT {
         assertThat(node.getRank(), not(isEmptyOrNullString()));
         assertThat(node.getScientificName(), not(isEmptyOrNullString()));
         assertThat(node.getSynonym(), not(isEmptyOrNullString()));
-        if(checkLinks){
+        if (checkLinks) {
             assertThat(node.getParentLink(), not(isEmptyOrNullString()));
 
             assertThat(node.getChildrenLinks(), notNullValue());
@@ -362,5 +371,4 @@ public class TaxonomyRestIT {
             assertThat(node.getSiblingsLinks(), not(emptyIterable()));
         }
     }
-
 }
