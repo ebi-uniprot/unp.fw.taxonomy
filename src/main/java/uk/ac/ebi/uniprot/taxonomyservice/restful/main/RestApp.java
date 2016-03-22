@@ -72,7 +72,7 @@ public class RestApp extends ResourceConfig {
         String apiVersion = System.getenv("TAXONOMY_VERSION") != null ? System.getenv("TAXONOMY_VERSION") : "1.0.0";
         BeanConfig beanConfig = new BeanConfig();
         beanConfig.setVersion(apiVersion);
-        beanConfig.setSchemes(new String[]{"https"});
+        beanConfig.setSchemes(new String[]{"http"}); //TODO: Enable HTTPS
         beanConfig.setDescription("Taxonomy Rest Services.");
         beanConfig.setTitle("Taxonomy Service");
         beanConfig.setBasePath(RestAppMain.DEFAULT_TAXONOMY_SERVICE_CONTEXT_PATH);
