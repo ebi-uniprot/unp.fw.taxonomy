@@ -2,12 +2,16 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class contains REST response body attributes when occur any error during Taxonomy request
@@ -18,6 +22,8 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement(namespace = "http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomyRoot")
 @XmlType(namespace = "http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomyError")
 public class ErrorMessage {
+
+    public static final Logger logger = LoggerFactory.getLogger(ErrorMessage.class);
 
     private String requestedURL;
     private List<String> errorMessages;
@@ -33,7 +39,11 @@ public class ErrorMessage {
 
     public void setRequestedURL(String requestURL,String queryString) {
         if (queryString != null && !queryString.isEmpty()) {
-            requestURL+= "?"+(queryString);
+            try {
+                requestURL+= "?"+(URLEncoder.encode(queryString,"UTF-8"));
+            } catch (UnsupportedEncodingException e) {
+                logger.error("Error encoding ErrorMessage.requestedURL: ",e);
+            }
         }
         this.requestedURL = requestURL.toString();
     }

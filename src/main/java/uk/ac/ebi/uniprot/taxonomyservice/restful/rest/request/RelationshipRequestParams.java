@@ -5,6 +5,9 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.QueryParam;
 import org.glassfish.jersey.process.internal.RequestScoped;
 
+import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.FROM_PARAMETER_IS_REQUIRED;
+import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.TO_PARAMETER_IS_REQUIRED;
+
 /**
  * This class contains request parameter for /taxonomy/relationship requests
  *
@@ -13,12 +16,12 @@ import org.glassfish.jersey.process.internal.RequestScoped;
 @RequestScoped
 public class RelationshipRequestParams {
 
-    @NotNull
+    @NotNull(message = FROM_PARAMETER_IS_REQUIRED)
     @QueryParam(value = "from")
     @ApiParam(value = "from", required = true)
     private Long from;
 
-    @NotNull
+    @NotNull(message = TO_PARAMETER_IS_REQUIRED)
     @QueryParam(value = "to")
     @ApiParam(value = "to", required = true)
     private Long to;

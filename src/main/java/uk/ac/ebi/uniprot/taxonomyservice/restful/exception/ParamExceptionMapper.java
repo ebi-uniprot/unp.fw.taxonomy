@@ -11,6 +11,8 @@ import org.glassfish.jersey.server.ParamException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.REQUEST_PARAMETER_INVALID_VALUE;
+
 /**
  * This class is responsible to map and return any request parameter value error that happen in Rest services and build
  * the response error object.
@@ -31,7 +33,8 @@ public class ParamExceptionMapper implements ExceptionMapper<ParamException> {
         logger.error("Param exception error has occured with error message: ", exception.getMessage(), exception);
         ErrorMessage error = new ErrorMessage();
         error.setRequestedURL(request.getRequestURL().toString(),request.getQueryString());
-        error.addErrorMessage("Request parameter "+exception.getParameterName() + " contains not supported value.");
+        error.addErrorMessage(REQUEST_PARAMETER_INVALID_VALUE
+                .replaceFirst("\\{parameterName\\}", exception.getParameterName()));
         return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
     }
 }

@@ -10,6 +10,8 @@ import javax.validation.constraints.NotNull;
 import javax.ws.rs.QueryParam;
 import org.glassfish.jersey.process.internal.RequestScoped;
 
+import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.*;
+
 /**
  * This class contains request parameters for /taxonomy/path requests
  *
@@ -18,22 +20,21 @@ import org.glassfish.jersey.process.internal.RequestScoped;
 @RequestScoped
 public class PathRequestParams {
 
-
-    @NotNull(message = "id parameter is required")
+    @NotNull(message = ID_PARAMETER_IS_REQUIRED)
     @QueryParam(value = "id")
     @ApiParam(value = "id", required = true)
     private Long id;
 
-    @NotNull(message = "depth parameter is required")
-    @Min(value = 1, message = "depth param value must be between 1 and 5")
-    @Max(value = 5, message = "depth param value must be between 1 and 5")
+    @NotNull(message = DEPTH_PARAMETER_IS_REQUIRED)
+    @Min(value = 1, message = DEPTH_PARAM_MIN_MAX)
+    @Max(value = 5, message = DEPTH_PARAM_MIN_MAX)
     @QueryParam(value = "depth")
     @ApiParam(value = "depth", required = true)
     private Integer depth;
 
-    @IsEnumValue(enumClass = PathDirections.class,message = "direction parameter value must be top or bottom",
+    @IsEnumValue(enumClass = PathDirections.class,message = DIRECTION_VALID_VALUES,
             ignoreCase = true)
-    @NotNull(message = "direction parameter is required")
+    @NotNull(message = DIRECTION_PARAMETER_IS_REQUIRED)
     @QueryParam(value = "direction")
     @ApiParam(value = "direction", required = true)
     private String direction;

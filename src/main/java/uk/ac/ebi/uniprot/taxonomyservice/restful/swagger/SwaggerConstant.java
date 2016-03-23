@@ -10,10 +10,6 @@ public class SwaggerConstant {
             "it parent, siblings and children. There are also services that return the relationship between 2 " +
             "taxonomy elements, and the path between them. Services can return JSON or XML format";
 
-    public static final String API_RESPONSE_404 = "Taxonomy entry is not found.";
-
-    public static final String API_RESPONSE_400 = "Invalid request parameters.";
-
     //TAXONOMY BY ID
     public static final String API_OPERATION_TAXONOMY_DETAIL_BY_ID = "This service return details about a taxonomy " +
             "element, and also links for it parent, siblings and children ";
@@ -50,4 +46,25 @@ public class SwaggerConstant {
 
     public static final String NOTE_TAXONOMY_PATH = "";
 
+
+    //ERROR MESSAGES
+
+    public static final String API_RESPONSE_404 = "Taxonomy entry is not found.";
+
+    public static final String API_RESPONSE_400 = "Invalid request parameters.";
+
+    public static final String ID_PARAMETER_IS_REQUIRED = "id parameter is required";
+    public static final String NAME_PARAMETER_IS_REQUIRED = "name parameter is required";
+    public static final String DEPTH_PARAMETER_IS_REQUIRED = "depth parameter is required";
+    public static final String DEPTH_PARAM_MIN_MAX = "depth param value must be between 1 and 5";
+    public static final String DIRECTION_VALID_VALUES = "direction parameter value must be top or bottom";
+    public static final String DIRECTION_PARAMETER_IS_REQUIRED = "direction parameter is required";
+    public static final String TO_PARAMETER_IS_REQUIRED = "to parameter is required";
+    public static final String FROM_PARAMETER_IS_REQUIRED = "from parameter is required";
+
+    public static final String API_RESPONSE_500 =
+            "Unexpected error happened, could you please try again later";
+
+    public static final String REQUEST_PARAMETER_INVALID_VALUE =
+            "Request parameter {parameterName} contains not supported value.";
 }
