@@ -68,4 +68,13 @@ public interface TaxonomyDataAccess {
      */
     TaxonomyNode getTaxonomyPath(PathRequestParams nodePathParams);
 
+    /**
+     * This method check if exist any historical change for {@param id} and it there is, it will return the the
+     * new identification of taxonomy and if there is not, it will return -1.
+     *
+     * @param id identification of taxonomy
+     * @return new identification of taxonomy if exist
+     */
+    long checkTaxonomyIdHistoricalChange(long id);
+
 }

@@ -45,17 +45,17 @@ public @interface IsEnumValue {
         {
             boolean result = false;
 
-            Object[] enumValues = this.annotation.enumClass().getEnumConstants();
+            if(valueForValidation != null) {
+                Object[] enumValues = this.annotation.enumClass().getEnumConstants();
 
-            if(enumValues != null)
-            {
-                for(Object enumValue:enumValues)
-                {
-                    if(valueForValidation.equals(enumValue.toString())
-                            || (this.annotation.ignoreCase() && valueForValidation.equalsIgnoreCase(enumValue.toString())))
-                    {
-                        result = true;
-                        break;
+                if (enumValues != null) {
+                    for (Object enumValue : enumValues) {
+                        if (valueForValidation.equals(enumValue.toString())
+                                || (this.annotation.ignoreCase() &&
+                                            valueForValidation.equalsIgnoreCase(enumValue.toString()))) {
+                            result = true;
+                            break;
+                        }
                     }
                 }
             }

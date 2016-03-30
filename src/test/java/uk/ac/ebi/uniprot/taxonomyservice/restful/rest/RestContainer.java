@@ -28,10 +28,13 @@ public class RestContainer extends ExternalResource {
     private final String basePath;
     private HttpServer httpServer;
 
+    public final String baseURL;
+
     public RestContainer() {
         baseURI = "http://localhost";
         port = 12345;
         basePath = "/rest";
+        baseURL = baseURI+":"+port+basePath;
     }
 
     @Override protected void before() throws Throwable {

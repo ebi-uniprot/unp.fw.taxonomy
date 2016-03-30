@@ -10,14 +10,17 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Mock taxonomy data access that create and return mock results based on {@values #validIds} and  {@values
- * validNames}  attributes.
+ * Mock taxonomy data access that create and return mock results based on {@values #validIds},  {@values
+ * validNames} and {@values changedIds} attributes.
  *
  * Created by lgonzales on 19/02/16.
  */
 public class MockTaxonomyDataAccess implements TaxonomyDataAccess {
 
-    private static final long[] validIds = {11111,12121, 12345, 22222};//{12121, 12345, 22222};
+    private static final long[] validIds = {11111,12121, 12345, 22222, 55555};//{12121, 12345, 22222, 55555};
+
+    private static final long[] changedIds = {23232,33333,34343, 44444};//33333,34343, 44444
+
     private static final String[] validNames = {"gnathostomata", "human", "metazoa"};
 
     private static final String TAXONOMY_BASE_LINK = "https://localhost:9090/uniprot/services/restful/taxonomy/id/";
@@ -142,6 +145,14 @@ public class MockTaxonomyDataAccess implements TaxonomyDataAccess {
             }
         }
         return null;
+    }
+
+    @Override public long checkTaxonomyIdHistoricalChange(long id) {
+        if (Arrays.binarySearch(changedIds,id) > 0) {
+            return 55555;
+        }else{
+            return -1;
+        }
     }
 
     private TaxonomyNode getTaxonomyMockedNodeBase(long id, String nodeName) {

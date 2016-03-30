@@ -3,7 +3,7 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
@@ -40,7 +40,7 @@ public class ErrorMessage {
     public void setRequestedURL(String requestURL,String queryString) {
         if (queryString != null && !queryString.isEmpty()) {
             try {
-                requestURL+= "?"+(URLEncoder.encode(queryString,"UTF-8"));
+                requestURL+= "?"+(URLDecoder.decode(queryString,"UTF-8"));
             } catch (UnsupportedEncodingException e) {
                 logger.error("Error encoding ErrorMessage.requestedURL: ",e);
             }
@@ -50,7 +50,7 @@ public class ErrorMessage {
 
     @XmlElement(name = "errorMessage")
     @XmlElementWrapper(name = "errorMessages")
-    @JsonGetter(value = "errorMessages")
+    @JsonGetter(value = "errorMessage")
     public List<String> getErrorMessages() {
         return errorMessages;
     }

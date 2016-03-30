@@ -6,6 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
@@ -37,7 +38,7 @@ public class GeneralExceptionMapper implements ExceptionMapper<Exception> {
 
         if (exception instanceof NotFoundException) {
             error.addErrorMessage(API_RESPONSE_404);
-            return Response.status(Response.Status.NOT_FOUND).entity(error)
+            return Response.status(Response.Status.NOT_FOUND).entity(error).type(MediaType.APPLICATION_JSON_TYPE)
                     .build();
         } else if (exception instanceof BadRequestException) {
             error.addErrorMessage(API_RESPONSE_400+" "+exception.getMessage());

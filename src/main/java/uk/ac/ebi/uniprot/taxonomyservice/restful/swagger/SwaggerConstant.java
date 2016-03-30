@@ -48,6 +48,8 @@ public class SwaggerConstant {
 
 
     //ERROR MESSAGES
+    public static final String API_RESPONSE_303 = "Taxonomy identification change and new identification is now " +
+            "{newId}.";
 
     public static final String API_RESPONSE_404 = "Taxonomy entry is not found.";
 
