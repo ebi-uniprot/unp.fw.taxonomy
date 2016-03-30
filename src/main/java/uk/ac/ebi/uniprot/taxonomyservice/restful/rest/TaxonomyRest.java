@@ -65,7 +65,7 @@ public class TaxonomyRest {
             String id) {
         logger.debug(">>TaxonomyRest.getTaxonomyDetailsById");
 
-        long taxonomyId = new Long(id);
+        long taxonomyId = Long.valueOf(id);
         TaxonomyNode response = dataAccess.getTaxonomyDetailsById(taxonomyId);
 
         return buildTaxonomyNodeResponse(response,taxonomyId);
@@ -89,7 +89,7 @@ public class TaxonomyRest {
             String id) {
         logger.debug(">>TaxonomyRest.getTaxonomyDetailsById");
 
-        long taxonomyId = new Long(id);
+        long taxonomyId = Long.valueOf(id);
         Taxonomies response = dataAccess.getTaxonomySiblingsById(taxonomyId);
 
         return buildTaxonomiesResponse(response,taxonomyId);
@@ -113,7 +113,7 @@ public class TaxonomyRest {
             String id) {
         logger.debug(">>TaxonomyRest.getTaxonomyDetailsById");
 
-        long taxonomyId = new Long(id);
+        long taxonomyId = Long.valueOf(id);
         Taxonomies response = dataAccess.getTaxonomyChildrenById(taxonomyId);
 
         return buildTaxonomiesResponse(response,taxonomyId);
@@ -133,7 +133,7 @@ public class TaxonomyRest {
             String id) {
         logger.debug(">>TaxonomyRest.getTaxonomyDetailsById");
 
-        long taxonomyId = new Long(id);
+        long taxonomyId = Long.valueOf(id);
         TaxonomyNode response = dataAccess.getTaxonomyParentById(taxonomyId);
 
         return buildTaxonomyNodeResponse(response,taxonomyId);
@@ -175,19 +175,21 @@ public class TaxonomyRest {
     @Path("/relationship")
     public Response checkRelationshipBetweenTaxonomies(@Valid @BeanParam RelationshipRequestParams params) {
 
-        TaxonomyNode response = dataAccess.checkRelationshipBetweenTaxonomies(new Long(params.getFrom()), new Long
-                (params.getTo()));
+        long from = Long.valueOf(params.getFrom());
+        long to = Long.valueOf(params.getTo());
+
+        TaxonomyNode response = dataAccess.checkRelationshipBetweenTaxonomies(from,to);
         if (response != null) {
             return Response.ok(response).build();
         } else {
             String newURL = getCurrentURL();
-            long newFromTaxonomyId = dataAccess.checkTaxonomyIdHistoricalChange(new Long(params.getFrom()));
+            long newFromTaxonomyId = dataAccess.checkTaxonomyIdHistoricalChange(from);
             if(newFromTaxonomyId > 0){
-                newURL = getNewRedirectHeaderLocationURL(newURL,new Long(params.getFrom()), newFromTaxonomyId);
+                newURL = getNewRedirectHeaderLocationURL(newURL,from, newFromTaxonomyId);
             }
-            long newToTaxonomyId = dataAccess.checkTaxonomyIdHistoricalChange(new Long(params.getTo()));
+            long newToTaxonomyId = dataAccess.checkTaxonomyIdHistoricalChange(to);
             if(newToTaxonomyId > 0){
-                newURL = getNewRedirectHeaderLocationURL(newURL,new Long(params.getTo()), newToTaxonomyId);
+                newURL = getNewRedirectHeaderLocationURL(newURL,to, newToTaxonomyId);
             }
             if(newFromTaxonomyId > 0 || newToTaxonomyId > 0){
                 return buildRedirectResponse(newURL,newFromTaxonomyId,newToTaxonomyId);
@@ -215,7 +217,7 @@ public class TaxonomyRest {
 
         TaxonomyNode response = dataAccess.getTaxonomyPath(pathRequestParam);
 
-        return buildTaxonomyNodeResponse(response,new Long(pathRequestParam.getId()));
+        return buildTaxonomyNodeResponse(response,Long.valueOf(pathRequestParam.getId()));
     }
 
     private Response buildTaxonomyNodeResponse(TaxonomyNode response,long taxonomyId) {

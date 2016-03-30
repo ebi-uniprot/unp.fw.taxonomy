@@ -113,15 +113,15 @@ public class MockTaxonomyDataAccess implements TaxonomyDataAccess {
     }
 
     @Override public TaxonomyNode getTaxonomyPath(PathRequestParams nodePathParams) {
-        if (Arrays.binarySearch(validIds, new Long(nodePathParams.getId())) > 0) {
+        if (Arrays.binarySearch(validIds, Long.valueOf(nodePathParams.getId())) > 0) {
             switch (nodePathParams.getPathDirection()) {
                 case TOP:
                     TaxonomyNode levelNode =
-                            getTaxonomyMockedNodeBase(new Long(nodePathParams.getId()) + nodePathParams.getDepth(),
+                            getTaxonomyMockedNodeBase(Long.valueOf(nodePathParams.getId()) + nodePathParams.getDepth(),
                                     "Level " + nodePathParams.getDepth());
                     for (int currentLevel = nodePathParams.getDepth() - 1; currentLevel >= 0; currentLevel--) {
                         TaxonomyNode parentNode =
-                                getTaxonomyMockedNodeBase(new Long(nodePathParams.getId()) + currentLevel, "Level " +
+                                getTaxonomyMockedNodeBase(Long.valueOf(nodePathParams.getId()) + currentLevel, "Level " +
                                         "" + currentLevel);
                         parentNode.setParent(levelNode);
 
@@ -130,7 +130,7 @@ public class MockTaxonomyDataAccess implements TaxonomyDataAccess {
                     return levelNode;
                 case BOTTOM:
                     //TODO: Improve it to enable more deep levels (recursively build tree depth levels)
-                    TaxonomyNode rootNode = getTaxonomyMockedNodeBase(new Long(nodePathParams.getId()), "Root");
+                    TaxonomyNode rootNode = getTaxonomyMockedNodeBase(Long.valueOf(nodePathParams.getId()), "Root");
 
                     List<TaxonomyNode> childrenLevel = Arrays.asList(getTaxonomyMockedNodeBase(1, "Level 1"),
                             getTaxonomyMockedNodeBase(1, "Level 1"));
