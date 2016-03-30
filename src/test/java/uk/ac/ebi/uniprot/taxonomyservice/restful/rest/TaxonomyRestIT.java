@@ -9,6 +9,7 @@ import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.ExtractableResponse;
 import com.jayway.restassured.response.Response;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.ws.rs.core.HttpHeaders;
 import org.junit.ClassRule;
@@ -24,7 +25,6 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
@@ -87,7 +87,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.REQUEST_PARAMETER_INVALID_VALUE.replace("{parameterName}","id"));
+        errorMessages.add(SwaggerConstant.ID_PARAMETER_VALID_NUMBER);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
@@ -102,7 +102,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.REQUEST_PARAMETER_INVALID_VALUE.replace("{parameterName}","id"));
+        errorMessages.add(SwaggerConstant.ID_PARAMETER_VALID_NUMBER);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
@@ -117,7 +117,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.REQUEST_PARAMETER_INVALID_VALUE.replace("{parameterName}","id"));
+        errorMessages.add(SwaggerConstant.ID_PARAMETER_VALID_NUMBER);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.XML,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -672,8 +672,19 @@ public class TaxonomyRestIT {
         assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response,ContentType.JSON,12345,false);
     }
 
+
     @Test
-    public void lookupTaxonomyPathWithHistoricalChangesReturnsSeeOtherWithJsonContentTypeAndCorrectTaxonomyNode() {
+    public void lookupTaxonomyPathBottomDirectionParametersReturnsBadRequest() {
+        ExtractableResponse<Response> response = when()
+                .get(TAXONOMY_BASE_PATH + "/path?id=12345&direction=BOTTOM&depth=3")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract();
+        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response,ContentType.JSON,12345,false);
+    }
+
+    @Test
+    public void lookupTaxonomyPathWithHistoricalChangesReturnsSeeOtherWithJsonContentType() {
         String requestedURL = TAXONOMY_BASE_PATH + "/path?id=33333&direction=TOP&depth=3";
 
         ExtractableResponse<Response> response = given().redirects().follow(false)
@@ -690,9 +701,121 @@ public class TaxonomyRestIT {
                 restContainer.baseURL+requestedURL);
     }
 
-    /*
-    MISSING ONLY RELATIONSHIP  :-(
-     */
+    @Test
+    public void lookupTaxonomyRelationshipWithTwoHistoricalChangesReturnsSeeOtherWithJsonContentType() {
+        String requestedURL = TAXONOMY_BASE_PATH + "/relationship?from=33333&to=34343";
+
+        ExtractableResponse<Response> response = given().redirects().follow(false)
+                .when().get(requestedURL)
+                .then()
+                .statusCode(SEE_OTHER.getStatusCode())
+                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH +
+                        "/relationship?from=55555&to=55555")
+                .extract();
+
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","55555"));
+        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","55555"));
+        assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
+                restContainer.baseURL+requestedURL);
+    }
+
+    @Test
+    public void lookupTaxonomyRelationshipWithFromHistoricalChangesReturnsSeeOtherWithJsonContentType() {
+        String requestedURL = TAXONOMY_BASE_PATH + "/relationship?from=33333&to=12345";
+
+        ExtractableResponse<Response> response = given().redirects().follow(false)
+                .when().get(requestedURL)
+                .then()
+                .statusCode(SEE_OTHER.getStatusCode())
+                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH +
+                        "/relationship?from=55555&to=12345")
+                .extract();
+
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","55555"));
+        assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
+                restContainer.baseURL+requestedURL);
+    }
+
+    @Test
+    public void lookupTaxonomyRelationshipWithToHistoricalChangesReturnsSeeOtherWithJsonContentType() {
+        String requestedURL = TAXONOMY_BASE_PATH + "/relationship?from=12345&to=33333";
+
+        ExtractableResponse<Response> response = given().redirects().follow(false)
+                .when().get(requestedURL)
+                .then()
+                .statusCode(SEE_OTHER.getStatusCode())
+                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH +
+                        "/relationship?from=12345&to=55555")
+                .extract();
+
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","55555"));
+        assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
+                restContainer.baseURL+requestedURL);
+    }
+
+    @Test
+    public void lookupTaxonomyRelationshipWithInvalidIdsReturnsNotFoundWithJsonContentType() {
+        String requestedURL = TAXONOMY_BASE_PATH + "/relationship?from=98989&to=99999";
+
+        ExtractableResponse<Response> jsonResponse = when()
+                .get(requestedURL)
+                .then()
+                .statusCode(NOT_FOUND.getStatusCode())
+                .extract();
+
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(SwaggerConstant.API_RESPONSE_404);
+        assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
+    }
+
+    @Test
+    public void lookupTaxonomyRelationshipWithInvalidIdTypesReturnsBadRequestWithJsonContentType() {
+        String requestedURL = TAXONOMY_BASE_PATH + "/relationship?from=INVALIDFrom&to=INVALIDTo";
+
+        ExtractableResponse<Response> jsonResponse = when()
+                .get(requestedURL)
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode())
+                .extract();
+
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(SwaggerConstant.FROM_PARAMETER_VALID_NUMBER);
+        errorMessages.add(SwaggerConstant.TO_PARAMETER_VALID_NUMBER);
+        assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
+    }
+
+    @Test
+    public void lookupTaxonomyRelationshipWithoutParametersReturnsBadRequestWithJsonContentType() {
+        String requestedURL = TAXONOMY_BASE_PATH + "/relationship";
+
+        ExtractableResponse<Response> jsonResponse = when()
+                .get(requestedURL)
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode())
+                .extract();
+
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(SwaggerConstant.FROM_PARAMETER_IS_REQUIRED);
+        errorMessages.add(SwaggerConstant.TO_PARAMETER_IS_REQUIRED);
+        assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
+    }
+
+
+    @Test
+    public void lookupTaxonomyRelationshipWithValidIdsReturnsOkWithJsonContentType() {
+        String requestedURL = TAXONOMY_BASE_PATH + "/relationship?from=12345&to=22222";
+
+        ExtractableResponse<Response> response = when()
+                .get(requestedURL)
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract();
+
+        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response,ContentType.JSON,12345,false);
+    }
 
     private void assertErrorResponseReturnCorrectContentTypeAndResponseBody(ExtractableResponse<Response>
             response, ContentType contentType, List<String> errorMessages, String requestedURL) {
@@ -701,8 +824,11 @@ public class TaxonomyRestIT {
         ErrorMessage error = response.as(ErrorMessage.class);
         assertThat(error.getErrorMessages(), notNullValue());
         assertThat(error.getErrorMessages(), not(emptyIterable()));
-        containsInAnyOrder(error.getErrorMessages(),errorMessages);
+        assertThat(error.getErrorMessages().size(),is(errorMessages.size()));
 
+        Collections.sort(error.getErrorMessages());
+        Collections.sort(errorMessages);
+        assertThat(error.getErrorMessages(),equalTo(errorMessages));
         assertThat(error.getRequestedURL(), notNullValue());
         assertThat(error.getRequestedURL(), is(requestedURL));
 

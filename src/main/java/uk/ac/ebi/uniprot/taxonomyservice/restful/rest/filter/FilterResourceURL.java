@@ -50,7 +50,7 @@ public class FilterResourceURL implements ContainerRequestFilter {
                     requestContext.setRequestUri(getURI(path,queryString));
                 }
             } catch (URISyntaxException e) {
-                e.printStackTrace();
+                logger.error("Error at FilterResourceURL: ",e);
             }
         }
     }

@@ -2,11 +2,14 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request;
 
 import io.swagger.annotations.ApiParam;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.ws.rs.QueryParam;
 import org.glassfish.jersey.process.internal.RequestScoped;
 
 import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.FROM_PARAMETER_IS_REQUIRED;
+import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.FROM_PARAMETER_VALID_NUMBER;
 import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.TO_PARAMETER_IS_REQUIRED;
+import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.TO_PARAMETER_VALID_NUMBER;
 
 /**
  * This class contains request parameter for /taxonomy/relationship requests
@@ -17,29 +20,32 @@ import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.
 public class RelationshipRequestParams {
 
     @NotNull(message = FROM_PARAMETER_IS_REQUIRED)
+    @Pattern(regexp = "[0-9]+", message = FROM_PARAMETER_VALID_NUMBER)
     @QueryParam(value = "from")
     @ApiParam(value = "from", required = true)
-    private Long from;
+    private String from;
 
     @NotNull(message = TO_PARAMETER_IS_REQUIRED)
+    @Pattern(regexp = "[0-9]+", message = TO_PARAMETER_VALID_NUMBER)
     @QueryParam(value = "to")
     @ApiParam(value = "to", required = true)
-    private Long to;
+    private String to;
 
 
-    public Long getFrom() {
+    public String getFrom() {
         return from;
     }
 
-    public void setFrom(Long from) {
+
+    public void setFrom(String from) {
         this.from = from;
     }
 
-    public Long getTo() {
+    public String getTo() {
         return to;
     }
 
-    public void setTo(Long to) {
+    public void setTo(String to) {
         this.to = to;
     }
 

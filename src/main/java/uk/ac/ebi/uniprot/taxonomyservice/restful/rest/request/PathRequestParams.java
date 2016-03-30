@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiParam;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.ws.rs.QueryParam;
 import org.glassfish.jersey.process.internal.RequestScoped;
 
@@ -21,9 +22,10 @@ import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.
 public class PathRequestParams {
 
     @NotNull(message = ID_PARAMETER_IS_REQUIRED)
+    @Pattern(regexp = "[0-9]+", message = ID_PARAMETER_VALID_NUMBER)
     @QueryParam(value = "id")
     @ApiParam(value = "id", required = true)
-    private Long id;
+    private String id;
 
     @NotNull(message = DEPTH_PARAMETER_IS_REQUIRED)
     @Min(value = 1, message = DEPTH_PARAM_MIN_MAX)
@@ -39,11 +41,11 @@ public class PathRequestParams {
     @ApiParam(value = "direction", required = true)
     private String direction;
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -92,7 +94,7 @@ public class PathRequestParams {
         if (getDepth() != null ? !getDepth().equals(that.getDepth()) : that.getDepth() != null) {
             return false;
         }
-        return getDirection() == that.getDirection();
+        return getDirection() != null ? getDirection().equals(that.getDirection()) : that.getDirection() == null;
 
     }
 

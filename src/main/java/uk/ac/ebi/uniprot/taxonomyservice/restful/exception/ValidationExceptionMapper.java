@@ -29,7 +29,6 @@ public class ValidationExceptionMapper implements ExceptionMapper<ConstraintViol
 
     @Override
     public Response toResponse(ConstraintViolationException exception) {
-        exception.printStackTrace();
         ErrorMessage error = new ErrorMessage();
         error.setRequestedURL(request.getRequestURL().toString(),request.getQueryString());
 

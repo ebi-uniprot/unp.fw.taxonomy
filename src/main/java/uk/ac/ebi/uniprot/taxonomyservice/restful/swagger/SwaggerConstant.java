@@ -48,7 +48,7 @@ public class SwaggerConstant {
 
 
     //ERROR MESSAGES
-    public static final String API_RESPONSE_303 = "Taxonomy identification change and new identification is now " +
+    public static final String API_RESPONSE_303 = "Taxonomy identification changed and new identification is now " +
             "{newId}.";
 
     public static final String API_RESPONSE_404 = "Taxonomy entry is not found.";
@@ -63,6 +63,9 @@ public class SwaggerConstant {
     public static final String DIRECTION_PARAMETER_IS_REQUIRED = "direction parameter is required";
     public static final String TO_PARAMETER_IS_REQUIRED = "to parameter is required";
     public static final String FROM_PARAMETER_IS_REQUIRED = "from parameter is required";
+    public static final String TO_PARAMETER_VALID_NUMBER = "The paramenter to must be a valid number";
+    public static final String FROM_PARAMETER_VALID_NUMBER = "The paramenter from must be a valid number";
+    public static final String ID_PARAMETER_VALID_NUMBER = "The paramenter id must be a valid number";
 
     public static final String API_RESPONSE_500 =
             "Unexpected error happened, could you please try again later";
