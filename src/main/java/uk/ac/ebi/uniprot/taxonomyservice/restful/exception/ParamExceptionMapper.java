@@ -26,7 +26,7 @@ public class ParamExceptionMapper implements ExceptionMapper<ParamException> {
 
     public static final Logger logger = LoggerFactory.getLogger(ParamExceptionMapper.class);
 
-    @Context private HttpServletRequest request;
+    @Context protected HttpServletRequest request;
 
     @Override
     public Response toResponse(ParamException exception) {

@@ -25,7 +25,7 @@ public class ValidationExceptionMapper implements ExceptionMapper<ConstraintViol
 
     public static final Logger logger = LoggerFactory.getLogger(ValidationExceptionMapper.class);
 
-    @Context private HttpServletRequest request;
+    @Context protected HttpServletRequest request;
 
     @Override
     public Response toResponse(ConstraintViolationException exception) {

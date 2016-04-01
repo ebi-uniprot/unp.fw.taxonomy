@@ -28,7 +28,7 @@ import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.
 public class GeneralExceptionMapper implements ExceptionMapper<Exception> {
     public static final Logger logger = LoggerFactory.getLogger(GeneralExceptionMapper.class);
 
-    @Context private HttpServletRequest request;
+    @Context protected HttpServletRequest request;
 
     @Override
     public Response toResponse(Exception exception) {

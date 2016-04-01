@@ -33,8 +33,8 @@ public class FilterResourceURL implements ContainerRequestFilter {
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
-        logger.debug("FilterResourceURL: " + requestContext.getUriInfo().getRequestUri().toString());
         if (requestContext.getUriInfo() != null && requestContext.getUriInfo().getPath() != null) {
+            logger.debug("FilterResourceURL: " + requestContext.getUriInfo().getRequestUri().toString());
             String path = requestContext.getUriInfo().getRequestUri().toString();
             MultivaluedMap<String, String> queryString = requestContext.getUriInfo().getQueryParameters();
             try {
@@ -52,6 +52,8 @@ public class FilterResourceURL implements ContainerRequestFilter {
             } catch (URISyntaxException e) {
                 logger.error("Error at FilterResourceURL: ",e);
             }
+        }else{
+            logger.warn("FilterResourceURL: requestContext.getUriInfo is null");
         }
     }
 
