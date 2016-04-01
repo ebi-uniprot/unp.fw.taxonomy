@@ -4,7 +4,6 @@ import uk.ac.ebi.uniprot.taxonomyservice.restful.exception.GeneralExceptionMappe
 import uk.ac.ebi.uniprot.taxonomyservice.restful.exception.ParamExceptionMapper;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.exception.ValidationExceptionMapper;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.filter.FilterResourceURL;
-import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.MyInjectingConstraintValidatorFactory;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.ValidationConfigurationContextResolver;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
@@ -17,19 +16,10 @@ import com.mycila.guice.ext.jsr250.Jsr250Module;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.jaxrs.listing.ApiListingResource;
 import io.swagger.jaxrs.listing.SwaggerSerializers;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.util.List;
 import javax.inject.Inject;
-import javax.validation.ParameterNameProvider;
-import javax.validation.Validation;
-import javax.ws.rs.container.ResourceContext;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.ext.ContextResolver;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
-import org.glassfish.jersey.server.validation.ValidationConfig;
 import org.jvnet.hk2.guice.bridge.api.GuiceBridge;
 import org.jvnet.hk2.guice.bridge.api.GuiceIntoHK2Bridge;
 import org.slf4j.Logger;
@@ -110,40 +100,6 @@ public class RestApp extends ResourceConfig {
         GuiceBridge.getGuiceBridge().initializeGuiceBridge(serviceLocator);
         GuiceIntoHK2Bridge guiceBridge = serviceLocator.getService(GuiceIntoHK2Bridge.class);
         guiceBridge.bridgeGuiceInjector(injector);
-    }
-
-
-    public static class ValidationConfigurationContextResolverLocal implements ContextResolver<ValidationConfig> {
-
-        @Context
-        private ResourceContext resourceContext;
-
-        @Override
-        public ValidationConfig getContext(final Class<?> type) {
-            return new ValidationConfig().constraintValidatorFactory(resourceContext.getResource
-                    (MyInjectingConstraintValidatorFactory.class)).parameterNameProvider(new
-                    CustomParameterNameProvider());
-        }
-
-        private class CustomParameterNameProvider implements ParameterNameProvider {
-
-            private final ParameterNameProvider nameProvider;
-
-            public CustomParameterNameProvider() {
-                nameProvider = Validation.byDefaultProvider().configure().getDefaultParameterNameProvider();
-            }
-
-            @Override
-            public List<String> getParameterNames(final Constructor<?> constructor) {
-                return nameProvider.getParameterNames(constructor);
-            }
-
-            @Override
-            public List<String> getParameterNames(final Method method) {
-                return nameProvider.getParameterNames(method);
-            }
-        }
-
     }
 
 }
