@@ -19,8 +19,8 @@ import org.slf4j.LoggerFactory;
  * Created by lgonzales on 11/03/16.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@XmlRootElement(namespace = "http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomyRoot")
-@XmlType(namespace = "http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomyError")
+@XmlRootElement
+@XmlType(name = "taxonomyError", propOrder = {"requestedURL","errorMessages"})
 public class ErrorMessage {
 
     public static final Logger logger = LoggerFactory.getLogger(ErrorMessage.class);

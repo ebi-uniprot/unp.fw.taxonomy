@@ -20,8 +20,8 @@ import javax.xml.bind.annotation.XmlType;
  * Created by lgonzales on 08/03/16.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@XmlRootElement(namespace = "http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomyRoot")
-@XmlType(namespace = "http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomies")
+@XmlRootElement
+@XmlType(name = "taxonomies", propOrder = {"taxonomies"})
 public class Taxonomies {
 
     private List<TaxonomyNode> taxonomies;
@@ -33,7 +33,7 @@ public class Taxonomies {
         this.taxonomies = taxonomyNames;
     }
 
-    @XmlElement(name = "taxonomy", namespace = "http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomy")
+    @XmlElement(name = "taxonomy")
     @XmlElementWrapper(name = "taxonomies")
     @JsonGetter(value = "taxonomies")
     public List<TaxonomyNode> getTaxonomies() {

@@ -1762,9 +1762,10 @@
             return buffer + "</select>\n";
         }, "useData": true
     });
+	//BEGIN: @lgonzales Changed signature template adding sampleXML
     this["Handlebars"]["templates"]["signature"] = Handlebars.template({
         "compiler": [6, ">= 2.0.0-beta.1"], "main": function (depth0, helpers, partials, data) {
-            var stack1, helper, functionType = "function", helperMissing = helpers.helperMissing, escapeExpression = this.escapeExpression, buffer = "<div>\n<ul class=\"signature-nav\">\n  <li><a class=\"description-link\" href=\"#\" data-sw-translate>Model</a></li>\n  <li><a class=\"snippet-link\" href=\"#\" data-sw-translate>Model Schema</a></li>\n</ul>\n<div>\n\n<div class=\"signature-container\">\n  <div class=\"description\">\n    ";
+            var stack1, helper, functionType = "function", helperMissing = helpers.helperMissing, escapeExpression = this.escapeExpression, buffer = "<div>\n<ul class=\"signature-nav\">\n  <li><a class=\"description-link\" href=\"#\" data-sw-translate>Model</a></li>\n  <li><a class=\"snippet-link\" href=\"#\" data-sw-translate>Model Schema</a></li>\n  <li><a class=\"xml-link\" href=\"#\" data-sw-translate>XML Schema</a></li>\n</ul>\n<div>\n\n<div class=\"signature-container\">\n  <div class=\"description\">\n    ";
             stack1 = ((helper = (helper = helpers.signature || (depth0 != null ? depth0.signature : depth0)) != null ? helper : helperMissing), (typeof helper === functionType ? helper.call(depth0, {
                 "name": "signature",
                 "hash": {},
@@ -1779,9 +1780,16 @@
                     "hash": {},
                     "data": data
                 }) : helper)))
-                + "</code></pre>\n    <small class=\"notice\" data-sw-translate></small>\n  </div>\n</div>\n\n";
+                + "</code></pre>\n    <small class=\"notice\" data-sw-translate></small>\n  </div>\n</div>\n\n  <div class=\"xmlSnipt\">\n    <pre><code>"
+                + escapeExpression(((helper = (helper = helpers.sampleXML || (depth0 != null ? depth0.sampleXML : depth0)) != null ? helper : helperMissing), (typeof helper === functionType ? helper.call(depth0, {
+                    "name": "sampleXML",
+                    "hash": {},
+                    "data": data
+                }) : helper)))
+                + "</code></pre>\n  </div>\n";
         }, "useData": true
     });
+	//END: @lgonzales Changed signature template
     this["Handlebars"]["templates"]["status_code"] = Handlebars.template({
         "1": function (depth0, helpers, partials, data) {
             var lambda = this.lambda, escapeExpression = this.escapeExpression;
@@ -27038,11 +27046,27 @@
                     if (typeof value === 'object' && typeof value.createJSONSample === 'function') {
                         this.model.successDescription = value.description;
                         this.model.headers = this.parseResponseHeaders(value.headers);
+						//BEGIN:  @lgonzales Changed signature template
+                        var sampleXmlResponse = null;
+                        if(this.model.xsdMapping) {
+                            $.ajax({
+                                url: this.model.xsdMapping,
+                                async: false,
+                            }).done(function (data) {
+                                sampleXmlResponse = data;
+                            }).fail(function (data) {
+                                sampleXmlResponse = "Mapped xsd was not found";
+                            });
+                        }else{
+                            sampleXmlResponse = "XML Schema was not mapped";
+                        }
                         signatureModel = {
                             sampleJSON: JSON.stringify(value.createJSONSample(), void 0, 2),
                             isParam: false,
-                            signature: value.getMockSignature()
+                            signature: value.getMockSignature(),
+                            sampleXML: sampleXmlResponse
                         };
+						//END: @lgonzales Changed signature template
                     }
                 }
             } else if (this.model.responseClassSignature && this.model.responseClassSignature !== 'string') {
@@ -27813,8 +27837,16 @@
 
         render: function () {
             var methods = {};
+			//BEGIN: @lgonzales adding mapped XML
+            var xsdMapping = null;
 
-
+            $.ajax({
+                url: "xsdMapping.json",
+                async: false,
+            }).done(function(data) {
+                xsdMapping = JSON.parse(data);
+            });
+			//END: @lgonzales adding mapped XML
             $(this.el).html(Handlebars.templates.resource(this.model));
 
             // Render each operation
@@ -27830,6 +27862,7 @@
 
                 methods[id] = operation;
 
+                operation.xsdMapping = xsdMapping.paths[this.model.id]; // @lgonzales adding mapped XML to operation object
                 operation.nickname = id;
                 operation.parentId = this.model.id;
                 operation.definitions = this.model.definitions; // make Json Schema available for JSonEditor in this
@@ -27889,6 +27922,7 @@
         events: {
             'click a.description-link': 'switchToDescription',
             'click a.snippet-link': 'switchToSnippet',
+            'click a.xml-link': 'switchToXml', //@lgonzales Changed signature template
             'mousedown .snippet': 'snippetToTextArea'
         },
 
@@ -27911,20 +27945,31 @@
             if (this.isParam) {
                 $('.notice', $(this.el)).text('Click to set as parameter value');
             }
+			//BEGIN: @lgonzales Changed signature template
+            if(!this.model.sampleXML){
+                $('.xml-link', $(this.el)).hide();
+            }else{
+                $('.snippet-link', $(this.el)).text("JSON Schema");
+                $('.description-link', $(this.el)).hide();
+            }
+			//END: @lgonzales Changed signature template
 
             return this;
         },
-
+		//BEGIN: @lgonzales Changed signature behavior
         // handler for show signature
         switchToDescription: function (e) {
             if (e) {
                 e.preventDefault();
             }
 
-            $('.snippet', $(this.el)).hide();
             $('.description', $(this.el)).show();
+            $('.snippet', $(this.el)).hide();
+            $('.xmlSnipt', $(this.el)).hide();
+
             $('.description-link', $(this.el)).addClass('selected');
             $('.snippet-link', $(this.el)).removeClass('selected');
+            $('.xml-link', $(this.el)).removeClass('selected');
         },
 
         // handler for show sample
@@ -27933,11 +27978,30 @@
                 e.preventDefault();
             }
 
-            $('.description', $(this.el)).hide();
             $('.snippet', $(this.el)).show();
+            $('.description', $(this.el)).hide();
+            $('.xmlSnipt', $(this.el)).hide();
+
             $('.snippet-link', $(this.el)).addClass('selected');
             $('.description-link', $(this.el)).removeClass('selected');
+            $('.xml-link', $(this.el)).removeClass('selected');
         },
+
+        // handler for show xml schema
+        switchToXml: function (e) {
+            if (e) {
+                e.preventDefault();
+            }
+
+            $('.xmlSnipt', $(this.el)).show();
+            $('.description', $(this.el)).hide();
+            $('.snippet', $(this.el)).hide();
+
+            $('.xml-link', $(this.el)).addClass('selected');
+            $('.description-link', $(this.el)).removeClass('selected');
+            $('.snippet-link', $(this.el)).removeClass('selected');
+        },
+		//END: @lgonzales Changed signature behavior
 
         // handler for snippet to text area
         snippetToTextArea: function (e) {

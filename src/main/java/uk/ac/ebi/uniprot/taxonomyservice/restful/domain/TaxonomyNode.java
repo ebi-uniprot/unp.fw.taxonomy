@@ -17,8 +17,9 @@ import javax.xml.bind.annotation.XmlType;
  * Created by lgonzales on 19/02/16.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@XmlRootElement(namespace = "http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomyRoot")
-@XmlType(namespace = "http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomy")
+@XmlRootElement
+@XmlType(name = "taxonomyNode", propOrder = {"taxonomyId","mnemonic","scientificName","commonName","synonym","rank",
+        "parent","parentLink","children","childrenLinks","siblings","siblingsLinks"})
 public class TaxonomyNode {
 
     private long taxonomyId;
@@ -91,7 +92,7 @@ public class TaxonomyNode {
         this.rank = rank;
     }
 
-    @XmlElement(namespace = "http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomy")
+    @XmlElement
     public TaxonomyNode getParent() {
         return parent;
     }
@@ -109,7 +110,7 @@ public class TaxonomyNode {
         this.parentLink = parentLink;
     }
 
-    @XmlElement(name = "child", namespace = "http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomy")
+    @XmlElement(name = "child")
     @XmlElementWrapper(name = "children")
     @JsonGetter(value = "children")
     public List<TaxonomyNode> getChildren() {
@@ -133,7 +134,7 @@ public class TaxonomyNode {
         this.childrenLinks = childrenLinks;
     }
 
-    @XmlElement(name = "sibling", namespace = "http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomy")
+    @XmlElement(name = "sibling")
     @XmlElementWrapper(name = "siblings")
     @JsonGetter(value = "siblings")
     public List<TaxonomyNode> getSiblings() {
