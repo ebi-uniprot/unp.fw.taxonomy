@@ -1,20 +1,17 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.filter;
 
+import uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant;
+
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLEncoder;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
+import java.util.Optional;
 import java.util.stream.Stream;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.PreMatching;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.UriInfo;
+import org.glassfish.jersey.server.ParamException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,57 +28,44 @@ public class FilterResourceURL implements ContainerRequestFilter {
 
     public static final Logger logger = LoggerFactory.getLogger(FilterResourceURL.class);
 
+    public static final String[] acceptedContentType = {MediaType.APPLICATION_XML,MediaType.APPLICATION_JSON};
+
+    public static final String defaultContentType = MediaType.APPLICATION_JSON;
+
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
-        if (requestContext.getUriInfo() != null && requestContext.getUriInfo().getPath() != null) {
-            logger.debug("FilterResourceURL: " + requestContext.getUriInfo().getRequestUri().toString());
-            String path = requestContext.getUriInfo().getRequestUri().toString();
-            MultivaluedMap<String, String> queryString = requestContext.getUriInfo().getQueryParameters();
-            try {
-                if (requestContext.getUriInfo().getPath().endsWith(".xml")) {
-                    path = path.substring(0, path.indexOf(".xml"));
-                    logger.debug("new path: " + path);
+        String currentAcceptHeader = requestContext.getHeaders().getFirst(HttpHeaders.ACCEPT);
+        if (currentAcceptHeader == null || !isCurrentAcceptHeaderInAcceptedContentTypeList(currentAcceptHeader)) {
+            Optional<String> formatParamValue = getFormatParamFromRequestContext(requestContext.getUriInfo());
+            if(formatParamValue.isPresent()){
+                if(formatParamValue.get().equalsIgnoreCase("xml")){
                     requestContext.getHeaders().add(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML);
-                    requestContext.setRequestUri(getURI(path,queryString));
-                } else if (requestContext.getUriInfo().getPath().endsWith(".json")) {
-                    path = path.substring(0, path.indexOf(".json"));
-                    logger.debug("new path: " + path);
+                }else if(formatParamValue.get().equalsIgnoreCase("json")){
                     requestContext.getHeaders().add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
-                    requestContext.setRequestUri(getURI(path,queryString));
+                }else{
+                   throw new ParamException.QueryParamException(new IllegalArgumentException( SwaggerConstant
+                           .REQUEST_PARAMETER_INVALID_VALUE),"format","");
                 }
-            } catch (URISyntaxException e) {
-                logger.error("Error at FilterResourceURL: ",e);
+            }else{
+                requestContext.getHeaders().add(HttpHeaders.ACCEPT, defaultContentType);
             }
         }else{
-            logger.warn("FilterResourceURL: requestContext.getUriInfo is null");
+            logger.debug("FilterResourceURL, we already have a valid accept header: "+currentAcceptHeader);
         }
     }
 
-    private URI getURI(String path,  MultivaluedMap<String, String> queryString) throws URISyntaxException {
-        String absolutePath = path;
-        if(queryString!= null && !queryString.isEmpty()){
-            absolutePath += "?"+queryString.entrySet().stream()
-                    .flatMap(entry -> encodeMultiParameter(entry.getKey(), entry.getValue(), StandardCharsets.UTF_8))
-                    .reduce((param1, param2) -> param1 + "&" + param2)
-                    .orElse("");
+    private Optional<String> getFormatParamFromRequestContext(UriInfo uriInfo) {
+        Optional<String> format;
+        if(uriInfo != null && uriInfo.getQueryParameters() != null){
+            format = Optional.ofNullable(uriInfo.getQueryParameters().getFirst("format"));
+        }else{
+            format = Optional.empty();
         }
-        return new URI(absolutePath);
+        return format;
     }
 
-    private Stream<String> encodeMultiParameter(String key, List<String> values, Charset encoding) {
-        String[] arrayValues = values.toArray(new String[values.size()]);
-        return Stream.of(arrayValues).map(value -> encodeSingleParameter(key, value,encoding));
+    private boolean isCurrentAcceptHeaderInAcceptedContentTypeList(String currentAcceptHeader) {
+        return Stream.of(acceptedContentType).anyMatch(x -> x.equalsIgnoreCase(currentAcceptHeader));
     }
 
-    private String encodeSingleParameter(String key, String value, Charset encoding) {
-        return urlEncode(key, encoding) + "=" + urlEncode(value, encoding);
-    }
-
-    private String urlEncode(String value, Charset encoding) {
-        try {
-            return URLEncoder.encode(value, encoding.toString());
-        } catch (UnsupportedEncodingException e) {
-            throw new IllegalArgumentException("Cannot url encode " + value, e);
-        }
-    }
 }
