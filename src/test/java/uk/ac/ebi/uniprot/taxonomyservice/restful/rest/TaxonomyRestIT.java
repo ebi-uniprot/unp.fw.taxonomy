@@ -93,7 +93,7 @@ public class TaxonomyRestIT {
 
     @Test
     public void lookupTaxonomyIdWithInvalidIdReturnsBadRequestStatusInJsonFormat() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/id/INVALID.json";
+        String requestedURL = TAXONOMY_BASE_PATH + "/id/INVALID?format=json";
 
         ExtractableResponse<Response> response = when()
                 .get(requestedURL)
@@ -108,7 +108,7 @@ public class TaxonomyRestIT {
 
     @Test
     public void lookupTaxonomyIdWithInvalidIdReturnsBadRequestStatusInXmlFormat() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/id/INVALID.xml";
+        String requestedURL = TAXONOMY_BASE_PATH + "/id/INVALID?format=xml";
 
         ExtractableResponse<Response> response = when()
                 .get(requestedURL)
@@ -135,7 +135,7 @@ public class TaxonomyRestIT {
     @Test
     public void lookupTaxonomyIdWithValidIdReturnsOKStatusInJsonFormatAndTheCorrectId() {
         ExtractableResponse<Response> response = when()
-                .get(TAXONOMY_BASE_PATH + "/id/12345.json")
+                .get(TAXONOMY_BASE_PATH + "/id/12345?format=json")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
@@ -145,7 +145,7 @@ public class TaxonomyRestIT {
     @Test
     public void lookupTaxonomyIdWithResourceXmlPathReturnsOKStatusXmlFormatAndTheCorrectId() {
         ExtractableResponse<Response> response = when()
-                .get(TAXONOMY_BASE_PATH + "/id/12345.xml")
+                .get(TAXONOMY_BASE_PATH + "/id/12345?format=xml")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
@@ -171,13 +171,13 @@ public class TaxonomyRestIT {
 
     @Test
     public void lookupTaxonomyIdWithHistoricalChangeAndXmlPathReturnsSeeOtherStatusXmlFormatAndTheCorrectId() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/id/33333.xml";
+        String requestedURL = TAXONOMY_BASE_PATH + "/id/33333?format=xml";
 
         ExtractableResponse<Response> response = given().redirects().follow(false)
                 .when().get(requestedURL)
                 .then()
                 .statusCode(SEE_OTHER.getStatusCode())
-                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/55555.xml") //redirect Location header
+                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/55555?format=xml") //redirect Location header
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
@@ -188,13 +188,13 @@ public class TaxonomyRestIT {
 
     @Test
     public void lookupTaxonomyIdWithHistoricalChangeAndJsonPathReturnsSeeOtherStatusXmlFormatAndTheCorrectId() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/id/33333.json";
+        String requestedURL = TAXONOMY_BASE_PATH + "/id/33333?format=json";
 
         ExtractableResponse<Response> response = given().redirects().follow(false)
                 .when().get(requestedURL)
                 .then()
                 .statusCode(SEE_OTHER.getStatusCode())
-                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/55555.json") //redirect Location header
+                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/55555?format=json") //redirect Location header
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
@@ -271,7 +271,7 @@ public class TaxonomyRestIT {
     @Test
     public void lookupTaxonomyChildrenWithJsonResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
         ExtractableResponse<Response> response = when()
-                .get(TAXONOMY_BASE_PATH + "/id/12345/children.json")
+                .get(TAXONOMY_BASE_PATH + "/id/12345/children?format=json")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
@@ -281,13 +281,13 @@ public class TaxonomyRestIT {
 
     @Test
     public void lookupTaxonomyChildrenWithHistoricalChangeAndJsonPathReturnsSeeOtherStatusXmlFormatAndTheCorrectId() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/id/33333/children.json";
+        String requestedURL = TAXONOMY_BASE_PATH + "/id/33333/children?format=json";
 
         ExtractableResponse<Response> response = given().redirects().follow(false)
                 .when().get(requestedURL)
                 .then()
                 .statusCode(SEE_OTHER.getStatusCode())
-                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/55555/children.json")
+                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/55555/children?format=json")
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
@@ -299,7 +299,7 @@ public class TaxonomyRestIT {
     @Test
     public void lookupTaxonomyChildrenWithXmlResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
         ExtractableResponse<Response> response = when()
-                .get(TAXONOMY_BASE_PATH + "/id/12345/children.xml")
+                .get(TAXONOMY_BASE_PATH + "/id/12345/children?format=xml")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
@@ -309,13 +309,13 @@ public class TaxonomyRestIT {
 
     @Test
     public void lookupTaxonomyChildrenWithHistoricalChangeAndXmlPathReturnsSeeOtherStatusXmlFormatAndTheCorrectId() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/id/33333/children.xml";
+        String requestedURL = TAXONOMY_BASE_PATH + "/id/33333/children?format=xml";
 
         ExtractableResponse<Response> response = given().redirects().follow(false)
                 .when().get(requestedURL)
                 .then()
                 .statusCode(SEE_OTHER.getStatusCode())
-                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/55555/children.xml")
+                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/55555/children?format=xml")
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
@@ -355,7 +355,7 @@ public class TaxonomyRestIT {
     @Test
     public void lookupTaxonomySiblingsWithJsonResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
         ExtractableResponse<Response> response = when()
-                .get(TAXONOMY_BASE_PATH + "/id/12345/siblings.json")
+                .get(TAXONOMY_BASE_PATH + "/id/12345/siblings?format=json")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
@@ -365,13 +365,13 @@ public class TaxonomyRestIT {
 
     @Test
     public void lookupTaxonomySiblingsWithHistoricalChangeAndJsonPathReturnsSeeOtherStatusXmlFormatAndTheCorrectId() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/id/33333/siblings.json";
+        String requestedURL = TAXONOMY_BASE_PATH + "/id/33333/siblings?format=json";
 
         ExtractableResponse<Response> response = given().redirects().follow(false)
                 .when().get(requestedURL)
                 .then()
                 .statusCode(SEE_OTHER.getStatusCode())
-                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/55555/siblings.json")
+                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/55555/siblings?format=json")
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
@@ -383,7 +383,7 @@ public class TaxonomyRestIT {
     @Test
     public void lookupTaxonomySiblingsWithXmlResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
         ExtractableResponse<Response> response = when()
-                .get(TAXONOMY_BASE_PATH + "/id/12345/siblings.xml")
+                .get(TAXONOMY_BASE_PATH + "/id/12345/siblings?format=xml")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
@@ -393,13 +393,13 @@ public class TaxonomyRestIT {
 
     @Test
     public void lookupTaxonomySiblingsWithHistoricalChangeAndXmlPathReturnsSeeOtherStatusXmlFormatAndTheCorrectId() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/id/33333/siblings.xml";
+        String requestedURL = TAXONOMY_BASE_PATH + "/id/33333/siblings?format=xml";
 
         ExtractableResponse<Response> response = given().redirects().follow(false)
                 .when().get(requestedURL)
                 .then()
                 .statusCode(SEE_OTHER.getStatusCode())
-                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/55555/siblings.xml")
+                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/55555/siblings?format=xml")
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
@@ -438,7 +438,7 @@ public class TaxonomyRestIT {
     @Test
     public void lookupTaxonomyParentWithJsonResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
         ExtractableResponse<Response> response = when()
-                .get(TAXONOMY_BASE_PATH + "/id/12345/parent.json")
+                .get(TAXONOMY_BASE_PATH + "/id/12345/parent?format=json")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
@@ -447,13 +447,13 @@ public class TaxonomyRestIT {
 
     @Test
     public void lookupTaxonomyParentWithHistoricalChangeAndJsonResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/id/33333/parent.json";
+        String requestedURL = TAXONOMY_BASE_PATH + "/id/33333/parent?format=json";
 
         ExtractableResponse<Response> response = given().redirects().follow(false)
                 .when().get(requestedURL)
                 .then()
                 .statusCode(SEE_OTHER.getStatusCode())
-                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/55555/parent.json")
+                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/55555/parent?format=json")
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
@@ -465,7 +465,7 @@ public class TaxonomyRestIT {
     @Test
     public void lookupTaxonomyParentWithXmlResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
         ExtractableResponse<Response> xmlResponse = when()
-                .get(TAXONOMY_BASE_PATH + "/id/12345/parent.xml")
+                .get(TAXONOMY_BASE_PATH + "/id/12345/parent?format=xml")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
@@ -474,13 +474,13 @@ public class TaxonomyRestIT {
 
     @Test
     public void lookupTaxonomyParentWithHistoricalChangeAndXmlResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/id/33333/parent.xml";
+        String requestedURL = TAXONOMY_BASE_PATH + "/id/33333/parent?format=xml";
 
         ExtractableResponse<Response> response = given().redirects().follow(false)
                 .when().get(requestedURL)
                 .then()
                 .statusCode(SEE_OTHER.getStatusCode())
-                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/55555/parent.xml")
+                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/55555/parent?format=xml")
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
@@ -544,7 +544,7 @@ public class TaxonomyRestIT {
     @Test
     public void lookupTaxonomyNameValidReturnsOkWithXmlContentTypeAndCorrectTaxonomies() {
         ExtractableResponse<Response> response = when()
-                .get(TAXONOMY_BASE_PATH + "/name/human.xml")
+                .get(TAXONOMY_BASE_PATH + "/name/human?format=xml")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
@@ -554,7 +554,7 @@ public class TaxonomyRestIT {
     @Test
     public void lookupTaxonomyNameValidReturnsOkWithJsonContentTypeAndCorrectTaxonomies() {
         ExtractableResponse<Response> response = when()
-                .get(TAXONOMY_BASE_PATH + "/name/human.json")
+                .get(TAXONOMY_BASE_PATH + "/name/human?format=json")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();

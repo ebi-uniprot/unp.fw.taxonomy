@@ -2,6 +2,8 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.util;
 
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.ErrorMessage;
 
+import com.jayway.restassured.internal.mapper.ObjectMapperType;
+import com.jayway.restassured.response.ExtractableResponse;
 import java.util.Collections;
 import javax.ws.rs.core.Response;
 import org.junit.Assert;
@@ -25,6 +27,18 @@ public class ResponseAssert {
         assertTrue(response.getEntity() instanceof ErrorMessage);
 
         ErrorMessage errorResponse = (ErrorMessage) response.getEntity();
+        assertResponseErrorMessage(expectedError, errorResponse);
+    }
+
+    public static void assertResponseErrorMessage(ErrorMessage expectedError, ExtractableResponse<com.jayway.restassured.response.Response> response) {
+        assertThat(response, notNullValue());
+
+        ErrorMessage errorResponse = response.as(ErrorMessage.class, ObjectMapperType.JACKSON_2);
+        assertResponseErrorMessage(expectedError, errorResponse);
+    }
+
+
+    private static void assertResponseErrorMessage(ErrorMessage expectedError, ErrorMessage errorResponse) {
         assertThat(errorResponse, notNullValue());
         Assert.assertThat(errorResponse.getErrorMessages(),notNullValue());
         assertThat(errorResponse.getErrorMessages().size(), is(expectedError.getErrorMessages().size()));
