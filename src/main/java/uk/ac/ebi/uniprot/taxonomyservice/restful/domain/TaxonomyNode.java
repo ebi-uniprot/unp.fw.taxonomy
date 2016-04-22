@@ -3,6 +3,7 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.domain;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -20,7 +21,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlRootElement
 @XmlType(name = "taxonomyNode", propOrder = {"taxonomyId","mnemonic","scientificName","commonName","synonym","rank",
         "parent","parentLink","children","childrenLinks","siblings","siblingsLinks"})
-public class TaxonomyNode {
+public class TaxonomyNode implements Comparable<TaxonomyNode>{
 
     private long taxonomyId;
     private String mnemonic;
@@ -101,6 +102,13 @@ public class TaxonomyNode {
         this.parent = parent;
     }
 
+    public TaxonomyNode mergeParent(TaxonomyNode parent){
+        if(this.parent == null){
+            this.parent = parent;
+        }
+        return this.parent;
+    }
+
     @XmlElement
     public String getParentLink() {
         return parentLink;
@@ -120,6 +128,21 @@ public class TaxonomyNode {
     @JsonSetter(value = "children")
     public void setChildren(List<TaxonomyNode> children) {
         this.children = children;
+    }
+
+    public TaxonomyNode mergeChildren(TaxonomyNode children){
+        TaxonomyNode result = children;
+        if(this.children == null){
+            this.children = new ArrayList<>();
+            this.children.add(children);
+        }else{
+            if(this.children.contains(children)){
+                result = this.children.get(this.children.indexOf(children));
+            }else{
+                this.children.add(children);
+            }
+        }
+        return result;
     }
 
     @XmlElement(name = "childLink")
@@ -144,6 +167,22 @@ public class TaxonomyNode {
     @JsonSetter(value = "siblings")
     public void setSiblings(List<TaxonomyNode> siblings) {
         this.siblings = siblings;
+    }
+
+
+    public TaxonomyNode mergeSiblings(TaxonomyNode sibling){
+        TaxonomyNode result = sibling;
+        if(this.siblings == null){
+            this.siblings = new ArrayList<>();
+            this.siblings.add(sibling);
+        }else{
+            if(this.siblings.contains(sibling)){
+                result = this.siblings.get(this.siblings.indexOf(sibling));
+            }else{
+                this.siblings.add(sibling);
+            }
+        }
+        return result;
     }
 
     @XmlElement(name = "siblingLinks")
@@ -187,57 +226,26 @@ public class TaxonomyNode {
 
         if (getTaxonomyId() != that.getTaxonomyId()) {
             return false;
+        }else{
+            return true;
         }
-        if (getMnemonic() != null ? !getMnemonic().equals(that.getMnemonic()) : that.getMnemonic() != null) {
-            return false;
-        }
-        if (getScientificName() != null ? !getScientificName().equals(that.getScientificName()) :
-                that.getScientificName() != null) {
-            return false;
-        }
-        if (getCommonName() != null ? !getCommonName().equals(that.getCommonName()) : that.getCommonName() != null) {
-            return false;
-        }
-        if (getSynonym() != null ? !getSynonym().equals(that.getSynonym()) : that.getSynonym() != null) {
-            return false;
-        }
-        if (getRank() != null ? !getRank().equals(that.getRank()) : that.getRank() != null) {
-            return false;
-        }
-        if (getParent() != null ? !getParent().equals(that.getParent()) : that.getParent() != null) {
-            return false;
-        }
-        if (getParentLink() != null ? !getParentLink().equals(that.getParentLink()) : that.getParentLink() != null) {
-            return false;
-        }
-        if (getChildren() != null ? !getChildren().equals(that.getChildren()) : that.getChildren() != null) {
-            return false;
-        }
-        if (getChildrenLinks() != null ? !getChildrenLinks().equals(that.getChildrenLinks()) :
-                that.getChildrenLinks() != null) {
-            return false;
-        }
-        if (getSiblings() != null ? !getSiblings().equals(that.getSiblings()) : that.getSiblings() != null) {
-            return false;
-        }
-        return getSiblingsLinks() != null ? getSiblingsLinks().equals(that.getSiblingsLinks()) :
-                that.getSiblingsLinks() == null;
-
     }
 
     @Override public int hashCode() {
         int result = (int) (getTaxonomyId() ^ (getTaxonomyId() >>> 32));
-        result = 31 * result + (getMnemonic() != null ? getMnemonic().hashCode() : 0);
-        result = 31 * result + (getScientificName() != null ? getScientificName().hashCode() : 0);
-        result = 31 * result + (getCommonName() != null ? getCommonName().hashCode() : 0);
-        result = 31 * result + (getSynonym() != null ? getSynonym().hashCode() : 0);
-        result = 31 * result + (getRank() != null ? getRank().hashCode() : 0);
-        result = 31 * result + (getParent() != null ? getParent().hashCode() : 0);
-        result = 31 * result + (getParentLink() != null ? getParentLink().hashCode() : 0);
-        result = 31 * result + (getChildren() != null ? getChildren().hashCode() : 0);
-        result = 31 * result + (getChildrenLinks() != null ? getChildrenLinks().hashCode() : 0);
-        result = 31 * result + (getSiblings() != null ? getSiblings().hashCode() : 0);
-        result = 31 * result + (getSiblingsLinks() != null ? getSiblingsLinks().hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public int compareTo(TaxonomyNode that) {
+        if(this.equals(that)){
+            return 0;
+        }else{
+            if(this.getTaxonomyId() < that.getTaxonomyId()){
+                return -1;
+            }else{
+                return 1;
+            }
+        }
     }
 }

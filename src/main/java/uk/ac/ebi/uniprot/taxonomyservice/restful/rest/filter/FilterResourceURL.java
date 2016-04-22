@@ -28,9 +28,9 @@ public class FilterResourceURL implements ContainerRequestFilter {
 
     public static final Logger logger = LoggerFactory.getLogger(FilterResourceURL.class);
 
-    public static final String[] acceptedContentType = {MediaType.APPLICATION_XML,MediaType.APPLICATION_JSON};
+    private static final String[] acceptedContentType = {MediaType.APPLICATION_XML,MediaType.APPLICATION_JSON};
 
-    public static final String defaultContentType = MediaType.APPLICATION_JSON;
+    private static final String defaultContentType = MediaType.APPLICATION_JSON;
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {

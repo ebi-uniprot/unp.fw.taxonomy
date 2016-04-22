@@ -1,0 +1,14 @@
+{
+  "xsd": {
+    "taxonomy": "/uniprot/services/docs/xsd/taxonomy.xsd"
+  },
+  "xml": {
+    "/taxonomy/id/{id}":"/uniprot/services/docs/xml/taxonomy.xml",
+    "/taxonomy/id/{id}/siblings":"/uniprot/services/docs/xml/taxonomies.xml",
+    "/taxonomy/id/{id}/parent":"/uniprot/services/docs/xml/taxonomy.xml",
+    "/taxonomy/id/{id}/children":"/uniprot/services/docs/xml/taxonomies.xml",
+    "/taxonomy/name/{name}":"/uniprot/services/docs/xml/taxonomies.xml",
+    "/taxonomy/relationship":"/uniprot/services/docs/xml/taxonomy.xml",
+    "/taxonomy/path":"/uniprot/services/docs/xml/taxonomy.xml"
+  }
+}

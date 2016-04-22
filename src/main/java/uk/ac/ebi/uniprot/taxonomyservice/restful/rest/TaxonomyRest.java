@@ -6,10 +6,9 @@ import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.PathRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.RelationshipRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.ErrorMessage;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.util.URLUtil;
 
 import io.swagger.annotations.*;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -66,7 +65,7 @@ public class TaxonomyRest {
         logger.debug(">>TaxonomyRest.getTaxonomyDetailsById");
 
         long taxonomyId = Long.valueOf(id);
-        TaxonomyNode response = dataAccess.getTaxonomyDetailsById(taxonomyId);
+        TaxonomyNode response = dataAccess.getTaxonomyDetailsById(taxonomyId,URLUtil.getTaxonomyIdBasePath(request));
 
         return buildTaxonomyNodeResponse(response,taxonomyId);
     }
@@ -154,7 +153,7 @@ public class TaxonomyRest {
             @NotNull(message = NAME_PARAMETER_IS_REQUIRED)
             @PathParam("name") String taxonomyName) {
 
-        Taxonomies response = dataAccess.getTaxonomyDetailsByName(taxonomyName);
+        Taxonomies response = dataAccess.getTaxonomyDetailsByName(taxonomyName,URLUtil.getTaxonomyIdBasePath(request));
         if (response != null) {
             return Response.ok(response).build();
         } else {
@@ -182,14 +181,14 @@ public class TaxonomyRest {
         if (response != null) {
             return Response.ok(response).build();
         } else {
-            String newURL = getCurrentURL();
+            String newURL = URLUtil.getCurrentURL(request);
             long newFromTaxonomyId = dataAccess.checkTaxonomyIdHistoricalChange(from);
             if(newFromTaxonomyId > 0){
-                newURL = getNewRedirectHeaderLocationURL(newURL,from, newFromTaxonomyId);
+                newURL = URLUtil.getNewRedirectHeaderLocationURL(newURL,from, newFromTaxonomyId);
             }
             long newToTaxonomyId = dataAccess.checkTaxonomyIdHistoricalChange(to);
             if(newToTaxonomyId > 0){
-                newURL = getNewRedirectHeaderLocationURL(newURL,to, newToTaxonomyId);
+                newURL = URLUtil.getNewRedirectHeaderLocationURL(newURL,to, newToTaxonomyId);
             }
             if(newFromTaxonomyId > 0 || newToTaxonomyId > 0){
                 return buildRedirectResponse(newURL,newFromTaxonomyId,newToTaxonomyId);
@@ -239,7 +238,8 @@ public class TaxonomyRest {
     private Response buildResponseWithHistoricalCheck(long taxonomyId) {
         long newTaxonomyId = dataAccess.checkTaxonomyIdHistoricalChange(taxonomyId);
         if(newTaxonomyId > 0){
-            String newURL = getNewRedirectHeaderLocationURL(getCurrentURL(),taxonomyId, newTaxonomyId);
+            String currentURL = URLUtil.getCurrentURL(request);
+            String newURL = URLUtil.getNewRedirectHeaderLocationURL(currentURL,taxonomyId,newTaxonomyId);
             return buildRedirectResponse(newURL,newTaxonomyId);
         }else {
             return buildNotFoundResponse();
@@ -248,36 +248,20 @@ public class TaxonomyRest {
 
     private Response buildNotFoundResponse() {
         ErrorMessage error = new ErrorMessage();
-        error.setRequestedURL(request.getRequestURL().toString(),request.getQueryString());
+        error.setRequestedURL(URLUtil.getCurrentURL(request));
         error.addErrorMessage(API_RESPONSE_404);
         return Response.status(Response.Status.NOT_FOUND).entity(error).build();
     }
 
     private Response buildRedirectResponse(String newURL,long ... newId) {
         ErrorMessage error = new ErrorMessage();
-        error.setRequestedURL(request.getRequestURL().toString(),request.getQueryString());
+        error.setRequestedURL(URLUtil.getCurrentURL(request));
         for (long id: newId) {
             if(id > 0){
                 error.addErrorMessage(API_RESPONSE_303.replace("{newId}",""+ id));
             }
         }
         return Response.status(Response.Status.SEE_OTHER).entity(error).header(HttpHeaders.LOCATION,newURL).build();
-    }
-
-    private String getNewRedirectHeaderLocationURL(String currentURL,long oldId, long newId) {
-        return currentURL.replace(""+oldId,""+newId);
-    }
-
-    private String getCurrentURL(){
-        String currentURL = request.getRequestURL().toString();
-        if (request.getQueryString() != null && !request.getQueryString().isEmpty()) {
-            try {
-                currentURL+= "?"+(URLDecoder.decode(request.getQueryString(),"UTF-8"));
-            } catch (UnsupportedEncodingException e) {
-                logger.error("Error encoding ErrorMessage.requestedURL: ",e);
-            }
-        }
-        return currentURL;
     }
 
 }

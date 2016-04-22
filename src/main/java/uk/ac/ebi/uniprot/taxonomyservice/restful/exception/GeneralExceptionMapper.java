@@ -1,6 +1,7 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.exception;
 
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.ErrorMessage;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.util.URLUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BadRequestException;
@@ -34,7 +35,7 @@ public class GeneralExceptionMapper implements ExceptionMapper<Exception> {
     public Response toResponse(Exception exception) {
         logger.error("Http Request Error has occured with error message: ", exception.getMessage(), exception);
         ErrorMessage error = new ErrorMessage();
-        error.setRequestedURL(request.getRequestURL().toString(),request.getQueryString());
+        error.setRequestedURL(URLUtil.getCurrentURL(request));
 
         if (exception instanceof NotFoundException) {
             error.addErrorMessage(API_RESPONSE_404);

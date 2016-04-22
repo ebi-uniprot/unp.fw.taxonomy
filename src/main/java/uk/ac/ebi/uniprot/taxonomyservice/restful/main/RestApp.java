@@ -3,6 +3,7 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.main;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.exception.GeneralExceptionMapper;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.exception.ParamExceptionMapper;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.exception.ValidationExceptionMapper;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.filter.CORSFilter;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.filter.FilterResourceURL;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.ValidationConfigurationContextResolver;
 
@@ -76,6 +77,7 @@ public class RestApp extends ResourceConfig {
         register(SwaggerSerializers.class);
 
         register(FilterResourceURL.class);
+        register(CORSFilter.class);
         register(ValidationConfigurationContextResolver.class);
 
         logger.info("Starting of RestApp Done");

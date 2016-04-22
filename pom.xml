@@ -18,6 +18,7 @@
         <glassfish-hk2.version>2.4.0</glassfish-hk2.version>
         <servlet-api.version>3.1.0</servlet-api.version>
         <swagger.version>1.5.7</swagger.version>
+        <neo4j.version>2.3.3</neo4j.version>
         <jersey-container-servlet.version>2.22.2</jersey-container-servlet.version>
         <rest-assured.version>2.8.0</rest-assured.version>
         <rest.host.url>www.ebi.ac.uk</rest.host.url>
@@ -173,6 +174,22 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j-kernel</artifactId>
+            <version>2.3.3</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j-io</artifactId>
+            <version>2.3.3</version>
+            <type>test-jar</type>
+            <scope>test</scope>
+        </dependency>
+
         <!-- swagger dependencies to document rest services-->
         <dependency>
             <groupId>io.swagger</groupId>
@@ -191,6 +208,12 @@
             </exclusions>
         </dependency>
 
+        <!--neo4j libraries -->
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j</artifactId>
+            <version>${neo4j.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

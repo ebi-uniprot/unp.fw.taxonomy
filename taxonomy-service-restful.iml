@@ -89,8 +89,16 @@
     <orderEntry type="library" scope="TEST" name="Maven: com.jayway.restassured:json-path:2.8.0" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.codehaus.groovy:groovy-json:2.4.4" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.jayway.restassured:rest-assured-common:2.8.0" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.neo4j:neo4j-kernel:test-jar:tests:2.3.3" level="project" />
+    <orderEntry type="library" name="Maven: org.neo4j:neo4j-primitive-collections:2.3.3" level="project" />
+    <orderEntry type="library" name="Maven: org.neo4j:neo4j-function:2.3.3" level="project" />
+    <orderEntry type="library" name="Maven: org.neo4j:neo4j-io:2.3.3" level="project" />
+    <orderEntry type="library" name="Maven: org.neo4j:neo4j-csv:2.3.3" level="project" />
+    <orderEntry type="library" name="Maven: org.neo4j:neo4j-logging:2.3.3" level="project" />
+    <orderEntry type="library" scope="TEST" name="Maven: org.neo4j:neo4j-io:test-jar:tests:2.3.3" level="project" />
+    <orderEntry type="library" name="Maven: org.neo4j:neo4j-unsafe:2.3.3" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.3.2" level="project" />
     <orderEntry type="library" name="Maven: io.swagger:swagger-core:1.5.7" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.2.1" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.datatype:jackson-datatype-joda:2.4.5" level="project" />
     <orderEntry type="library" name="Maven: joda-time:joda-time:2.2" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.4.5" level="project" />
@@ -106,5 +114,29 @@
     <orderEntry type="library" name="Maven: com.google.code.findbugs:annotations:2.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.glassfish.jersey.media:jersey-media-multipart:2.1" level="project" />
     <orderEntry type="library" name="Maven: org.jvnet.mimepull:mimepull:1.8" level="project" />
+    <orderEntry type="library" name="Maven: org.neo4j:neo4j:2.3.3" level="project" />
+    <orderEntry type="library" name="Maven: org.neo4j:neo4j-kernel:2.3.3" level="project" />
+    <orderEntry type="library" name="Maven: org.neo4j:neo4j-lucene-index:2.3.3" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.lucene:lucene-core:3.6.2" level="project" />
+    <orderEntry type="library" name="Maven: org.neo4j:neo4j-graph-algo:2.3.3" level="project" />
+    <orderEntry type="library" name="Maven: org.neo4j:neo4j-udc:2.3.3" level="project" />
+    <orderEntry type="library" name="Maven: org.neo4j:neo4j-graph-matching:2.3.3" level="project" />
+    <orderEntry type="library" name="Maven: org.neo4j:neo4j-cypher:2.3.3" level="project" />
+    <orderEntry type="library" name="Maven: org.scala-lang:scala-library:2.11.7" level="project" />
+    <orderEntry type="library" name="Maven: org.scala-lang:scala-reflect:2.11.7" level="project" />
+    <orderEntry type="library" name="Maven: org.scala-lang.modules:scala-parser-combinators_2.11:1.0.4" level="project" />
+    <orderEntry type="library" name="Maven: org.neo4j:neo4j-codegen:2.3.3" level="project" />
+    <orderEntry type="library" name="Maven: org.ow2.asm:asm:5.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.neo4j:neo4j-cypher-compiler-1.9_2.11:2.0.5" level="project" />
+    <orderEntry type="library" name="Maven: org.neo4j:neo4j-cypher-compiler-2.2_2.11:2.2.6" level="project" />
+    <orderEntry type="library" name="Maven: org.neo4j:neo4j-cypher-compiler-2.3:2.3.3" level="project" />
+    <orderEntry type="library" name="Maven: org.neo4j:neo4j-cypher-frontend-2.3:2.3.3" level="project" />
+    <orderEntry type="library" name="Maven: org.parboiled:parboiled-scala_2.11:1.1.7" level="project" />
+    <orderEntry type="library" name="Maven: org.parboiled:parboiled-core:1.1.7" level="project" />
+    <orderEntry type="library" name="Maven: net.sf.opencsv:opencsv:2.3" level="project" />
+    <orderEntry type="library" name="Maven: com.googlecode.concurrentlinkedhashmap:concurrentlinkedhashmap-lru:1.4.2" level="project" />
+    <orderEntry type="library" name="Maven: org.neo4j:neo4j-jmx:2.3.3" level="project" />
+    <orderEntry type="library" name="Maven: org.neo4j:neo4j-consistency-check:2.3.3" level="project" />
+    <orderEntry type="library" name="Maven: org.neo4j:neo4j-consistency-check-legacy:2.3.3" level="project" />
   </component>
 </module>

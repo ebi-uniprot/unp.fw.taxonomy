@@ -14,9 +14,10 @@ public interface TaxonomyDataAccess {
      * This method return details about searched {@param taxonomyId}, including it siblings and children
      *
      * @param taxonomyId identification of taxonomy
+     * @param basePath base path to build taxonomy parent, children and sibling links
      * @return details about searched taxonomy
      */
-    TaxonomyNode getTaxonomyDetailsById(long taxonomyId);
+    TaxonomyNode getTaxonomyDetailsById(long taxonomyId,String basePath);
 
     /**
      * This method return list of siblings of a searched {@param taxonomyId}.
@@ -46,9 +47,10 @@ public interface TaxonomyDataAccess {
      * This method return the details of all taxonomies names that contains {@param taxonomyName}
      *
      * @param taxonomyName Name given to a taxonomy element
+     * @param basePath base path to build taxonomy parent, children and sibling links
      * @return List of taxonomies
      */
-    Taxonomies getTaxonomyDetailsByName(String taxonomyName);
+    Taxonomies getTaxonomyDetailsByName(String taxonomyName, String basePath);
 
     /**
      * This method return all nodes that are between  {@param taxonomyId1} and {@param taxonomyId2}

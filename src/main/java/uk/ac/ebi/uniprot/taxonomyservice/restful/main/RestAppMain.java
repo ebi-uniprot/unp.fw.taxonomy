@@ -5,7 +5,6 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.Servlet;
-import org.glassfish.grizzly.http.server.CLStaticHttpHandler;
 import org.glassfish.grizzly.http.server.HttpHandlerRegistration;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.accesslog.AccessLogBuilder;
@@ -96,7 +95,7 @@ public class RestAppMain {
         //adding mapping for docs.
         HttpHandlerRegistration docHandler = new HttpHandlerRegistration.Builder().contextPath("/uniprot/services/docs")
                 .urlPattern("/*").build();
-        server.getServerConfiguration().addHttpHandler(new CLStaticHttpHandler(RestAppMain.class.getClassLoader(),
+        server.getServerConfiguration().addHttpHandler(new CLStaticHttpHandlerWithCORS(RestAppMain.class.getClassLoader(),
                 "staticContent/"), docHandler);
 
         if (contextInitParams != null) {

@@ -1,6 +1,7 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.exception;
 
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.ErrorMessage;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.util.URLUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
@@ -30,7 +31,7 @@ public class ValidationExceptionMapper implements ExceptionMapper<ConstraintViol
     @Override
     public Response toResponse(ConstraintViolationException exception) {
         ErrorMessage error = new ErrorMessage();
-        error.setRequestedURL(request.getRequestURL().toString(),request.getQueryString());
+        error.setRequestedURL(URLUtil.getCurrentURL(request));
 
         ConstraintViolationException constraintViolation = (ConstraintViolationException) exception;
         for (ConstraintViolation violation:constraintViolation.getConstraintViolations()) {

@@ -1,6 +1,7 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.exception;
 
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.ErrorMessage;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.util.URLUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
@@ -32,7 +33,7 @@ public class ParamExceptionMapper implements ExceptionMapper<ParamException> {
     public Response toResponse(ParamException exception) {
         logger.error("Param exception error has occured with error message: ", exception.getMessage(), exception);
         ErrorMessage error = new ErrorMessage();
-        error.setRequestedURL(request.getRequestURL().toString(),request.getQueryString());
+        error.setRequestedURL(URLUtil.getCurrentURL(request));
         error.addErrorMessage(REQUEST_PARAMETER_INVALID_VALUE
                 .replaceFirst("\\{parameterName\\}", exception.getParameterName()));
         return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
