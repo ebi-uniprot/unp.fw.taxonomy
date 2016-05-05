@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<taxonomies xmlns="http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomy">
+    <taxonomies>
+        <taxonomy>
+            <taxonomyId>1000</taxonomyId>
+            <mnemonic>Children 1 mnemonic name</mnemonic>
+            <scientificName>Children 1 Scientific Name</scientificName>
+            <commonName>Children 1 common Name</commonName>
+            <synonym>Synonym Name</synonym>
+            <rank>Rank name</rank>
+        </taxonomy>
+        <taxonomy>
+            <taxonomyId>2000</taxonomyId>
+            <mnemonic>Children 2 mnemonic name</mnemonic>
+            <scientificName>Children 2 Scientific Name</scientificName>
+            <commonName>Children 2 common Name</commonName>
+            <synonym>Synonym Name</synonym>
+            <rank>Rank name</rank>
+        </taxonomy>
+        <taxonomy>
+            <taxonomyId>3000</taxonomyId>
+            <mnemonic>Children 3 mnemonic name</mnemonic>
+            <scientificName>Children 3 Scientific Name</scientificName>
+            <commonName>Children 3 common Name</commonName>
+            <synonym>Synonym Name</synonym>
+            <rank>Rank name</rank>
+        </taxonomy>
+    </taxonomies>
+</taxonomies>

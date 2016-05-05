@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomy" elementFormDefault="qualified" targetNamespace="http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomy" version="1.0">
+
+  <xs:element name="errorMessage" type="tns:taxonomyError"/>
+
+  <xs:element name="taxonomies" type="tns:taxonomies"/>
+
+  <xs:element name="taxonomyNode" type="tns:taxonomyNode"/>
+
+  <xs:complexType name="taxonomyNode">
+    <xs:annotation>
+      <xs:documentation><![CDATA[This class represents a Taxonomy Element(node) in the taxonomy Tree.
+It contains annotations that will be used by Jackson Parser to build XML or JSON response
+Created by lgonzales on 19/02/16.]]></xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="taxonomyId" type="xs:long"/>
+      <xs:element name="mnemonic" type="xs:string"/>
+      <xs:element minOccurs="0" name="scientificName" type="xs:string"/>
+      <xs:element minOccurs="0" name="commonName" type="xs:string"/>
+      <xs:element minOccurs="0" name="synonym" type="xs:string"/>
+      <xs:element minOccurs="0" name="rank" type="xs:string"/>
+      <xs:element minOccurs="0" name="parent" type="tns:taxonomyNode"/>
+      <xs:element minOccurs="0" name="parentLink" type="xs:string"/>
+      <xs:element minOccurs="0" name="children">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="child" type="tns:taxonomyNode"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element minOccurs="0" name="childrenLinks">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="childLink" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element minOccurs="0" name="siblings">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="sibling" type="tns:taxonomyNode"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element minOccurs="0" name="siblingsLinks">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="siblingLinks" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="taxonomyError">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="requestedURL" type="xs:string"/>
+      <xs:element minOccurs="0" name="errorMessages">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="errorMessage" type="xs:string"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="taxonomies">
+    <xs:annotation>
+      <xs:documentation><![CDATA[This class represents the REST response body object that will be returned when user request
+/taxonomy/name/{taxonomyName}, it has a list of taxonomies with the searched {taxonomyName}
+It contains annotations that will be used by Jackson Parser to build XML or JSON response format
+Created by lgonzales on 08/03/16.]]></xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element minOccurs="0" name="taxonomies">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="taxonomy" type="tns:taxonomyNode"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
