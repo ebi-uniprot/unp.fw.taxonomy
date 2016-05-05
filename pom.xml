@@ -7,22 +7,17 @@
     <groupId>uk.ac.ebi.uniprot</groupId>
     <artifactId>taxonomy-service-restful</artifactId>
     <version>0.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <modules>
+        <module>taxonomy-restful</module>
+        <module>taxonomy-import</module>
+    </modules>
+    <packaging>pom</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <slf4j.version>1.7.16</slf4j.version>
         <logback.version>1.1.5</logback.version>
-        <jackson.version>2.7.1</jackson.version>
-        <glassfish-hk2.version>2.4.0</glassfish-hk2.version>
-        <servlet-api.version>3.1.0</servlet-api.version>
-        <swagger.version>1.5.7</swagger.version>
-        <neo4j.version>2.3.3</neo4j.version>
-        <jersey-container-servlet.version>2.22.2</jersey-container-servlet.version>
-        <rest-assured.version>2.8.0</rest-assured.version>
-        <rest.host.url>www.ebi.ac.uk</rest.host.url>
-        <rest.basePath>/uniprot/services/restful</rest.basePath>
 
         <surefire-version>2.19.1</surefire-version>
         <failsafe-version>2.19.1</failsafe-version>
@@ -45,6 +40,8 @@
         <!--this should be overrided in the jenkins release job to: -->
         <!--/nfs/public/rw/uniprot/restful. -->
         <restful-prod-release-dir>${project.basedir}</restful-prod-release-dir>
+
+        <neo4j.version>2.3.3</neo4j.version>
     </properties>
 
     <dependencies>
@@ -68,69 +65,6 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>${servlet-api.version}</version>
-        </dependency>
-
-        <!-- "Application server" dependencies  -->
-        <dependency>
-            <groupId>org.glassfish.jersey.containers</groupId>
-            <artifactId>jersey-container-grizzly2-servlet</artifactId>
-            <version>${jersey-container-servlet.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.ext</groupId>
-            <artifactId>jersey-bean-validation</artifactId>
-            <version>${jersey-container-servlet.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.hk2</groupId>
-            <artifactId>hk2-locator</artifactId>
-            <version>${glassfish-hk2.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.hk2</groupId>
-            <artifactId>guice-bridge</artifactId>
-            <version>${glassfish-hk2.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.glassfish.hk2</groupId>
-            <artifactId>hk2-metadata-generator</artifactId>
-            <version>${glassfish-hk2.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.jaxrs</groupId>
-            <artifactId>jackson-jaxrs-json-provider</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.mycila.guice.extensions</groupId>
-            <artifactId>mycila-guice-jsr250</artifactId>
-            <version>3.6.ga</version>
         </dependency>
 
         <!-- test dependencies  -->
@@ -159,25 +93,10 @@
             <version>1.3</version>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>com.jayway.restassured</groupId>
-            <artifactId>rest-assured</artifactId>
-            <version>${rest-assured.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.jayway.restassured</groupId>
-            <artifactId>json-path</artifactId>
-            <version>${rest-assured.version}</version>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j-kernel</artifactId>
-            <version>2.3.3</version>
+            <version>${neo4j.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
@@ -185,27 +104,9 @@
         <dependency>
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j-io</artifactId>
-            <version>2.3.3</version>
+            <version>${neo4j.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
-        </dependency>
-
-        <!-- swagger dependencies to document rest services-->
-        <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-core</artifactId>
-            <version>${swagger.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.swagger</groupId>
-            <artifactId>swagger-jersey2-jaxrs</artifactId>
-            <version>${swagger.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.glassfish.jersey.containers</groupId>
-                    <artifactId>jersey-container-servlet-core</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!--neo4j libraries -->
@@ -249,34 +150,6 @@
                 </executions>
 
             </plugin>
-
-            <!-- Generate XSD files based on Model classes -->
-            <plugin>
-                            <groupId>org.codehaus.mojo</groupId>
-                            <artifactId>jaxb2-maven-plugin</artifactId>
-                            <version>2.2</version>
-                            <executions>
-                                <execution>
-                                    <id>schemagen</id>
-                                    <goals>
-                                        <goal>schemagen</goal>
-                                    </goals>
-                                </execution>
-                            </executions>
-                            <configuration>
-                                <sources>
-                                    <source>src/main/java/uk/ac/ebi/uniprot/taxonomyservice/restful/rest/response</source>
-                                    <source>src/main/java/uk/ac/ebi/uniprot/taxonomyservice/restful/domain</source>
-                                </sources>
-                                <outputDirectory>${project.basedir}/src/main/resources/staticContent/xsd</outputDirectory>
-                                <transformSchemas>
-                                    <transformSchema>
-                                        <uri>http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomy</uri>
-                                        <toFile>taxonomy.xsd</toFile>
-                                    </transformSchema>
-                                </transformSchemas>
-                            </configuration>
-                        </plugin>
 
             <plugin>
                 <groupId>org.jacoco</groupId>

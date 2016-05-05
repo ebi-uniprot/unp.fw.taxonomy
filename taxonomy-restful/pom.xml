@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>taxonomy-rest</artifactId>
+    <artifactId>taxonomy-restful</artifactId>
     <properties>
         <jackson.version>2.7.1</jackson.version>
         <glassfish-hk2.version>2.4.0</glassfish-hk2.version>
