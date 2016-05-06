@@ -21,8 +21,8 @@ import org.slf4j.LoggerFactory;
  * Created by lgonzales on 19/02/16.
  */
 public class GuiceModule extends AbstractModule {
-
     public static final String PACKAGE_SCAN = "uk.ac.ebi.uniprot.taxonomyservice.restful.rest";
+
     private static final Logger logger = LoggerFactory.getLogger(GuiceModule.class);
     private static final String CONFIG_PROPERTY_FILE = "config.properties";
 
@@ -37,14 +37,13 @@ public class GuiceModule extends AbstractModule {
      */
     @Override protected void configure() {
         Properties configProperties = loadProperties();
-        Names.bindProperties(binder(),configProperties);
+        Names.bindProperties(binder(), configProperties);
 
         logger.info("Registering data neo4j access service");
         this.bind(TaxonomyDataAccess.class).to(Neo4jTaxonomyDataAccess.class).asEagerSingleton();
 
         app.packages(PACKAGE_SCAN);
-        app.packages(PACKAGE_SCAN+".request");
-
+        app.packages(PACKAGE_SCAN + ".request");
     }
 
     /**
@@ -59,6 +58,7 @@ public class GuiceModule extends AbstractModule {
         } catch (IOException e) {
             logger.warn("unable to load " + CONFIG_PROPERTY_FILE + " with getResourceAsStream");
         }
+
         if (properties.isEmpty()) {
             try (InputStream propertyInputStream = new FileInputStream(CONFIG_PROPERTY_FILE)) {
                 properties.load(propertyInputStream);
@@ -68,7 +68,5 @@ public class GuiceModule extends AbstractModule {
         }
 
         return properties;
-
     }
-
 }
