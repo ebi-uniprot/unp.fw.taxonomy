@@ -11,13 +11,12 @@ import org.slf4j.LoggerFactory;
  * It is a Lifecycle listener that is responsible for start/stop the custom service that is required
  * by the Rest Services.
  *
- * The lifecycle listener will be called when Jersey container start/stop or reload. Inject any service
- * that will need to be start/stop container wise should be injected here and start/stop accordingly.
+ * The lifecycle listener will be called when Jersey container starts/stops or reloads. Inject any service
+ * that requires its initialization/termination to be managed by the container.
  *
  * Created by lgonzales on 19/02/16.
  */
 public class ServiceLifecycleManager extends AbstractContainerLifecycleListener {
-
     private static final Logger logger = LoggerFactory.getLogger(ServiceLifecycleManager.class);
 
     private final Injector guiceInjector;
@@ -29,7 +28,6 @@ public class ServiceLifecycleManager extends AbstractContainerLifecycleListener 
 
     @Override
     public void onStartup(Container container) {
-
     }
 
     @Override
@@ -45,5 +43,4 @@ public class ServiceLifecycleManager extends AbstractContainerLifecycleListener 
         guiceInjector.getInstance(CloseableInjector.class).close();
         logger.info("ServiceInitor Shutdown");
     }
-
 }
