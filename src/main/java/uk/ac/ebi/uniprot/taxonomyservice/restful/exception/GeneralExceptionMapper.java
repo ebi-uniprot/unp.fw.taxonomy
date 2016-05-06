@@ -34,24 +34,33 @@ public class GeneralExceptionMapper implements ExceptionMapper<Exception> {
     public Response toResponse(Exception exception) {
         logger.error("Http Request Error has occured with error message: ", exception.getMessage(), exception);
         ErrorMessage error = new ErrorMessage();
-        error.setRequestedURL(request.getRequestURL().toString(),request.getQueryString());
+        error.setRequestedURL(request.getRequestURL().toString(), request.getQueryString());
 
         if (exception instanceof NotFoundException) {
             error.addErrorMessage(API_RESPONSE_404);
-            return Response.status(Response.Status.NOT_FOUND).entity(error).type(MediaType.APPLICATION_JSON_TYPE)
+            return Response
+                    .status(Response.Status.NOT_FOUND)
+                    .entity(error)
+                    .type(MediaType.APPLICATION_JSON_TYPE)
                     .build();
         } else if (exception instanceof BadRequestException) {
-            error.addErrorMessage(API_RESPONSE_400+" "+exception.getMessage());
-            return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
+            error.addErrorMessage(API_RESPONSE_400 + " " + exception.getMessage());
+            return Response
+                    .status(Response.Status.BAD_REQUEST)
+                    .entity(error)
+                    .build();
         } else if (exception instanceof javax.ws.rs.WebApplicationException) {
             error.addErrorMessage(API_RESPONSE_500);
             javax.ws.rs.WebApplicationException e = (javax.ws.rs.WebApplicationException) exception;
             return Response
-                    .status(e.getResponse().getStatus()).entity(error)
+                    .status(e.getResponse().getStatus())
+                    .entity(error)
                     .build();
         } else {
             error.addErrorMessage(API_RESPONSE_500);
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(error)
+            return Response
+                    .status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(error)
                     .build();
         }
     }
