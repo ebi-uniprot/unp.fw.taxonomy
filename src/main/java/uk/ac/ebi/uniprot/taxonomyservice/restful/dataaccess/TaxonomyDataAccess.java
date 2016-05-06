@@ -5,76 +5,78 @@ import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.PathRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
 
 /**
- * Interface used to retrieve Taxonomy information from a datasource using search criteria
+ * Interface used to retrieve Taxonomy information from the Taxonomy datasource.
  *
  * Created by lgonzales on 19/02/16.
  */
 public interface TaxonomyDataAccess {
     /**
-     * This method return details about searched {@param taxonomyId}, including it siblings and children
+     * Retrieves the taxonomy node details, including its siblings and children, for the given {@param taxonomyId}.
      *
-     * @param taxonomyId identification of taxonomy
-     * @return details about searched taxonomy
+     * @param taxonomyId taxonomic node identifier
+     * @return the taxonomic node that maps to the taxonomyId, or null if the id does not mpa to a node
      */
     TaxonomyNode getTaxonomyDetailsById(long taxonomyId);
 
     /**
-     * This method return list of siblings of a searched {@param taxonomyId}.
+     * Lists all siblings for the taxonomic node that maps to {@param taxonomyId}.
      *
-     * @param taxonomyId identification of taxonomy siblings
-     * @return details about searched taxonomy
+     * @param taxonomyId id of the node the siblings are associated to
+     * @return siblings of the node associated to the taxonomyId
      */
     Taxonomies getTaxonomySiblingsById(long taxonomyId);
 
     /**
-     * This method return the parent of a searched {@param taxonomyId}.
+     * Retrieves the parent of the node associated to the identifier {@param taxonomyId}.
      *
-     * @param taxonomyId identification of taxonomy
-     * @return details about searched taxonomy parent
+     * @param taxonomyId taxonomy identifier
+     * @return parent taxonomic node
      */
     TaxonomyNode getTaxonomyParentById(long taxonomyId);
 
     /**
-     * This method return list of children of a searched {@param taxonomyId}.
+     * Retrieves all of the direct child nodes for the given {@param taxonomyId}.
      *
-     * @param taxonomyId identification of taxonomy
-     * @return details about searched taxonomy children
+     * @param taxonomyId taxonomy identifier
+     * @return returns all direct child nodes
      */
     Taxonomies getTaxonomyChildrenById(long taxonomyId);
 
     /**
-     * This method return the details of all taxonomies names that contains {@param taxonomyName}
+     * Retrieves all nodes that directly map to the {@param taxonomyName}
      *
-     * @param taxonomyName Name given to a taxonomy element
-     * @return List of taxonomies
+     * Note: Taxonomy names do not always map 1-to-1 to a node. A single name can map to more than one node.
+     *
+     * @param taxonomyName Name of the taxonomy node to retrieve
+     * @return Set of matching taxonomy nodes
      */
     Taxonomies getTaxonomyDetailsByName(String taxonomyName);
 
     /**
-     * This method return all nodes that are between  {@param taxonomyId1} and {@param taxonomyId2}
+     * Provides a direct path between the node that maps to {@param taxonomyId1} and {@param taxonomyId2}.
      *
-     * @param taxonomyId1 identification of taxonomy
-     * @param taxonomyId2 identification of taxonomy
-     * @return List of taxonomies
+     * @param startId taxonomy identifier of the start node
+     * @param stopId taxonomy identifier of the stop node
+     * @return start node with a string of nodes that eventually lead to the stop node
      */
-    TaxonomyNode checkRelationshipBetweenTaxonomies(long taxonomyId1, long taxonomyId2);
+    TaxonomyNode checkRelationshipBetweenTaxonomies(long startId, long stopId);
 
     /**
-     * This method return all nodes that has relationship with taxonomyId in a specific direction
-     * and only depth levels.
+     * Retrieves all nodes associated to a given taxonomy id, for the given direction {up, down}, up to the specified
+     * level.
      *
      * @param nodePathParams {@link PathRequestParams} are taxonomyId, direction and depth
-     * @return List of taxonomies
+     * @return Taxonomic nodes that fulfill the search criteria
      */
     TaxonomyNode getTaxonomyPath(PathRequestParams nodePathParams);
 
     /**
-     * This method check if exist any historical change for {@param id} and it there is, it will return the the
-     * new identification of taxonomy and if there is not, it will return -1.
+     * Checks to see if the provided {@param taxonomyId} is still current, or if the node associated to the id has
+     * been changed and associated to a newer id. If the id is historical the most up to date id for the node will be
+     * returned, if the id is the current then -1 is returned.
      *
-     * @param id identification of taxonomy
-     * @return new identification of taxonomy if exist
+     * @param taxonomyId taxonomic node identifier
+     * @return a more recent taxonomic node identifier, or -1 if the provided id is the most current
      */
-    long checkTaxonomyIdHistoricalChange(long id);
-
+    long checkTaxonomyIdHistoricalChange(long taxonomyId);
 }
