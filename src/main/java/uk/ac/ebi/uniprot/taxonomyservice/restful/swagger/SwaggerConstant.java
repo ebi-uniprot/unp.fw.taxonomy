@@ -51,25 +51,25 @@ public class SwaggerConstant {
     public static final String API_RESPONSE_303 = "Taxonomy identification changed and new identification is now " +
             "{newId}.";
 
-    public static final String API_RESPONSE_404 = "Taxonomy entry is not found.";
+    public static final String API_RESPONSE_404 = "Taxonomy entry not found.";
 
-    public static final String API_RESPONSE_400 = "Invalid request parameters.";
+    public static final String API_RESPONSE_400 = "Invalid request parameters:";
 
-    public static final String ID_PARAMETER_IS_REQUIRED = "id parameter is required";
-    public static final String NAME_PARAMETER_IS_REQUIRED = "name parameter is required";
-    public static final String DEPTH_PARAMETER_IS_REQUIRED = "depth parameter is required";
-    public static final String DEPTH_PARAM_MIN_MAX = "depth param value must be between 1 and 5";
-    public static final String DIRECTION_VALID_VALUES = "direction parameter value must be top or bottom";
-    public static final String DIRECTION_PARAMETER_IS_REQUIRED = "direction parameter is required";
-    public static final String TO_PARAMETER_IS_REQUIRED = "to parameter is required";
-    public static final String FROM_PARAMETER_IS_REQUIRED = "from parameter is required";
-    public static final String TO_PARAMETER_VALID_NUMBER = "The paramenter to must be a valid number";
-    public static final String FROM_PARAMETER_VALID_NUMBER = "The paramenter from must be a valid number";
-    public static final String ID_PARAMETER_VALID_NUMBER = "The paramenter id must be a valid number";
+    public static final String ID_PARAMETER_IS_REQUIRED = "\"id\" is required";
+    public static final String NAME_PARAMETER_IS_REQUIRED = "\"name\" is required";
+    public static final String DEPTH_PARAMETER_IS_REQUIRED = "\"depth\" is required";
+    public static final String DEPTH_PARAM_MIN_MAX = "\"depth\" must be between 1 and 5";
+    public static final String DIRECTION_VALID_VALUES = "\"direction\" must be top or bottom";
+    public static final String DIRECTION_PARAMETER_IS_REQUIRED = "\"direction\" is required";
+    public static final String TO_PARAMETER_IS_REQUIRED = "\"to\" is required";
+    public static final String FROM_PARAMETER_IS_REQUIRED = "\"from\" is required";
+    public static final String TO_PARAMETER_VALID_NUMBER = "\"to\" must be a valid taxonomy identifier";
+    public static final String FROM_PARAMETER_VALID_NUMBER = "\"from\" must be a valid taxonomy identifier";
+    public static final String ID_PARAMETER_VALID_NUMBER = "\"id\" must be a valid taxonomy identifier";
 
     public static final String API_RESPONSE_500 =
-            "Unexpected error happened, could you please try again later";
+            "Unexpected error has occurred. Could you please try again later.";
 
     public static final String REQUEST_PARAMETER_INVALID_VALUE =
-            "Request parameter {parameterName} contains not supported value.";
+            "Request parameter {parameterName} contains an unsupported value.";
 }
