@@ -16,7 +16,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * This class is responsible to test GeneralExceptionMapper methods
+ * This class is responsible to test GeneralExceptionMapper methods.
+ *
  * Created by lgonzales on 30/03/16.
  */
 public class GeneralExceptionMapperTest {
@@ -48,7 +49,7 @@ public class GeneralExceptionMapperTest {
     public void assertBadRequestExceptionReturnErrorMessage() {
         ErrorMessage expectedError = new ErrorMessage();
         expectedError.setRequestedURL(ResponseAssert.REQUEST_URL);
-        expectedError.addErrorMessage(SwaggerConstant.API_RESPONSE_400+" BadRequest");
+        expectedError.addErrorMessage(SwaggerConstant.API_RESPONSE_400 + " BadRequest");
 
         when(request.getRequestURL()).thenReturn(new StringBuffer(ResponseAssert.REQUEST_URL));
 
@@ -80,12 +81,9 @@ public class GeneralExceptionMapperTest {
         ResponseAssert.assertResponseErrorMessage(expectedError, response);
     }
 
-    private class MockedGeneralExceptionMapper extends GeneralExceptionMapper{
-
-        public void setRequest(HttpServletRequest request){
+    private class MockedGeneralExceptionMapper extends GeneralExceptionMapper {
+        public void setRequest(HttpServletRequest request) {
             this.request = request;
         }
-
     }
-
 }
