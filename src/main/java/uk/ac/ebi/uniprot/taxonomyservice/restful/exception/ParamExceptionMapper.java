@@ -31,7 +31,7 @@ public class ParamExceptionMapper implements ExceptionMapper<ParamException> {
 
     @Override
     public Response toResponse(ParamException exception) {
-        logger.error("Param exception error has occured with error message: ", exception.getMessage(), exception);
+        logger.error("Param exception error has occurred with error message: ", exception.getMessage(), exception);
         ErrorMessage error = new ErrorMessage();
         error.setRequestedURL(URLUtil.getCurrentURL(request));
         error.addErrorMessage(REQUEST_PARAMETER_INVALID_VALUE
