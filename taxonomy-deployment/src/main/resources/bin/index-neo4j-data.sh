@@ -12,6 +12,9 @@ UPDATE_BASE="$(readlink -f $CONF_PATH/../update)"
 NEO4J_DATABASE_PATH="$UPDATE_BASE/neo4j-taxonomy-database"
 PERMITTED_USER="uni_adm"
 
+# ======= OVERRRIDE EXISTINGS ENVIRONMENT VARIABLES ======
+JAVA_HOME=/nfs/web-hx/uniprot/software/java/jdks/latest_1.8
+
 # ======= check the right user runs this script =======================================
 if ! echo "$PERMITTED_USER" | grep "$USER" > /dev/null 2>&1; then
     echo "This service can only be run as user(s), '$PERMITTED_USER'";
@@ -39,9 +42,9 @@ fi
 
 # ======= execute neo4j import Job ==========================================
 IMPORT_JAR_PATH="$UPDATE_BASE/lib/$TAXONOMY_IMPORT_ARTIFACT_ID-$TAXONOMY_VERSION.jar"
-JAVA_OPTS="$TAXONOMY_IMPORT_JVM_MEM_MAX $TAXONOMY_IMPORT_JVM_MEM_MAX -Dneo4j.database.path=$NEO4J_DATABASE_PATH"
+JAVA_OPTS="$TAXONOMY_IMPORT_JVM_MEM_MAX $TAXONOMY_IMPORT_JVM_MEM_MIN -Dneo4j.database.path=$NEO4J_DATABASE_PATH"
 echo "running java command $JAVA_OPTS -jar $IMPORT_JAR_PATH"
-java $JAVA_OPTS -jar $IMPORT_JAR_PATH
+$JAVA_HOME/bin/java $JAVA_OPTS -jar $IMPORT_JAR_PATH
 
 if [ "ls -A $NEO4J_DATABASE_PATH" ]
 then
@@ -49,7 +52,7 @@ then
 else
   echo "ERROR: There is nothing in $NEO4J_DATABASE_PATH folder"
 fi
-echo"done!!"
+echo "done!!"
 
 
 

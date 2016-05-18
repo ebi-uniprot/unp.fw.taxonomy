@@ -234,7 +234,7 @@ public class TaxonomyImportConfig {
             DriverManagerDataSource ds = new DriverManagerDataSource(databaseURL, databaseUserName, databasePassword);
             ds.setDriverClassName(databaseDriverClassName);
             this.readDatasource = ds;
-            logger.info("TaxonomyDataSource initialized");
+            logger.info("TaxonomyDataSource initialized for "+databaseURL);
         }
         return this.readDatasource;
 
