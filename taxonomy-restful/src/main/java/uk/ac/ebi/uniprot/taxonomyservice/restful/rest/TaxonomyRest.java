@@ -38,7 +38,7 @@ public class TaxonomyRest {
     public static final Logger logger = LoggerFactory.getLogger(TaxonomyRest.class);
 
     public TaxonomyRest() {
-        logger.debug("created instance of TaxonomyRest");
+        //logger.debug("created instance of TaxonomyRest");
     }
 
     @Inject
@@ -63,7 +63,7 @@ public class TaxonomyRest {
             @PathParam("id")
             @Pattern(regexp = "[0-9]+", message = ID_PARAMETER_VALID_NUMBER)
             String id) {
-        logger.debug(">>TaxonomyRest.getTaxonomyDetailsById");
+        //logger.debug(">>TaxonomyRest.getTaxonomyDetailsById");
 
         long taxonomyId = Long.valueOf(id);
         TaxonomyNode response = dataAccess.getTaxonomyDetailsById(taxonomyId,URLUtil.getTaxonomyIdBasePath(request));

@@ -10,6 +10,7 @@
     <modules>
         <module>taxonomy-restful</module>
         <module>taxonomy-import</module>
+        <module>taxonomy-deployment</module>
     </modules>
     <packaging>pom</packaging>
 

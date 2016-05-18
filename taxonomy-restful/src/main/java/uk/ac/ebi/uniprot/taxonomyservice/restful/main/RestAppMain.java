@@ -5,12 +5,21 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.Servlet;
+import javax.ws.rs.ProcessingException;
+import jersey.repackaged.com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.glassfish.grizzly.http.server.HttpHandlerRegistration;
 import org.glassfish.grizzly.http.server.HttpServer;
+import org.glassfish.grizzly.http.server.NetworkListener;
+import org.glassfish.grizzly.http.server.ServerConfiguration;
 import org.glassfish.grizzly.http.server.accesslog.AccessLogBuilder;
 import org.glassfish.grizzly.servlet.ServletRegistration;
 import org.glassfish.grizzly.servlet.WebappContext;
+import org.glassfish.grizzly.threadpool.GrizzlyExecutorService;
+import org.glassfish.grizzly.threadpool.ThreadPoolConfig;
+import org.glassfish.grizzly.utils.Charsets;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
+import org.glassfish.jersey.grizzly2.httpserver.internal.LocalizationMessages;
+import org.glassfish.jersey.process.JerseyProcessingUncaughtExceptionHandler;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,7 +88,24 @@ public class RestAppMain {
             Map<String, String> initParams, Map<String, String> contextInitParams, String taxonomyServiceContextPath)
             throws IOException {
 
-        HttpServer server = GrizzlyHttpServerFactory.createHttpServer(baseUri);
+        String host = baseUri.getHost() == null?"0.0.0.0":baseUri.getHost();
+        int port = baseUri.getPort() == -1?(80):baseUri.getPort(); // SSL
+        NetworkListener listener = new NetworkListener("grizzly", host, port);
+
+        ThreadPoolConfig threadPoolConfig = listener.getTransport().getWorkerThreadPoolConfig();
+        threadPoolConfig.setThreadFactory((new ThreadFactoryBuilder()).setNameFormat("grizzly-http-server-%d")
+                .setUncaughtExceptionHandler(new JerseyProcessingUncaughtExceptionHandler()).build());
+        threadPoolConfig.setCorePoolSize(10);
+        threadPoolConfig.setMaxPoolSize(100);
+        listener.setSecure(false);
+
+        HttpServer server = new HttpServer();
+        server.addListener(listener);
+        ServerConfiguration config = server.getServerConfiguration();
+        config.setPassTraceRequest(true);
+        config.setDefaultQueryEncoding(Charsets.UTF8_CHARSET);
+
+
 
         // adding services
         WebappContext context = new WebappContext("GrizzlyContext", taxonomyServiceContextPath);

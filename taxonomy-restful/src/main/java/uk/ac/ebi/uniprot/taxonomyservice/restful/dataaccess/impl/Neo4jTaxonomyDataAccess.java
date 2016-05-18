@@ -14,6 +14,7 @@ import javax.annotation.PostConstruct;
 import org.neo4j.graphalgo.impl.util.PathImpl;
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
+import org.neo4j.graphdb.factory.GraphDatabaseSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,6 +78,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
         if (this.neo4jDb == null) {
             logger.debug("Creating an instance for Neo4jTaxonomyDataAccess and using neo4jDb filePath: "+filePath);
             neo4jDb = new GraphDatabaseFactory().newEmbeddedDatabase(new File(filePath));
+            //GraphDatabaseSettings
             registerStop(neo4jDb);
         }
 
@@ -102,13 +104,15 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
     @Override
     public TaxonomyNode getTaxonomyDetailsById(long taxonomyId, String basePath) {
         TaxonomyNode result = null;
-
+        long startTime = System.currentTimeMillis();
         Map<String, Object> params = new HashMap<>();
         params.put("id", "" + taxonomyId);
         try (Transaction ignored = neo4jDb.beginTx();
                 Result queryResult = neo4jDb.execute(GET_TAXONOMY_DETAILS_BY_ID_ONE_CYPHER_QUERY, params)) {
             result = getTaxonomyFromQueryResult(basePath, queryResult).getOrDefault(taxonomyId,null);
         }
+        long elapsed = System.currentTimeMillis() - startTime;
+        logger.debug("NeoQuery Time: "+elapsed);
         return result;
     }
 
