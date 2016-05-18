@@ -11,6 +11,7 @@
         <module>taxonomy-restful</module>
         <module>taxonomy-import</module>
         <module>taxonomy-deployment</module>
+        <module>taxonomy-stress-test</module>
     </modules>
     <packaging>pom</packaging>
 
