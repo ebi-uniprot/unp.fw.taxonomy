@@ -27,9 +27,20 @@ TAXONOMY_NEO4J_DIR="$(readlink -f $SERVICE_BIN_PATH/../$TAXONOMY_DATABASE_DIR)"
 function executeBuildProcess(){
     echo "=================== 1- Get most update taxonomy source code from git ================================"
     cd $TAXONOMY_REPO_DIR
-    git fetch
-    git checkout $GIT_BRANCH
-    git pull
+    $GIT fetch
+    if [ "$GIT_BRANCH" == "master" ]
+    then
+       echo "checkout from master"
+       $GIT checkout $GIT_BRANCH || {
+            echo "master is already being used"
+       }
+    else
+       echo "checkout from branch $GIT_BRANCH"
+       $GIT checkout -b $GIT_BRANCH || {
+            echo "$GIT_BRANCH is already being used"
+       }
+    fi
+    $GIT pull origin $GIT_BRANCH
     cd $SERVICE_BIN_PATH
     echo "=================== 2- Build taxonomy-restful-service project libs =================================="
     $SERVICE_BIN_PATH/build-taxonomy-jars.sh

@@ -22,16 +22,25 @@ TAXONOMY_REPO_DIR=$CURRENT_PATH/git-repository/unp.fw.taxonomy
 
 echo "Pulling information from git at $GIT_BRANCH"
 cd $TAXONOMY_REPO_DIR
-git fetch
-git checkout $GIT_BRANCH
-git pull
+$GIT fetch
+if [ "$GIT_BRANCH" == "master" ]
+then
+   echo "checkout from master"
+   $GIT checkout $GIT_BRANCH || {
+        echo "master is already being used"
+   }
+else
+   echo "checkout from branch $GIT_BRANCH"
+   $GIT checkout -b $GIT_BRANCH || {
+        echo "$GIT_BRANCH is already being used"
+   }
+fi
+$GIT pull origin $GIT_BRANCH
 cd $CURRENT_PATH
 
 echo "Moving deploying scripts from $TAXONOMY_REPO_DIR/taxonomy-deployment/src/main/resources/bin to $CURRENT_PATH/bin"
 
-rm -rf $CURRENT_PATH/bin/*.sh
-cp $TAXONOMY_REPO_DIR/taxonomy-deployment/src/main/resources/bin/*.sh $CURRENT_PATH/bin
+rm -rf $CURRENT_PATH/bin/*
+cp $TAXONOMY_REPO_DIR/taxonomy-deployment/src/main/resources/bin/* $CURRENT_PATH/bin
 
 echo "Done"
-
-
