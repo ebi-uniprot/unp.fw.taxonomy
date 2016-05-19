@@ -23,7 +23,7 @@ SERVICE_BIN_PATH="$(pwd -P)"
 SERVICE_TARGET_PATH="$(readlink -f $SERVICE_BIN_PATH/../$TARGET_DIR)"
 LIB_DIR_PATH="$SERVICE_TARGET_PATH/$LIB_DIR"
 TAXONOMY_REPO_DIR="$SERVICE_BIN_PATH/../git-repository/unp.fw.taxonomy"
-export JAVA_HOME=$JAVA_PATH
+export JAVA_HOME=$JAVA_PATH/bin
 
 if [ ! -d "$TAXONOMY_REPO_DIR" ]; then
     echo " please make sure you have cloned your git repository at "

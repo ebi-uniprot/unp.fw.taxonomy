@@ -78,7 +78,7 @@ while true; do
              break;;
         No) echo "Deploy taxonomy canceled ";
              exit 1;;
-        * ) echo "Please answer yes or no.";;
+        * ) echo "Please answer Yes or No.";;
     esac
 done
 echo "done"

@@ -60,7 +60,7 @@ fi
 
 # just use nohup for now, may need to use something better like
 # http://www.source-code.biz/snippets/java/7.htm
-export JAVA_HOME=$JAVA_PATH
+export JAVA_HOME=$JAVA_PATH/bin
 
 nohup java -server -XX:+UseG1GC $TAXONOMY_RESTFUL_JVM_MEM_MAX $TAXONOMY_RESTFUL_JVM_MEM_MIN  \
 -Dcom.sun.management.jmxremote  \
