@@ -1,103 +1,73 @@
 #!/bin/bash
 
-# unoffical bash strict mode.
+# This script will execute all steps necessary to deploy taxonomy taxonomy service
 # please Refer to http://redsymbol.net/articles/unofficial-bash-strict-mode/ for details.
 set -euo pipefail
 IFS=$'\n\t'
 
-SERVICES=${1:-}
-
-if [ -z $SERVICES ]
-  then
-    echo "no service is specified"
+# ======= read the variables used by the control scripts =======================================
+source "environment.properties" || {
+    echo "Please create a file called, environment.properties, containing the necessary environment variables."
     exit 1;
-  else
-    echo "starting services: $SERVICES"
-    export RestServices=$SERVICES
-fi
+}
 
-
-# check current user,  only uni_adm can runs it.
-if [ $USER != "uni_adm" ] ; then
-    echo "This service can only be run with user 'uni_adm'";
+# ======= check the right user runs this script =======================================
+if ! echo "$PERMITTED_USER" | grep "$USER" > /dev/null 2>&1; then
+    echo "This service can only be run as user(s), '$PERMITTED_USER'";
     exit 1;
 fi;
 
-SERVICE_PATH="/nfs/public/rw/uniprot/restful"
-UPDATE_PATH="$SERVICE_PATH/update"
-UPDATE_FILES="www services/bin services/lib"
-
-#bring down the service, if it is already running.
-$UPDATE_PATH/services/bin/stop.sh || true
-
-#copy the files from the update directory
-pushd .
-cd $UPDATE_PATH
-cp -rf www  $SERVICE_PATH
-cp -rf services/bin  $SERVICE_PATH/services
-cp -rf services/lib  $SERVICE_PATH/services
-popd
-
-#start the services.
-$SERVICE_PATH/services/bin/start.sh $SERVICES
+SERVICE_BIN_PATH="$(pwd -P)"
+TAXONOMY_REPO_DIR="$SERVICE_BIN_PATH/../git-repository/unp.fw.taxonomy"
+SERVICE_TARGET_PATH="$(readlink -f $SERVICE_BIN_PATH/../$TARGET_DIR)"
+TAXONOMY_LIB_DIR="$(readlink -f $SERVICE_BIN_PATH/../$LIB_DIR)"
+TAXONOMY_NEO4J_DIR="$(readlink -f $SERVICE_BIN_PATH/../$TAXONOMY_DATABASE_DIR)"
 
 
+function executeBuildProcess(){
+    echo "=================== 1- Get most update taxonomy source code from git ================================"
+    cd $TAXONOMY_REPO_DIR
+    git fetch
+    git checkout $GIT_BRANCH
+    git pull
+    cd $SERVICE_BIN_PATH
+    echo "=================== 2- Build taxonomy-restful-service project libs =================================="
+    $SERVICE_BIN_PATH/build-taxonomy-jars.sh
+    echo "=================== 3- Execute Neo4J taxonomy-import process ========================================"
+    $SERVICE_BIN_PATH/index-neo4j-data.sh
+    echo "=================== 4- Stop taxonomy service ========================================================"
+    $SERVICE_BIN_PATH/stop.sh
+    echo "=================== 5- Update Neo4J and taxonomy libs and create backup ============================="
+    echo "Moving files from target to lib and data dir"
 
+    cp $SERVICE_TARGET_PATH/$LIB_DIR/*.jar $TAXONOMY_LIB_DIR
+    rm -rf $TAXONOMY_NEO4J_DIR
+    mv $SERVICE_TARGET_PATH/$TAXONOMY_DATABASE_DIR  $TAXONOMY_NEO4J_DIR
 
+    rm -rf $SERVICE_TARGET_PATH
 
-
-
-
-
-BACKUP_LIB_DIR="$SERVICE_PATH/lib/backups"
-TIMESTAMPED_BACKUP_DIR="$(addTimeStamp $BACKUP_LIB_DIR/version)"
-
-# ======= FUNCTIONS ======================================================================
-# ======= take a string and add a time-stamp to it =======================================
-function addTimeStamp() {
-    local dirname="$(dirname $1)"
-    local fname=$(basename "$1")
-    local fext=""
-    if echo "$fname" | grep '\.'; then
-        fext=".${fname##*.}"
-    fi
-    local fname="${fname%.*}"
-    echo "$dirname/$fname-$(date '+%s.%N')$fext"
+    echo "=================== 6- Start taxonomy service ======================================================="
+    $SERVICE_BIN_PATH/start.sh
+    echo "Deployment completed...."
 }
-# ======= keep only last 5 backups =======================================
-pushd . > /dev/null
-cd "$BACKUP_LIB_DIR"
-# double check we're actually in the backup directory, before deleting anything!
-if [ "$(basename $(pwd))" == "$(basename $BACKUP_LIB_DIR)" ]; then
-    echo "Deleting oldest backups, but keeping newest 5";
-    (ls -t|head -n 5;ls)|sort|uniq -u|xargs rm -rf;
-fi
-popd > /dev/null
 
-# ======= backup old lib =======================================
-if ls $LIB_DIR/*.jar > /dev/null 2>&1; then
-    if [ ! -d "$TIMESTAMPED_BACKUP_DIR" ]; then
-        mkdir $TIMESTAMPED_BACKUP_DIR
-    fi
-    for lib in "$(ls $LIB_DIR/*.jar)"; do
-        ls "$lib" > /dev/null 2>&1 && mv "$lib" "$TIMESTAMPED_BACKUP_DIR"
-    done
-fi
 
-# ======= move new artifact into lib =======================================
-for new_lib in "$(ls $TEMP_DIR/*.jar)"; do
-    ls "$new_lib" > /dev/null 2>&1 && mv "$new_lib" "$LIB_DIR"
+echo "This script will execute the following tasks:";
+echo "1- Get most update taxonomy source code from git";
+echo "2- Build taxonomy-restful-service project libs";
+echo "3- Execute Neo4J taxonomy-import process";
+echo "4- Stop taxonomy service";
+echo "5- Update Neo4J and taxonomy libs and create backup";
+echo "6- Start taxonomy service";
+echo "Are you sure that you want to execute these steps above? Yes/No";
+while true; do
+    read yn;
+    case $yn in
+        Yes) executeBuildProcess;
+             break;;
+        No) echo "Deploy taxonomy canceled ";
+             exit 1;;
+        * ) echo "Please answer yes or no.";;
+    esac
 done
-rmdir $TEMP_DIR || {
-    echo "Could not clean up temp directory: '$TEMP_DIR'. Please check it is empty."
-}
-
-# ======= add a readme describing the contents of the app directory =======================================
-if [ -d "$SERVICE_BASE" ]; then
-    mkdir -p $SERVICE_BASE
-    echo "Contains live details (libraries, logs and PID files) for applications that " \
-          "correspond to their configuration details in ../bin." > "$SERVICE_BASE/readme.txt"
-fi
-
-
 echo "done"
