@@ -24,6 +24,7 @@ SERVICE_BIN_PATH="$(pwd -P)"
 SERVICE_TARGET_PATH="$(readlink -f $SERVICE_BIN_PATH/../$TARGET_DIR)"
 NEO4J_DATABASE_PATH="$SERVICE_TARGET_PATH/$TAXONOMY_DATABASE_DIR"
 
+export JAVA_HOME=$JAVA_PATH
 # ======= create neo4j database directory ==========================================
 if [ ! -d "$NEO4J_DATABASE_PATH" ]; then
     mkdir -p $NEO4J_DATABASE_PATH
@@ -33,7 +34,7 @@ fi
 IMPORT_JAR_PATH="$UPDATE_BASE/lib/$TAXONOMY_IMPORT_ARTIFACT_ID-$TAXONOMY_VERSION.jar"
 JAVA_OPTS="$TAXONOMY_IMPORT_JVM_MEM_MAX $TAXONOMY_IMPORT_JVM_MEM_MIN -Dneo4j.database.path=$NEO4J_DATABASE_PATH"
 echo "running java command $JAVA_OPTS -jar $IMPORT_JAR_PATH"
-$JAVA $JAVA_OPTS -jar $IMPORT_JAR_PATH
+java $JAVA_OPTS -jar $IMPORT_JAR_PATH
 
 if [ "ls -A $NEO4J_DATABASE_PATH" ]
 then
