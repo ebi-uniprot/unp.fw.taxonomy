@@ -6,7 +6,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 # ======= read the variables used by the control scripts =======================================
-source "environment.properties" || {
+source "bin/environment.properties" || {
     echo "Please create a file called, environment.properties, containing the necessary environment variables."
     exit 1;
 }
