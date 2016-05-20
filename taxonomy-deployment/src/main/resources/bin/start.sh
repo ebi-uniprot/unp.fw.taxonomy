@@ -34,7 +34,7 @@ if [ -e $PIDFILE ]
 then
     echo "Service has already been started: `cat $PIDFILE`"
     exit 1
-:fi
+fi
 
 # this configuration file named "config.properties" will be used if it exist.
 pushd  .

@@ -117,16 +117,16 @@ public class RestApp extends ResourceConfig {
     protected Properties loadProperties() {
         Properties properties = new Properties();
 
-        try (InputStream propertyInputStream = getClass().getResourceAsStream("/" + CONFIG_PROPERTY_FILE)) {
+        try (InputStream propertyInputStream = new FileInputStream(CONFIG_PROPERTY_FILE)) {
             properties.load(propertyInputStream);
         } catch (IOException e) {
-            logger.warn("unable to load " + CONFIG_PROPERTY_FILE + " with getResourceAsStream");
+            logger.warn("unable to load " + CONFIG_PROPERTY_FILE + " with FileInputStream");
         }
         if (properties.isEmpty()) {
-            try (InputStream propertyInputStream = new FileInputStream(CONFIG_PROPERTY_FILE)) {
+            try (InputStream propertyInputStream = getClass().getResourceAsStream("/" + CONFIG_PROPERTY_FILE)) {
                 properties.load(propertyInputStream);
             } catch (IOException e) {
-                logger.warn("unable to load " + CONFIG_PROPERTY_FILE + " with FileInputStream");
+                logger.warn("unable to load " + CONFIG_PROPERTY_FILE + " with getResourceAsStream");
             }
         }
         return properties;
