@@ -22,32 +22,31 @@ LOGFILE="$SERVICE_BIN_PATH/log/log.txt"
 
 if [ ! -r $PIDFILE ]
 then
-    echo "pid file doesn't exist. please check if Taxonomy service is running"
-    exit 1;
+    echo "pid file doesn't exist. Taxonomy service is not running"
+else
+    #read PIDFILE to check the hostname.
+    PIDSTR=`cat $PIDFILE`
+    read -ra PIDFILE_ARRAY <<<"$PIDSTR"
+
+    if [ ${PIDFILE_ARRAY[1]} != `hostname` ]
+    then
+        echo "Current host: `hostname`, PID host: ${PIDFILE_ARRAY[1]} "
+        echo "Need to run stop on the same host start runs."
+        exit 1
+    fi
+
+    if [ -r $LOGFILE ]
+    then
+        echo "backing up logfile"
+        mv $LOGFILE $LOGFILE.`date +"%Y-%m-%d-%T"`
+    fi
+
+    echo "killing the job of pid: ${PIDFILE_ARRAY[0]}."
+    kill ${PIDFILE_ARRAY[0]} || {
+        echo "processing killing failed, please check the process ID manually: ${PIDFILE_ARRAY[0]}"
+    }
+
+    rm $PIDFILE
 fi
-
-#read PIDFILE to check the hostname.
-PIDSTR=`cat $PIDFILE`
-read -ra PIDFILE_ARRAY <<<"$PIDSTR"
-
-if [ ${PIDFILE_ARRAY[1]} != `hostname` ]
-then
-    echo "Current host: `hostname`, PID host: ${PIDFILE_ARRAY[1]} "
-    echo "Need to run stop on the same host start runs."
-    exit 1
-fi
-
-if [ -r $LOGFILE ]
-then
-    echo "backing up logfile"
-    mv $LOGFILE $LOGFILE.`date +"%Y-%m-%d-%T"`
-fi
-
-echo "killing the job of pid: ${PIDFILE_ARRAY[0]}."
-kill ${PIDFILE_ARRAY[0]} || {
-    echo "processing killing failed, please check the process ID manually: ${PIDFILE_ARRAY[0]}"
-}
-
-rm $PIDFILE
 
 echo "done"

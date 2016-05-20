@@ -24,19 +24,20 @@ public class GuiceModule extends AbstractModule {
 
     public static final String PACKAGE_SCAN = "uk.ac.ebi.uniprot.taxonomyservice.restful.rest";
     private static final Logger logger = LoggerFactory.getLogger(GuiceModule.class);
-    private static final String CONFIG_PROPERTY_FILE = "config.properties";
 
     private final RestApp app;
+    private final Properties configProperties;
 
-    public GuiceModule(RestApp restApp) {
+
+    public GuiceModule(RestApp restApp, Properties configProperties) {
         this.app = restApp;
+        this.configProperties = configProperties;
     }
 
     /**
      * This method is responsible to inject all necessary objects in application services
      */
     @Override protected void configure() {
-        Properties configProperties = loadProperties();
         Names.bindProperties(binder(),configProperties);
 
         logger.info("Registering data neo4j access service");
@@ -44,30 +45,6 @@ public class GuiceModule extends AbstractModule {
 
         app.packages(PACKAGE_SCAN);
         app.packages(PACKAGE_SCAN+".request");
-
-    }
-
-    /**
-     * Load application properties from {@link #CONFIG_PROPERTY_FILE}
-     * @return loaded properties
-     */
-    private Properties loadProperties() {
-        Properties properties = new Properties();
-
-        try (InputStream propertyInputStream = getClass().getResourceAsStream("/" + CONFIG_PROPERTY_FILE)) {
-            properties.load(propertyInputStream);
-        } catch (IOException e) {
-            logger.warn("unable to load " + CONFIG_PROPERTY_FILE + " with getResourceAsStream");
-        }
-        if (properties.isEmpty()) {
-            try (InputStream propertyInputStream = new FileInputStream(CONFIG_PROPERTY_FILE)) {
-                properties.load(propertyInputStream);
-            } catch (IOException e) {
-                logger.warn("unable to load " + CONFIG_PROPERTY_FILE + " with FileInputStream");
-            }
-        }
-
-        return properties;
 
     }
 

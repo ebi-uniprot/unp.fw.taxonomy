@@ -37,7 +37,8 @@ public class RestAppMain {
     public static final String baseUri =
             "http://0.0.0.0:" + (System.getenv("PORT") != null ? System.getenv("PORT") : "9090");
 
-    public static final String DEFAULT_TAXONOMY_SERVICE_CONTEXT_PATH = "/uniprot/services/restful";
+    public static final String DEFAULT_TAXONOMY_SERVICE_CONTEXT_PATH = "/uniprot/api";
+    public static final String DEFAULT_ACCESS_LOG_PATH = "./logs/access.log";
 
     /**
      * Main method that start the application
@@ -51,10 +52,29 @@ public class RestAppMain {
         initParams.put("javax.ws.rs.Application", "uk.ac.ebi.uniprot.taxonomyservice.restful.main.RestApp");
 
         String taxonomyServiceContextPath = getContextPathFromMainArgument(args);
+        String accessLogPath = getAccessLogPathFromMainArgument(args);
 
         HttpServer httpServer =
                 create(URI.create(baseUri), ServletContainer.class, null, initParams, null, taxonomyServiceContextPath);
+
+        enableAccessLog(httpServer,accessLogPath);
+
         httpServer.start();
+    }
+
+    /*
+     * This method check if received an argument[1] from main method for access log path and return it, if does not
+     * receive, it return de default access log from {@link #DEFAULT_ACCESS_LOG_PATH}
+     *
+     * @param args Arguments received in main method
+     * @return  access log file path
+     */
+    private static String getAccessLogPathFromMainArgument(String[] args) {
+        String accessLogPath = DEFAULT_ACCESS_LOG_PATH;
+        if (args != null && args.length > 1 && !args[1].isEmpty()) {
+            accessLogPath = args[1];
+        }
+        return accessLogPath;
     }
 
     /*
@@ -119,7 +139,7 @@ public class RestAppMain {
         registration.addMapping("/*");
 
         //adding mapping for docs.
-        HttpHandlerRegistration docHandler = new HttpHandlerRegistration.Builder().contextPath("/uniprot/services/docs")
+        HttpHandlerRegistration docHandler = new HttpHandlerRegistration.Builder().contextPath("/uniprot/api/docs")
                 .urlPattern("/*").build();
         server.getServerConfiguration().addHttpHandler(new CLStaticHttpHandlerWithCORS(RestAppMain.class.getClassLoader(),
                 "staticContent/"), docHandler);
@@ -135,8 +155,6 @@ public class RestAppMain {
         }
         context.deploy(server);
 
-        enableAccessLog(server);
-
         return server;
 
     }
@@ -144,28 +162,13 @@ public class RestAppMain {
     /** This method configure Grizzly HttpServer accessLog
      *
      * @param httpServer GrizzlyHttpServer
+     * @param accessLogPath access log file path
      */
-    //@TODO: This is not working locally, I kept it, may it works in the server... need to check logs in the server
-    private static void enableAccessLog(HttpServer httpServer) {
-        //final AccessLogBuilder builder = new AccessLogBuilder(new File("/tmp/access.log"));./logs/access.log
-        final AccessLogBuilder builder = new AccessLogBuilder("./logs/access.log");
+    private static void enableAccessLog(HttpServer httpServer,String accessLogPath) {
+        final AccessLogBuilder builder = new AccessLogBuilder(accessLogPath);
         builder.synchronous(true);
         builder.rotatedHourly();
         builder.instrument(httpServer.getServerConfiguration());
-
-/*        try {
-            AccessLogAppender appender = new StreamAppender(new FileOutputStream(new File("/tmp/access.log")));
-            //AccessLogAppender appender = new StreamAppender(System.out);
-            AccessLogFormat format = ApacheLogFormat.COMBINED;
-            int statusThreshold = AccessLogProbe.DEFAULT_STATUS_THRESHOLD;
-            AccessLogProbe alp = new AccessLogProbe(appender, format, statusThreshold);
-            ServerConfiguration sc = httpServer.getServerConfiguration();
-            sc.getMonitoringConfig().getWebServerConfig().addProbes(alp);
-            logger.info("created access log at /tmp/access.log");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }*/
-
     }
 
 }

@@ -5,17 +5,6 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-SERVICES=${1:-}
-
-if [ -z $SERVICES ]
-  then
-    echo "no service is specified"
-    exit 1;
-  else
-    echo "starting services: $SERVICES"
-    export RestServices=$SERVICES
-fi
-
 # ======= read the variables used by the control scripts =======================================
 source "environment.properties" || {
     echo "Please create a file called, environment.properties, containing the necessary environment variables."
@@ -31,19 +20,20 @@ fi;
 SERVICE_BIN_PATH="$(pwd -P)"
 PIDFILE="$SERVICE_BIN_PATH/run.pid"
 CONFIG_FILE="$SERVICE_BIN_PATH/config.properties"
-LOGFILE="$SERVICE_BIN_PATH/log/log.txt"
+LOG_DIR="$(readlink -f $SERVICE_BIN_PATH/../logs)"
+LOGFILE="$LOG_DIR/log.txt"
 
 
 JAR_NAME="$TAXONOMY_RESTFUL_ARTIFACT_ID-$TAXONOMY_VERSION.jar"
 echo "Using the service jar: $JAR_NAME"
-TAXONOMY_JAR_PATH="$SERVICE_BIN_PATH/lib/$JAR_NAME"
+TAXONOMY_JAR_PATH="$(readlink -f $SERVICE_BIN_PATH/../lib/$JAR_NAME)"
 
 
 if [ -e $PIDFILE ]
 then
     echo "Service has already been started: `cat $PIDFILE`"
     exit 1
-fi
+:fi
 
 # this configuration file named "config.properties" will be used if it exist.
 pushd  .
@@ -67,7 +57,7 @@ nohup $JAVA_HOME/bin/java -server -XX:+UseG1GC $TAXONOMY_RESTFUL_JVM_MEM_MAX $TA
 -Dcom.sun.management.jmxremote.authenticate=false \
 -Dcom.sun.management.jmxremote.ssl=false  \
 -Dcom.sun.management.jmxremote.port=$JXM_REMOTE_PORT \
--jar $TAXONOMY_JAR_PATH $JAVA_MAIN > $LOGFILE 2>&1 &
+-jar $TAXONOMY_JAR_PATH > $LOGFILE 2>&1 &
 
 sleep 5
 

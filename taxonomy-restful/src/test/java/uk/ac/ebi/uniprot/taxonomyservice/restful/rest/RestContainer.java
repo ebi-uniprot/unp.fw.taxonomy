@@ -9,6 +9,7 @@ import com.google.inject.AbstractModule;
 import com.jayway.restassured.RestAssured;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.logging.Logger;
 import javax.inject.Inject;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -74,7 +75,7 @@ public class RestContainer extends ExternalResource {
         }
 
         @Override
-        protected AbstractModule configGuice() {
+        protected AbstractModule configGuice(Properties configProperties) {
             return new AbstractModule() {
                 @Override
                 protected void configure() {
