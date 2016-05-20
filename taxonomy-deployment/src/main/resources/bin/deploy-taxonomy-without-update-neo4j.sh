@@ -34,7 +34,7 @@ function executeBuildProcess(){
     echo "=================== 4- Stop taxonomy service ========================================================"
     $SERVICE_BIN_PATH/stop.sh
     echo "=================== 5- Update Neo4J and taxonomy libs and create backup ============================="
-    echo "Moving files from target to lib and data dir"
+    echo "Moving files from target to lib dir"
 
     cp $SERVICE_TARGET_PATH/$LIB_DIR/*.jar $TAXONOMY_LIB_DIR
     rm -rf $SERVICE_TARGET_PATH

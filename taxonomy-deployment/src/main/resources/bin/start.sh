@@ -27,6 +27,7 @@ LOGFILE="$LOG_DIR/log.txt"
 JAR_NAME="$TAXONOMY_RESTFUL_ARTIFACT_ID-$TAXONOMY_VERSION.jar"
 echo "Using the service jar: $JAR_NAME"
 TAXONOMY_JAR_PATH="$(readlink -f $SERVICE_BIN_PATH/../lib/$JAR_NAME)"
+ACCESS_LOG_PATH="$LOG_DIR/access_log.txt"
 
 
 if [ -e $PIDFILE ]
@@ -57,7 +58,7 @@ nohup $JAVA_HOME/bin/java -server -XX:+UseG1GC $TAXONOMY_RESTFUL_JVM_MEM_MAX $TA
 -Dcom.sun.management.jmxremote.authenticate=false \
 -Dcom.sun.management.jmxremote.ssl=false  \
 -Dcom.sun.management.jmxremote.port=$JXM_REMOTE_PORT \
--jar $TAXONOMY_JAR_PATH > $LOGFILE 2>&1 &
+-jar $TAXONOMY_JAR_PATH $CONTEXT_PATH $ACCESS_LOG_PATH > $LOGFILE 2>&1 &
 
 sleep 5
 
