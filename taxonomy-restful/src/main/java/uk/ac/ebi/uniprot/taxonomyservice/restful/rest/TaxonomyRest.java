@@ -31,7 +31,7 @@ import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.
  * Created by lgonzales on 19/02/16.
  *
  */
-@Path("/taxonomy")
+@Path("/")
 @Api(value = "/taxonomy", description = TAXONOMY_API_VALUE)
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class TaxonomyRest {

@@ -43,7 +43,7 @@ public class RestApp extends ResourceConfig {
     private static final String DEFAULT_API_VERSION = "1.0.0";
     private static final String DEFAULT_SWAGGER_DESCRIPTION = "Taxonomy Rest Services.";
     private static final String DEFAULT_SWAGGER_TITLE = "Taxonomy Services";
-    private static final String DEFAULT_SWAGGER_BASE_PATH = "/uniprot/api";
+    private static final String DEFAULT_SWAGGER_BASE_PATH = "/uniprot/api/taxonomy";
     private static final String DEFAULT_SWAGGER_RESOURCE_PACKAGE = "uk.ac.ebi.uniprot.taxonomyservice.restful.rest";
 
     /**

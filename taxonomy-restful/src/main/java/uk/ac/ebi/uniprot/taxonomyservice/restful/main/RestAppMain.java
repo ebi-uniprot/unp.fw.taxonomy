@@ -37,7 +37,7 @@ public class RestAppMain {
     public static final String baseUri =
             "http://0.0.0.0:" + (System.getenv("PORT") != null ? System.getenv("PORT") : "9090");
 
-    public static final String DEFAULT_TAXONOMY_SERVICE_CONTEXT_PATH = "/uniprot/api";
+    public static final String DEFAULT_TAXONOMY_SERVICE_CONTEXT_PATH = "/uniprot/api/taxonomy";
     public static final String DEFAULT_ACCESS_LOG_PATH = "./logs/access.log";
 
     /**
@@ -139,7 +139,8 @@ public class RestAppMain {
         registration.addMapping("/*");
 
         //adding mapping for docs.
-        HttpHandlerRegistration docHandler = new HttpHandlerRegistration.Builder().contextPath("/uniprot/api/docs")
+        HttpHandlerRegistration docHandler = new HttpHandlerRegistration.Builder().contextPath
+                ("/uniprot/api/taxonomy/docs")
                 .urlPattern("/*").build();
         server.getServerConfiguration().addHttpHandler(new CLStaticHttpHandlerWithCORS(RestAppMain.class.getClassLoader(),
                 "staticContent/"), docHandler);
