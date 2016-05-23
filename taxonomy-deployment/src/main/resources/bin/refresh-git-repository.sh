@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# This script will execute all steps necessary to deploy taxonomy taxonomy service
+# This script will update/refresh current git repository based on
+# $GIT_BRANCH that is at environment.properties
 # please Refer to http://redsymbol.net/articles/unofficial-bash-strict-mode/ for details.
 set -euo pipefail
 IFS=$'\n\t'

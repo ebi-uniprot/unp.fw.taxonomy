@@ -1,6 +1,12 @@
 #!/bin/bash
 
-# This script will execute all steps necessary to deploy taxonomy taxonomy service
+# This script will execute steps below to deploy taxonomy service without update neo4j taxonomy data
+# 1- clean $SERVICE_TARGET_PATH directory
+# 2- Get most update taxonomy source code from git
+# 3- Build taxonomy-restful-service project libs
+# 4- Stop taxonomy service
+# 5- Update taxonomy libs and create backup
+# 6- Start taxonomy service
 # please Refer to http://redsymbol.net/articles/unofficial-bash-strict-mode/ for details.
 set -euo pipefail
 IFS=$'\n\t'
@@ -34,7 +40,11 @@ function executeBuildProcess(){
     echo "=================== 4- Stop taxonomy service ========================================================"
     $SERVICE_BIN_PATH/stop.sh
     echo "=================== 5- Update Neo4J and taxonomy libs and create backup ============================="
-    echo "Moving files from target to lib dir"
+
+    echo "Creating backups"
+    $SERVICE_BIN_PATH/backup-libs-dir.sh
+
+    echo "Moving files from $TARGET_DIR to $LIB_DIR dir"
 
     cp $SERVICE_TARGET_PATH/$LIB_DIR/*.jar $TAXONOMY_LIB_DIR
     rm -rf $SERVICE_TARGET_PATH

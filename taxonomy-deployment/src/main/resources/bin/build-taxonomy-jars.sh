@@ -1,7 +1,7 @@
 #! /bin/bash
 
 ##=========================================================================================
-# This script execute maven install for taxonomy and copy generated jars to update folder.
+# This script execute maven build and install for taxonomy and copy generated jars to target folder.
 ##=========================================================================================
 
 set -euo pipefail

@@ -1,7 +1,7 @@
 #! /bin/bash
 
 ##=========================================================================================
-# This script will execute neo4j data import
+# This script will execute neo4j data import and will save generated data inside target folder
 ##=========================================================================================
 
 set -euo pipefail

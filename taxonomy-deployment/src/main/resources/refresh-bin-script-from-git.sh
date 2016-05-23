@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This script will execute all steps necessary to deploy taxonomy taxonomy service
+# This script will replace bin folder content with last version in GIT repository
 # please Refer to http://redsymbol.net/articles/unofficial-bash-strict-mode/ for details.
 set -euo pipefail
 IFS=$'\n\t'
