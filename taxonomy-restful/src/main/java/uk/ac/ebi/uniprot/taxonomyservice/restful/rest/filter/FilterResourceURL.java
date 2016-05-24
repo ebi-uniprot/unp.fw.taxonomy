@@ -39,15 +39,15 @@ public class FilterResourceURL implements ContainerRequestFilter {
             Optional<String> formatParamValue = getFormatParamFromRequestContext(requestContext.getUriInfo());
             if(formatParamValue.isPresent()){
                 if(formatParamValue.get().equalsIgnoreCase("xml")){
-                    requestContext.getHeaders().add(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML);
+                    requestContext.getHeaders().addFirst(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML);
                 }else if(formatParamValue.get().equalsIgnoreCase("json")){
-                    requestContext.getHeaders().add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
+                    requestContext.getHeaders().addFirst(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
                 }else{
                    throw new ParamException.QueryParamException(new IllegalArgumentException( SwaggerConstant
                            .REQUEST_PARAMETER_INVALID_VALUE),"format","");
                 }
             }else{
-                requestContext.getHeaders().add(HttpHeaders.ACCEPT, defaultContentType);
+                requestContext.getHeaders().addFirst(HttpHeaders.ACCEPT, defaultContentType);
             }
         }else{
             logger.debug("FilterResourceURL, we already have a valid accept header: "+currentAcceptHeader);

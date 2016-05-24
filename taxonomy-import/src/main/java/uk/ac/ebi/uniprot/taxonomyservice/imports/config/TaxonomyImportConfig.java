@@ -17,6 +17,9 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.sql.DataSource;
+import org.neo4j.graphdb.DynamicLabel;
+import org.neo4j.graphdb.Label;
+import org.neo4j.graphdb.schema.IndexDefinition;
 import org.neo4j.unsafe.batchinsert.BatchInserter;
 import org.neo4j.unsafe.batchinsert.BatchInserters;
 import org.slf4j.Logger;
@@ -244,6 +247,10 @@ public class TaxonomyImportConfig {
         if((batchInserter == null)){
             File neo4jDatabasePath = new File(env.getProperty("neo4j.database.path"));
             batchInserter = BatchInserters.inserter(neo4jDatabasePath);
+
+            Label nodeLabel = DynamicLabel.label( "Node" );
+            batchInserter.createDeferredSchemaIndex( nodeLabel ).on( "taxonomyId" ).create();
+
             logger.info("Neo4J batchInserter initialized");
         }
         return batchInserter;

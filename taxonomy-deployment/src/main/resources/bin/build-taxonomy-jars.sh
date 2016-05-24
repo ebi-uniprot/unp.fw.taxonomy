@@ -35,7 +35,7 @@ fi
 
 # ======= install the REST artifacts before fetching them =======================================
 cd $TAXONOMY_REPO_DIR
-$MAVEN -DskipTests install
+$MAVEN -DskipTests clean install
 cd $SERVICE_BIN_PATH
 
 # ======= build the variables required for artifact retrieval =======================================
