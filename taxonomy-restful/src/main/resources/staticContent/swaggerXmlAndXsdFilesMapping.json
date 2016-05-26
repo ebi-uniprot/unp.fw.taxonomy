@@ -3,12 +3,12 @@
     "taxonomy": "/uniprot/api/taxonomy/docs/xsd/taxonomy.xsd"
   },
   "xml": {
-    "/taxonomy/id/{id}":"/uniprot/api/taxonomy/docs/xml/taxonomy.xml",
-    "/taxonomy/id/{id}/siblings":"/uniprot/api/taxonomy/docs/xml/taxonomies.xml",
-    "/taxonomy/id/{id}/parent":"/uniprot/api/taxonomy/docs/xml/taxonomy.xml",
-    "/taxonomy/id/{id}/children":"/uniprot/api/taxonomy/docs/xml/taxonomies.xml",
-    "/taxonomy/name/{name}":"/uniprot/api/taxonomy/docs/xml/taxonomies.xml",
-    "/taxonomy/relationship":"/uniprot/api/taxonomy/docs/xml/taxonomy.xml",
-    "/taxonomy/path":"/uniprot/api/taxonomy/docs/xml/taxonomy.xml"
+    "/id/{id}":"/uniprot/api/taxonomy/docs/xml/taxonomy.xml",
+    "/id/{id}/siblings":"/uniprot/api/taxonomy/docs/xml/taxonomies.xml",
+    "/id/{id}/parent":"/uniprot/api/taxonomy/docs/xml/taxonomy.xml",
+    "/id/{id}/children":"/uniprot/api/taxonomy/docs/xml/taxonomies.xml",
+    "/name/{name}":"/uniprot/api/taxonomy/docs/xml/taxonomies.xml",
+    "/relationship":"/uniprot/api/taxonomy/docs/xml/taxonomy.xml",
+    "/path":"/uniprot/api/taxonomy/docs/xml/taxonomy.xml"
   }
 }
