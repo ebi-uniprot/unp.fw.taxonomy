@@ -202,7 +202,6 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib</classpathPrefix>
                         <!--<classpathPrefix>lib</classpathPrefix>  THIS TO TEST EXECUTE JAR LOCALLY-->
                             <mainClass>uk.ac.ebi.uniprot.taxonomyservice.restful.main.RestAppMain</mainClass>
                         </manifest>
