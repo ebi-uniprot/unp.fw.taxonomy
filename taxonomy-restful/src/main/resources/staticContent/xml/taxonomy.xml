@@ -1,20 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<taxonomyNode xmlns="http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomy">
-    <taxonomyId>12345</taxonomyId>
-    <mnemonic>node mnemonic name</mnemonic>
-    <scientificName>node Scientific Name</scientificName>
-    <commonName>node common Name</commonName>
-    <synonym>Synonym Name</synonym>
-    <rank>Rank name</rank>
-    <parentLink>https://localhost:9090/uniprot/services/restful/taxonomy/id/56789</parentLink>
+<taxonomyNode>
+    <taxonomyId>0</taxonomyId>
+    <mnemonic>string</mnemonic>
+    <scientificName>string</scientificName>
+    <commonName>string</commonName>
+    <synonym>string</synonym>
+    <rank>string</rank>
+    <parent>
+        <taxonomyId>0</taxonomyId>
+    </parent>
+    <parentLink>string</parentLink>
+    <children>
+        <child>
+            <taxonomyId>0</taxonomyId>
+        </child>
+    </children>
     <childrenLinks>
-        <childLink>https://localhost:9090/uniprot/services/restful/taxonomy/id/12355</childLink>
-        <childLink>https://localhost:9090/uniprot/services/restful/taxonomy/id/12356</childLink>
-        <childLink>https://localhost:9090/uniprot/services/restful/taxonomy/id/12357</childLink>
+        <childLink>string</childLink>
     </childrenLinks>
+    <siblings>
+        <sibling>
+            <taxonomyId>0</taxonomyId>
+        </sibling>
+    </siblings>
     <siblingsLinks>
-        <siblingLinks>https://localhost:9090/uniprot/services/restful/taxonomy/id/12346</siblingLinks>
-        <siblingLinks>https://localhost:9090/uniprot/services/restful/taxonomy/id/12347</siblingLinks>
-        <siblingLinks>https://localhost:9090/uniprot/services/restful/taxonomy/id/12348</siblingLinks>
+        <siblingLinks>string</siblingLinks>
     </siblingsLinks>
 </taxonomyNode>

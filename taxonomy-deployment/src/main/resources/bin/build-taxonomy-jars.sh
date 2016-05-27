@@ -36,6 +36,8 @@ fi
 # ======= install the REST artifacts before fetching them =======================================
 cd $TAXONOMY_REPO_DIR
 $MAVEN -DskipTests clean install
+echo "copying dependencies from taxonomy-restful/target/lib/*.jar to $LIB_DIR_PATH"
+cp taxonomy-restful/target/lib/*.jar $LIB_DIR_PATH
 cd $SERVICE_BIN_PATH
 
 # ======= build the variables required for artifact retrieval =======================================
