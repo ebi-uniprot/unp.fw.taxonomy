@@ -247,11 +247,15 @@ public class TaxonomyImportConfig {
         if((batchInserter == null)){
             File neo4jDatabasePath = new File(env.getProperty("neo4j.database.path"));
             batchInserter = BatchInserters.inserter(neo4jDatabasePath);
+            logger.info("Neo4J batchInserter initialized");
 
             Label nodeLabel = DynamicLabel.label( "Node" );
             batchInserter.createDeferredSchemaIndex( nodeLabel ).on( "taxonomyId" ).create();
+            batchInserter.createDeferredSchemaIndex( nodeLabel ).on( "scientificName" ).create();
+            batchInserter.createDeferredSchemaIndex( nodeLabel ).on( "commonName" ).create();
+            batchInserter.createDeferredSchemaIndex( nodeLabel ).on( "mnemonic" ).create();
 
-            logger.info("Neo4J batchInserter initialized");
+            logger.info("Created Neo4J index for taxonomyId, scientificName, commonName and mnemonic");
         }
         return batchInserter;
     }
