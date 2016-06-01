@@ -19,32 +19,32 @@ import static org.mockito.Mockito.when;
  */
 public class ParamExceptionMapperTest {
 
-    private MockedParamExceptionMapper mockedParamExceptionMapper;
+    private FakeParamExceptionMapper fakeParamExceptionMapping;
 
     private HttpServletRequest request;
 
     @Before
     public void initialiseMocks() {
-        mockedParamExceptionMapper = new MockedParamExceptionMapper();
+        fakeParamExceptionMapping = new FakeParamExceptionMapper();
         request = mock(HttpServletRequest.class);
-        mockedParamExceptionMapper.setRequest(request);
+        fakeParamExceptionMapping.setRequest(request);
     }
 
     @Test
-    public void assertParamExceptionReturnErrorMessage() {
+    public void paramExceptionReturnErrorMessage() {
         ErrorMessage expectedError = new ErrorMessage();
         expectedError.setRequestedURL(ResponseAssert.REQUEST_URL);
         expectedError.addErrorMessage(SwaggerConstant.REQUEST_PARAMETER_INVALID_VALUE.replace("{parameterName}","id"));
 
         when(request.getRequestURL()).thenReturn(new StringBuffer(ResponseAssert.REQUEST_URL));
 
-        Response response = mockedParamExceptionMapper.toResponse(new ParamException.QueryParamException(new
+        Response response = fakeParamExceptionMapping.toResponse(new ParamException.QueryParamException(new
                 Exception("Error"),"id",""));
 
         ResponseAssert.assertResponseErrorMessage(expectedError, response);
     }
 
-    private class MockedParamExceptionMapper extends ParamExceptionMapper{
+    private class FakeParamExceptionMapper extends ParamExceptionMapper{
 
         public void setRequest(HttpServletRequest request){
             this.request = request;

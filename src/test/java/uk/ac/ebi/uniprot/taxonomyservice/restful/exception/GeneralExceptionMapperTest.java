@@ -22,67 +22,67 @@ import static org.mockito.Mockito.when;
  */
 public class GeneralExceptionMapperTest {
 
-    private MockedGeneralExceptionMapper mockedGeneralExceptionMapper;
+    private FakeGeneralExceptionMapper fakeGeneralExceptionMapper;
 
     private HttpServletRequest request;
 
     @Before
     public void initialiseMocks() {
-        mockedGeneralExceptionMapper = new MockedGeneralExceptionMapper();
+        fakeGeneralExceptionMapper = new FakeGeneralExceptionMapper();
         request = mock(HttpServletRequest.class);
-        mockedGeneralExceptionMapper.setRequest(request);
+        fakeGeneralExceptionMapper.setRequest(request);
     }
 
     @Test
-    public void assertNotFoundExceptionReturnErrorMessage() {
-        ErrorMessage expectedError = new ErrorMessage();
-        expectedError.setRequestedURL(ResponseAssert.REQUEST_URL);
-        expectedError.addErrorMessage(SwaggerConstant.API_RESPONSE_404);
+    public void notFoundExceptionReturnErrorMessage() {
+        ErrorMessage expectedError = createExpectedErrorMessage(SwaggerConstant.API_RESPONSE_404);
 
         when(request.getRequestURL()).thenReturn(new StringBuffer(ResponseAssert.REQUEST_URL));
 
-        Response response = mockedGeneralExceptionMapper.toResponse(new NotFoundException());
+        Response response = fakeGeneralExceptionMapper.toResponse(new NotFoundException());
         ResponseAssert.assertResponseErrorMessage(expectedError, response);
     }
 
     @Test
-    public void assertBadRequestExceptionReturnErrorMessage() {
-        ErrorMessage expectedError = new ErrorMessage();
-        expectedError.setRequestedURL(ResponseAssert.REQUEST_URL);
-        expectedError.addErrorMessage(SwaggerConstant.API_RESPONSE_400 + " BadRequest");
+    public void badRequestExceptionReturnErrorMessage() {
+        ErrorMessage expectedError = createExpectedErrorMessage(SwaggerConstant.API_RESPONSE_400 + " BadRequest");
 
         when(request.getRequestURL()).thenReturn(new StringBuffer(ResponseAssert.REQUEST_URL));
 
-        Response response = mockedGeneralExceptionMapper.toResponse(new BadRequestException("BadRequest"));
+        Response response = fakeGeneralExceptionMapper.toResponse(new BadRequestException("BadRequest"));
         ResponseAssert.assertResponseErrorMessage(expectedError, response);
     }
 
     @Test
-    public void assertExceptionReturnErrorMessage() {
-        ErrorMessage expectedError = new ErrorMessage();
-        expectedError.setRequestedURL(ResponseAssert.REQUEST_URL);
-        expectedError.addErrorMessage(SwaggerConstant.API_RESPONSE_500);
+    public void exceptionReturnErrorMessage() {
+        ErrorMessage expectedError = createExpectedErrorMessage(SwaggerConstant.API_RESPONSE_500);
 
         when(request.getRequestURL()).thenReturn(new StringBuffer(ResponseAssert.REQUEST_URL));
 
-        Response response = mockedGeneralExceptionMapper.toResponse(new Exception("ErrorMessage"));
+        Response response = fakeGeneralExceptionMapper.toResponse(new Exception("ErrorMessage"));
         ResponseAssert.assertResponseErrorMessage(expectedError, response);
     }
 
     @Test
-    public void assertWebApplicationExceptionReturnErrorMessage() {
-        ErrorMessage expectedError = new ErrorMessage();
-        expectedError.setRequestedURL(ResponseAssert.REQUEST_URL);
-        expectedError.addErrorMessage(SwaggerConstant.API_RESPONSE_500);
+    public void webApplicationExceptionReturnErrorMessage() {
+        ErrorMessage expectedError = createExpectedErrorMessage(SwaggerConstant.API_RESPONSE_500);
 
         when(request.getRequestURL()).thenReturn(new StringBuffer(ResponseAssert.REQUEST_URL));
 
-        Response response = mockedGeneralExceptionMapper.toResponse(new WebApplicationException());
+        Response response = fakeGeneralExceptionMapper.toResponse(new WebApplicationException());
         ResponseAssert.assertResponseErrorMessage(expectedError, response);
     }
 
-    private class MockedGeneralExceptionMapper extends GeneralExceptionMapper {
-        public void setRequest(HttpServletRequest request) {
+    private ErrorMessage createExpectedErrorMessage(String apiResponse404) {
+        ErrorMessage expectedError = new ErrorMessage();
+        expectedError.setRequestedURL(ResponseAssert.REQUEST_URL);
+        expectedError.addErrorMessage(apiResponse404);
+        return expectedError;
+    }
+
+    private class FakeGeneralExceptionMapper extends GeneralExceptionMapper{
+
+        public void setRequest(HttpServletRequest request){
             this.request = request;
         }
     }

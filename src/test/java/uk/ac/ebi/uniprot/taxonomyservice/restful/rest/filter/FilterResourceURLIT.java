@@ -33,7 +33,7 @@ public class FilterResourceURLIT {
 
 
     @Test
-    public void assertJsonFormatQueryParameterReturnJsonAcceptHeader() throws Exception{
+    public void jsonFormatQueryParameterReturnJsonAcceptHeader() throws Exception{
         String requestedURL = TAXONOMY_BASE_PATH + "/id/12345?format=json";
 
         ExtractableResponse<com.jayway.restassured.response.Response> response = RestAssured.when()
@@ -48,7 +48,7 @@ public class FilterResourceURLIT {
 
 
     @Test
-    public void assertXmlFormatQueryParameterReturnXmlAcceptHeader() throws Exception{
+    public void xmlFormatQueryParameterReturnXmlAcceptHeader() throws Exception{
         String requestedURL = TAXONOMY_BASE_PATH + "/id/12345?format=xml";
 
         ExtractableResponse<com.jayway.restassured.response.Response> response = RestAssured.when()
@@ -62,7 +62,7 @@ public class FilterResourceURLIT {
     }
 
     @Test
-    public void assertWithoutFormatAndAcceptHeaderParametersReturnDefaultJsonAcceptHeader() throws Exception{
+    public void withoutFormatAndAcceptHeaderParametersReturnDefaultJsonAcceptHeader() throws Exception{
         String requestedURL = TAXONOMY_BASE_PATH + "/id/12345";
 
         ExtractableResponse<com.jayway.restassured.response.Response> response = RestAssured.when()
@@ -76,7 +76,7 @@ public class FilterResourceURLIT {
     }
 
     @Test
-    public void assertValidJsonAcceptHeaderHasPriorityOverXmlFormatParamReturnJsonAcceptHeader() throws Exception{
+    public void validJsonAcceptHeaderHasPriorityOverXmlFormatParamReturnJsonAcceptHeader() throws Exception{
         String requestedURL = TAXONOMY_BASE_PATH + "/id/12345?format=xml";
 
         ExtractableResponse<com.jayway.restassured.response.Response> response = RestAssured.given()
@@ -92,7 +92,7 @@ public class FilterResourceURLIT {
     }
 
     @Test
-    public void assertValidJsonAcceptHeaderHasPriorityOverJsonFormatParamReturnJsonAcceptHeader() throws Exception{
+    public void validJsonAcceptHeaderHasPriorityOverJsonFormatParamReturnJsonAcceptHeader() throws Exception{
         String requestedURL = TAXONOMY_BASE_PATH + "/id/12345?format=json";
 
         ExtractableResponse<com.jayway.restassured.response.Response> response = RestAssured.given()
@@ -108,7 +108,7 @@ public class FilterResourceURLIT {
     }
 
     @Test
-    public void assertXmlFormatParamHasPriorityOverInvalidAtomAcceptHeaderAddXmlAcceptHeader() throws Exception{
+    public void xmlFormatParamHasPriorityOverInvalidAtomAcceptHeaderAddXmlAcceptHeader() throws Exception{
         String requestedURL = TAXONOMY_BASE_PATH + "/id/12345?format=xml";
 
         ExtractableResponse<com.jayway.restassured.response.Response> response = RestAssured.given()
@@ -124,7 +124,7 @@ public class FilterResourceURLIT {
     }
 
     @Test
-    public void assertJsonFormatParamHasPriorityOverInvalidAtomAcceptHeaderAddXmlAcceptHeader() throws Exception{
+    public void jsonFormatParamHasPriorityOverInvalidAtomAcceptHeaderAddXmlAcceptHeader() throws Exception{
         String requestedURL = TAXONOMY_BASE_PATH + "/id/12345?format=json";
 
         ExtractableResponse<com.jayway.restassured.response.Response> response = RestAssured.given()
@@ -140,7 +140,7 @@ public class FilterResourceURLIT {
     }
 
     @Test
-    public void assertInvalidFormatParamReturnErrorMessageWithdefaultJsonContentType() throws Exception{
+    public void invalidFormatParamReturnErrorMessageWithdefaultJsonContentType() throws Exception{
         String requestedURL = TAXONOMY_BASE_PATH + "/id/12345?format=INVALID";
 
         ExtractableResponse<com.jayway.restassured.response.Response> response = RestAssured.when()

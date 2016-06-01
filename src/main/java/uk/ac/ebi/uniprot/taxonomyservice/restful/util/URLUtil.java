@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  */
 public class URLUtil {
 
-    public static final Logger logger = LoggerFactory.getLogger(URLUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(URLUtil.class);
 
     public static String getCurrentURL(HttpServletRequest request){
         String currentURL = request.getRequestURL().toString();
@@ -29,7 +29,8 @@ public class URLUtil {
 
     public static String getTaxonomyIdBasePath(HttpServletRequest request){
         String currentURL = request.getRequestURL().toString();
-        currentURL = currentURL.substring(0, currentURL.indexOf("taxonomy")+8)+"/id/";
+        String contextPath = request.getContextPath()+request.getServletPath();
+        currentURL = currentURL.substring(0, currentURL.indexOf(contextPath)+contextPath.length())+"/id/";
         return currentURL;
     }
 
