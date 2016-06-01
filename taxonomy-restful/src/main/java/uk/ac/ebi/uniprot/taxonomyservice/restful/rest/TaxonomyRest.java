@@ -9,6 +9,7 @@ import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.util.URLUtil;
 
 import io.swagger.annotations.*;
+import java.util.Optional;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -66,7 +67,7 @@ public class TaxonomyRest {
         //logger.debug(">>TaxonomyRest.getTaxonomyDetailsById");
 
         long taxonomyId = Long.valueOf(id);
-        TaxonomyNode response = dataAccess.getTaxonomyDetailsById(taxonomyId,URLUtil.getTaxonomyIdBasePath(request));
+        Optional<TaxonomyNode> response = dataAccess.getTaxonomyDetailsById(taxonomyId,URLUtil.getTaxonomyIdBasePath(request));
 
         return buildTaxonomyNodeResponse(response,taxonomyId);
     }
@@ -90,7 +91,7 @@ public class TaxonomyRest {
         logger.debug(">>TaxonomyRest.getTaxonomyDetailsById");
 
         long taxonomyId = Long.valueOf(id);
-        Taxonomies response = dataAccess.getTaxonomySiblingsById(taxonomyId);
+        Optional<Taxonomies> response = dataAccess.getTaxonomySiblingsById(taxonomyId);
 
         return buildTaxonomiesResponse(response,taxonomyId);
     }
@@ -114,7 +115,7 @@ public class TaxonomyRest {
         logger.debug(">>TaxonomyRest.getTaxonomyDetailsById");
 
         long taxonomyId = Long.valueOf(id);
-        Taxonomies response = dataAccess.getTaxonomyChildrenById(taxonomyId);
+        Optional<Taxonomies> response = dataAccess.getTaxonomyChildrenById(taxonomyId);
 
         return buildTaxonomiesResponse(response,taxonomyId);
     }
@@ -134,7 +135,7 @@ public class TaxonomyRest {
         logger.debug(">>TaxonomyRest.getTaxonomyDetailsById");
 
         long taxonomyId = Long.valueOf(id);
-        TaxonomyNode response = dataAccess.getTaxonomyParentById(taxonomyId);
+        Optional<TaxonomyNode> response = dataAccess.getTaxonomyParentById(taxonomyId);
 
         return buildTaxonomyNodeResponse(response,taxonomyId);
     }
@@ -155,7 +156,7 @@ public class TaxonomyRest {
             @Size(min = 2,message = NAME_PARAMETER_MIN_SIZE) // there are names Aa (id 152839), Zu ( id 143324)...
             @PathParam("name") String taxonomyName) {
 
-        Taxonomies response = dataAccess.getTaxonomyDetailsByName(taxonomyName,URLUtil.getTaxonomyIdBasePath(request));
+        Optional<Taxonomies> response = dataAccess.getTaxonomyDetailsByName(taxonomyName,URLUtil.getTaxonomyIdBasePath(request));
         if (response != null) {
             return Response.ok(response).build();
         } else {
@@ -179,21 +180,23 @@ public class TaxonomyRest {
         long from = Long.valueOf(params.getFrom());
         long to = Long.valueOf(params.getTo());
 
-        TaxonomyNode response = dataAccess.checkRelationshipBetweenTaxonomies(from,to);
-        if (response != null) {
-            return Response.ok(response).build();
+        Optional<TaxonomyNode> response = dataAccess.getTaxonomiesRelationship(from,to);
+        if (response.isPresent()) {
+            return Response.ok(response.get()).build();
         } else {
             String newURL = URLUtil.getCurrentURL(request);
-            long newFromTaxonomyId = dataAccess.checkTaxonomyIdHistoricalChange(from);
-            if(newFromTaxonomyId > 0){
-                newURL = URLUtil.getNewRedirectHeaderLocationURL(newURL,from, newFromTaxonomyId);
+            Optional<Long> newFromTaxonomyId = dataAccess.getTaxonomyHistoricalChange(from);
+            if(newFromTaxonomyId.isPresent()){
+                newURL = URLUtil.getNewRedirectHeaderLocationURL(newURL,from, newFromTaxonomyId.get());
+                from = newFromTaxonomyId.get();
             }
-            long newToTaxonomyId = dataAccess.checkTaxonomyIdHistoricalChange(to);
-            if(newToTaxonomyId > 0){
-                newURL = URLUtil.getNewRedirectHeaderLocationURL(newURL,to, newToTaxonomyId);
+            Optional<Long> newToTaxonomyId = dataAccess.getTaxonomyHistoricalChange(to);
+            if(newToTaxonomyId.isPresent()){
+                newURL = URLUtil.getNewRedirectHeaderLocationURL(newURL,to, newToTaxonomyId.get());
+                to = newToTaxonomyId.get();
             }
-            if(newFromTaxonomyId > 0 || newToTaxonomyId > 0){
-                return buildRedirectResponse(newURL,newFromTaxonomyId,newToTaxonomyId);
+            if(newFromTaxonomyId.isPresent() || newToTaxonomyId.isPresent()){
+                return buildRedirectResponse(newURL,from,to);
             }else {
                 return buildNotFoundResponse();
             }
@@ -216,33 +219,33 @@ public class TaxonomyRest {
     public Response getTaxonomyPath(
     @Valid @BeanParam PathRequestParams pathRequestParam) {
 
-        TaxonomyNode response = dataAccess.getTaxonomyPath(pathRequestParam);
+        Optional<TaxonomyNode> response = dataAccess.getTaxonomyPath(pathRequestParam);
 
         return buildTaxonomyNodeResponse(response,Long.valueOf(pathRequestParam.getId()));
     }
 
-    private Response buildTaxonomyNodeResponse(TaxonomyNode response,long taxonomyId) {
-        if (response != null) {
-            return Response.ok(response).build();
+    private Response buildTaxonomyNodeResponse(Optional<TaxonomyNode> response,long taxonomyId) {
+        if (response.isPresent()) {
+            return Response.ok(response.get()).build();
         } else {
             return buildResponseWithHistoricalCheck(taxonomyId);
         }
     }
 
-    private Response buildTaxonomiesResponse(Taxonomies response,long taxonomyId) {
-        if (response != null) {
-            return Response.ok(response).build();
+    private Response buildTaxonomiesResponse(Optional<Taxonomies> response,long taxonomyId) {
+        if (response.isPresent()) {
+            return Response.ok(response.get()).build();
         } else {
             return buildResponseWithHistoricalCheck(taxonomyId);
         }
     }
 
     private Response buildResponseWithHistoricalCheck(long taxonomyId) {
-        long newTaxonomyId = dataAccess.checkTaxonomyIdHistoricalChange(taxonomyId);
-        if(newTaxonomyId > 0){
+        Optional<Long> newTaxonomyId = dataAccess.getTaxonomyHistoricalChange(taxonomyId);
+        if(newTaxonomyId.isPresent()){
             String currentURL = URLUtil.getCurrentURL(request);
-            String newURL = URLUtil.getNewRedirectHeaderLocationURL(currentURL,taxonomyId,newTaxonomyId);
-            return buildRedirectResponse(newURL,newTaxonomyId);
+            String newURL = URLUtil.getNewRedirectHeaderLocationURL(currentURL,taxonomyId,newTaxonomyId.get());
+            return buildRedirectResponse(newURL,newTaxonomyId.get());
         }else {
             return buildNotFoundResponse();
         }

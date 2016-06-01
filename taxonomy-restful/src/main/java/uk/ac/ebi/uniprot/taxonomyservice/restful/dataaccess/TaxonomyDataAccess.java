@@ -4,6 +4,8 @@ import uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.PathRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
 
+import java.util.Optional;
+
 /**
  * Interface used to retrieve Taxonomy information from a datasource using search criteria
  *
@@ -17,7 +19,7 @@ public interface TaxonomyDataAccess {
      * @param basePath base path to build taxonomy parent, children and sibling links
      * @return details about searched taxonomy
      */
-    TaxonomyNode getTaxonomyDetailsById(long taxonomyId,String basePath);
+    Optional<TaxonomyNode> getTaxonomyDetailsById(long taxonomyId,String basePath);
 
     /**
      * This method return list of siblings of a searched {@param taxonomyId}.
@@ -25,7 +27,7 @@ public interface TaxonomyDataAccess {
      * @param taxonomyId identification of taxonomy siblings
      * @return details about searched taxonomy
      */
-    Taxonomies getTaxonomySiblingsById(long taxonomyId);
+    Optional<Taxonomies> getTaxonomySiblingsById(long taxonomyId);
 
     /**
      * This method return the parent of a searched {@param taxonomyId}.
@@ -33,7 +35,7 @@ public interface TaxonomyDataAccess {
      * @param taxonomyId identification of taxonomy
      * @return details about searched taxonomy parent
      */
-    TaxonomyNode getTaxonomyParentById(long taxonomyId);
+    Optional<TaxonomyNode> getTaxonomyParentById(long taxonomyId);
 
     /**
      * This method return list of children of a searched {@param taxonomyId}.
@@ -41,7 +43,7 @@ public interface TaxonomyDataAccess {
      * @param taxonomyId identification of taxonomy
      * @return details about searched taxonomy children
      */
-    Taxonomies getTaxonomyChildrenById(long taxonomyId);
+    Optional<Taxonomies> getTaxonomyChildrenById(long taxonomyId);
 
     /**
      * This method return the details of all taxonomies names that contains {@param taxonomyName}
@@ -50,25 +52,25 @@ public interface TaxonomyDataAccess {
      * @param basePath base path to build taxonomy parent, children and sibling links
      * @return List of taxonomies
      */
-    Taxonomies getTaxonomyDetailsByName(String taxonomyName, String basePath);
+    Optional<Taxonomies> getTaxonomyDetailsByName(String taxonomyName, String basePath);
 
     /**
-     * This method return all nodes that are between  {@param taxonomyId1} and {@param taxonomyId2}
+     * This method return all nodes that are between  {@param from} and {@param to}
      *
-     * @param taxonomyId1 identification of taxonomy
-     * @param taxonomyId2 identification of taxonomy
-     * @return List of taxonomies
+     * @param from identification of taxonomy
+     * @param to identification of taxonomy
+     * @return taxonomy nodes between {@param from} and {@param to}
      */
-    TaxonomyNode checkRelationshipBetweenTaxonomies(long taxonomyId1, long taxonomyId2);
+    Optional<TaxonomyNode> getTaxonomiesRelationship(long from, long to);
 
     /**
      * This method return all nodes that has relationship with taxonomyId in a specific direction
      * and only depth levels.
      *
      * @param nodePathParams {@link PathRequestParams} are taxonomyId, direction and depth
-     * @return List of taxonomies
+     * @return taxonomy path
      */
-    TaxonomyNode getTaxonomyPath(PathRequestParams nodePathParams);
+    Optional<TaxonomyNode> getTaxonomyPath(PathRequestParams nodePathParams);
 
     /**
      * This method check if exist any historical change for {@param id} and it there is, it will return the the
@@ -77,6 +79,6 @@ public interface TaxonomyDataAccess {
      * @param id identification of taxonomy
      * @return new identification of taxonomy if exist
      */
-    long checkTaxonomyIdHistoricalChange(long id);
+    Optional<Long> getTaxonomyHistoricalChange(long id);
 
 }

@@ -25,7 +25,7 @@ import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.
 @Provider
 public class ParamExceptionMapper implements ExceptionMapper<ParamException> {
 
-    public static final Logger logger = LoggerFactory.getLogger(ParamExceptionMapper.class);
+    private static final Logger logger = LoggerFactory.getLogger(ParamExceptionMapper.class);
 
     @Context protected HttpServletRequest request;
 

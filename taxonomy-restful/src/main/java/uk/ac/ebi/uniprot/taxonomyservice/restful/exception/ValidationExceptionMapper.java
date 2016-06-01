@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 @Provider
 public class ValidationExceptionMapper implements ExceptionMapper<ConstraintViolationException> {
 
-    public static final Logger logger = LoggerFactory.getLogger(ValidationExceptionMapper.class);
+    private static final Logger logger = LoggerFactory.getLogger(ValidationExceptionMapper.class);
 
     @Context protected HttpServletRequest request;
 
