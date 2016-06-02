@@ -14,6 +14,7 @@ import javax.annotation.PostConstruct;
 import org.neo4j.graphalgo.impl.util.PathImpl;
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
+import org.neo4j.graphdb.factory.GraphDatabaseSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +51,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
             "MATCH (n:Node) WHERE n.taxonomyId = {id} "+GET_TAXONOMY_DETAIL_MATCH_BASE;
 
     private static final String GET_TAXONOMY_DETAILS_BY_NAME_CYPHER_QUERY =
-            "MATCH (n:Node) WHERE n.scientificName =~ {name} "+GET_TAXONOMY_DETAIL_MATCH_BASE;
+            "MATCH (n:Node) WHERE n.scientificNameLowerCase = {name} "+GET_TAXONOMY_DETAIL_MATCH_BASE;
 
     private static final String GET_TAXONOMY_RELATIONSHIP_CYPHER_QUERY =
             "MATCH (n1:Node),(n2:Node), path = shortestpath((n1)-[r:CHILD_OF*]-(n2)) where n1" +
@@ -76,7 +77,13 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
 
         if (this.neo4jDb == null) {
             logger.debug("Creating an instance for Neo4jTaxonomyDataAccess and using neo4jDb filePath: "+filePath);
-            neo4jDb = new GraphDatabaseFactory().newEmbeddedDatabase(new File(filePath));
+            neo4jDb = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(new File(filePath))
+                    .setConfig("dbms.threads.worker_count", "10" )
+                    .setConfig(GraphDatabaseSettings.read_only,"true")
+                    .setConfig( GraphDatabaseSettings.pagecache_memory, "1g" )
+                    .setConfig( GraphDatabaseSettings.string_block_size, "120" )
+                    .setConfig( GraphDatabaseSettings.array_block_size, "600" )
+                    .newGraphDatabase();
             registerStop(neo4jDb);
         }
 
@@ -105,13 +112,15 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
         long startTime = System.currentTimeMillis();
         Map<String, Object> params = new HashMap<>();
         params.put("id", "" + taxonomyId);
-        try (Transaction ignored = neo4jDb.beginTx();
+        try (Transaction tx = neo4jDb.beginTx();
                 Result queryResult = neo4jDb.execute(GET_TAXONOMY_DETAILS_BY_ID_ONE_CYPHER_QUERY, params)) {
             result = Optional.ofNullable(getTaxonomyFromQueryResult(basePath, queryResult).getOrDefault(taxonomyId,
                     null));
+            queryResult.close();
+            tx.success();
         }
         long elapsed = System.currentTimeMillis() - startTime;
-        logger.debug("NeoQuery Time for getTaxonomyDetailsById: "+elapsed);
+        logger.debug("NeoQuery Time for getTaxonomyDetailsById: "+elapsed+ "for id "+taxonomyId);
         return result;
     }
 
@@ -135,7 +144,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
         Map<String, Object> params = new HashMap<>();
         params.put( "id", ""+taxonomyId );
 
-        try ( Transaction ignored = neo4jDb.beginTx();
+        try ( Transaction tx = neo4jDb.beginTx();
                 Result queryResult = neo4jDb.execute(GET_TAXONOMY_PARENT_BY_ID_CYPHER_QUERY,params ) )
         {
             if ( queryResult.hasNext() )
@@ -146,9 +155,12 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
                     result = Optional.ofNullable(getTaxonomyBaseNodeFromQueryResult(node));
                 }
             }
+            queryResult.close();
+            tx.success();
+            tx.close();
         }
         long elapsed = System.currentTimeMillis() - startTime;
-        logger.debug("NeoQuery Time for getTaxonomyParentById: "+elapsed);
+        logger.debug("NeoQuery Time for getTaxonomyParentById: "+elapsed+ "for id "+taxonomyId);
         return result;
     }
 
@@ -162,12 +174,16 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
         Collection<TaxonomyNode> result = null;
         long startTime = System.currentTimeMillis();
         Map<String, Object> params = new HashMap<>();
-        params.put( "name", "(?i).*"+taxonomyName+".*" );
+        //params.put( "name", "(?i).*"+taxonomyName+".*" );
+        params.put( "name", taxonomyName.toLowerCase() );
 
-        try ( Transaction ignored = neo4jDb.beginTx();
+        try ( Transaction tx = neo4jDb.beginTx();
                 Result queryResult = neo4jDb.execute(GET_TAXONOMY_DETAILS_BY_NAME_CYPHER_QUERY,params ) )
         {
             result =  getTaxonomyFromQueryResult(basePath, queryResult).values();
+            queryResult.close();
+            tx.success();
+            tx.close();
         }
         Optional<Taxonomies> taxonomies = Optional.empty();
         if(result != null && !result.isEmpty()){
@@ -176,7 +192,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
             taxonomies = Optional.of(nodeList);
         }
         long elapsed = System.currentTimeMillis() - startTime;
-        logger.debug("NeoQuery Time for getTaxonomyDetailsByName: "+elapsed);
+        logger.debug("NeoQuery Time for getTaxonomyDetailsByName: "+elapsed+ "for name "+taxonomyName);
         return taxonomies;
     }
 
@@ -188,7 +204,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
         params.put( "from", ""+taxonomyId1);
         params.put( "to", ""+ to);
 
-        try ( Transaction ignored = neo4jDb.beginTx();
+        try ( Transaction tx = neo4jDb.beginTx();
                 Result queryResult = neo4jDb.execute(GET_TAXONOMY_RELATIONSHIP_CYPHER_QUERY,params ) )
         {
             if ( queryResult.hasNext() ) {
@@ -199,9 +215,12 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
                 }
 
             }
+            queryResult.close();
+            tx.success();
+            tx.close();
         }
         long elapsed = System.currentTimeMillis() - startTime;
-        logger.debug("NeoQuery Time for getTaxonomiesRelationship: "+elapsed);
+        logger.debug("NeoQuery Time for getTaxonomiesRelationship: "+elapsed+ " from "+taxonomyId1+ " to "+to);
         return result;
     }
 
@@ -218,7 +237,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
         Map<String, Object> params = new HashMap<>();
         params.put( "id", nodePathParams.getId());
 
-        try ( Transaction ignored = neo4jDb.beginTx();
+        try ( Transaction tx = neo4jDb.beginTx();
                 Result queryResult = neo4jDb.execute(cypherQuery,params ) )
         {
             while ( queryResult.hasNext() ) {
@@ -228,9 +247,12 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
                     result = getTaxonomyNodePath(Long.parseLong(nodePathParams.getId()),relationshipList,result);
                 }
             }
+            queryResult.close();
+            tx.success();
+            tx.close();
         }
         long elapsed = System.currentTimeMillis() - startTime;
-        logger.debug("NeoQuery Time for getTaxonomyPath: "+elapsed);
+        logger.debug("NeoQuery Time for getTaxonomyPath: "+elapsed+ "for path param "+nodePathParams);
         return Optional.ofNullable(result);
     }
 
@@ -241,7 +263,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
         Map<String, Object> params = new HashMap<>();
         params.put( "id", ""+id );
 
-        try ( Transaction ignored = neo4jDb.beginTx();
+        try ( Transaction tx = neo4jDb.beginTx();
                 Result queryResult = neo4jDb.execute(CHECK_HISTORICAL_CHANGE_CYPHER_QUERY,params ) )
         {
             if ( queryResult.hasNext() )
@@ -251,9 +273,12 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
                     result = Long.parseLong("" + value.get());
                 }
             }
+            queryResult.close();
+            tx.success();
+            tx.close();
         }
         long elapsed = System.currentTimeMillis() - startTime;
-        logger.debug("NeoQuery Time for getTaxonomyHistoricalChange: "+elapsed);
+        logger.debug("NeoQuery Time for getTaxonomyHistoricalChange: "+elapsed+ "for id "+id);
         return Optional.ofNullable(result);
     }
 
@@ -358,7 +383,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
         params.put( "id", ""+taxonomyId );
         Taxonomies taxonomies = null;
         List<TaxonomyNode> queryResultList = new ArrayList<>();
-        try ( Transaction ignored = neo4jDb.beginTx();
+        try ( Transaction tx = neo4jDb.beginTx();
                 Result queryResult = neo4jDb.execute(cypherSQL,params) ) {
             while ( queryResult.hasNext() ) {
                 Map<String, Object> row = queryResult.next();
@@ -369,6 +394,9 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
                     queryResultList.add(taxonomyNode);
                 }
             }
+            queryResult.close();
+            tx.success();
+            tx.close();
         }
         if(!queryResultList.isEmpty()){
             taxonomies = new Taxonomies();

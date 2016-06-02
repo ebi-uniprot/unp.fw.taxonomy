@@ -37,7 +37,8 @@ public class Neo4jTaxonomyDataAccessTest {
     private static final String IMPORT_CYPHER_NODE_QUERY = LOAD_CSV +
             "MERGE (node:Node { taxonomyId : row.TAX_ID }) " +
                 "SET node += {taxonomyId : row.TAX_ID, mnemonic : row.SPTR_CODE, scientificName : row.SPTR_SCIENTIFIC, " +
-                    "commonName : row.SPTR_COMMON, synonym : row .SPTR_SYNONYM, rank : row.RANK} " +
+                    "scientificNameLowerCase : lower(row.SPTR_SCIENTIFIC), commonName : row.SPTR_COMMON, " +
+                    "synonym : row .SPTR_SYNONYM, rank : row.RANK} " +
             "MERGE (parent:Node {taxonomyId:row.PARENT_ID}) " +
             "MERGE (node)-[:CHILD_OF]-(parent)";
 
@@ -148,7 +149,7 @@ public class Neo4jTaxonomyDataAccessTest {
         assertThat(nodeOptional.isPresent(),is(true));
         Taxonomies nodes = nodeOptional.get();
         assertThat(nodes.getTaxonomies(),notNullValue());
-        assertThat(nodes.getTaxonomies().size(),is(4));
+        assertThat(nodes.getTaxonomies().size(),is(1));
     }
 
     @Test

@@ -43,7 +43,7 @@
         <!--/nfs/public/rw/uniprot/restful. -->
         <restful-prod-release-dir>${project.basedir}</restful-prod-release-dir>
 
-        <neo4j.version>2.3.3</neo4j.version>
+        <neo4j.version>3.0.1</neo4j.version>
     </properties>
 
     <dependencies>
@@ -115,6 +115,11 @@
         <dependency>
             <groupId>org.neo4j</groupId>
             <artifactId>neo4j</artifactId>
+            <version>${neo4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j-io</artifactId>
             <version>${neo4j.version}</version>
         </dependency>
     </dependencies>

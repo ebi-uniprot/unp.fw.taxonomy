@@ -17,9 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.sql.DataSource;
-import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.Label;
-import org.neo4j.graphdb.schema.IndexDefinition;
 import org.neo4j.unsafe.batchinsert.BatchInserter;
 import org.neo4j.unsafe.batchinsert.BatchInserters;
 import org.slf4j.Logger;
@@ -242,21 +240,38 @@ public class TaxonomyImportConfig {
         return this.readDatasource;
 
     }
-
     public BatchInserter getBatchInserter() throws IOException {
         if((batchInserter == null)){
             File neo4jDatabasePath = new File(env.getProperty("neo4j.database.path"));
             batchInserter = BatchInserters.inserter(neo4jDatabasePath);
             logger.info("Neo4J batchInserter initialized");
 
-            Label nodeLabel = DynamicLabel.label( "Node" );
+            Label nodeLabel = Label.label( "Node" );
             batchInserter.createDeferredSchemaIndex( nodeLabel ).on( "taxonomyId" ).create();
-            batchInserter.createDeferredSchemaIndex( nodeLabel ).on( "scientificName" ).create();
-            batchInserter.createDeferredSchemaIndex( nodeLabel ).on( "commonName" ).create();
-            batchInserter.createDeferredSchemaIndex( nodeLabel ).on( "mnemonic" ).create();
+            batchInserter.createDeferredSchemaIndex( nodeLabel ).on( "scientificNameLowerCase" ).create();
+            batchInserter.createDeferredSchemaIndex( nodeLabel ).on( "commonNameLowerCase" ).create();
+            batchInserter.createDeferredSchemaIndex( nodeLabel ).on( "mnemonicLowerCase" ).create();
 
             logger.info("Created Neo4J index for taxonomyId, scientificName, commonName and mnemonic");
+            registerStop(batchInserter);
         }
         return batchInserter;
+    }
+
+    /**
+     * TODO: Currently I am registering the stop manually
+     *       There is an automatic way, like uniprot restfull service does
+     **/
+    public void registerStop(final BatchInserter batchInserter) {
+        logger.info("Neo4J batchInserter Hook addShutdownHook");
+        Runtime.getRuntime().addShutdownHook( new Thread()
+        {
+            @Override
+            public void run()
+            {
+                logger.debug("Neo4J batchInserter Hook shutdown");
+                batchInserter.shutdown();
+            }
+        } );
     }
 }

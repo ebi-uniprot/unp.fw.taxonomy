@@ -42,12 +42,15 @@ public class Neo4JNodeItemWriterWithBatchInserter implements ItemWriter<Taxonomy
             properties.put("taxonomyId", "" + nodeModel.getTaxonomyId());
             if (nodeModel.getMnemonic() != null) {
                 properties.put("mnemonic", nodeModel.getMnemonic());
+                properties.put("mnemonicLowerCase", nodeModel.getMnemonic().toLowerCase());
             }
             if (nodeModel.getScientificName() != null) {
                 properties.put("scientificName", nodeModel.getScientificName());
+                properties.put("scientificNameLowerCase", nodeModel.getScientificName().toLowerCase());
             }
             if (nodeModel.getCommonName() != null) {
                 properties.put("commonName", nodeModel.getCommonName());
+                properties.put("commonNameLowerCase", nodeModel.getScientificName().toLowerCase());
             }
             if (nodeModel.getSynonym() != null) {
                 properties.put("synonym", nodeModel.getSynonym());
