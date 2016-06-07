@@ -80,9 +80,9 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
             neo4jDb = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(new File(filePath))
                     .setConfig("dbms.threads.worker_count", "10" )
                     .setConfig(GraphDatabaseSettings.read_only,"true")
-                    .setConfig( GraphDatabaseSettings.pagecache_memory, "1g" )
-                    .setConfig( GraphDatabaseSettings.string_block_size, "120" )
-                    .setConfig( GraphDatabaseSettings.array_block_size, "600" )
+                    //.setConfig( GraphDatabaseSettings.pagecache_memory, "1g" )
+                    //.setConfig( GraphDatabaseSettings.string_block_size, "120" )
+                    //.setConfig( GraphDatabaseSettings.array_block_size, "600" )
                     .newGraphDatabase();
             registerStop(neo4jDb);
         }
