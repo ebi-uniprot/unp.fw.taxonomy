@@ -11,7 +11,7 @@ import com.google.inject.name.Named;
 import java.io.File;
 import java.util.*;
 import javax.annotation.PostConstruct;
-import org.neo4j.graphalgo.impl.util.PathImpl;
+import org.neo4j.cypher.internal.compiler.v3_0.commands.expressions.PathImpl;
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.graphdb.factory.GraphDatabaseSettings;
@@ -42,10 +42,9 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
     private static final String GET_TAXONOMY_CHILDREN_BY_ID_CYPHER_QUERY =
             "MATCH (n:Node)-[r:CHILD_OF]->(p:Node) WHERE p.taxonomyId = {id} RETURN n as node";
 
-    private static final String GET_TAXONOMY_DETAIL_MATCH_BASE = "OPTIONAL MATCH (c:Node)-[rc:CHILD_OF]->(n)" +
-            "OPTIONAL MATCH (n)-[rp:CHILD_OF]->(p:Node) <-[rs:CHILD_OF]-(s:Node) " +
-            "RETURN distinct n as node,p.taxonomyId as parentId,c.taxonomyId as childId,s.taxonomyId as " +
-            "siblingId";
+    private static final String GET_TAXONOMY_DETAIL_MATCH_BASE = "OPTIONAL MATCH (n)-[rp:CHILD_OF]->(p:Node) " +
+            "with n,p return n as node,p.taxonomyId as parentId,(:Node)-[:CHILD_OF]->(n) as children," +
+            "(p)<-[:CHILD_OF]-(:Node) as siblings";
 
     private static final String GET_TAXONOMY_DETAILS_BY_ID_ONE_CYPHER_QUERY =
             "MATCH (n:Node) WHERE n.taxonomyId = {id} "+GET_TAXONOMY_DETAIL_MATCH_BASE;
@@ -114,8 +113,10 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
         params.put("id", "" + taxonomyId);
         try (Transaction tx = neo4jDb.beginTx();
                 Result queryResult = neo4jDb.execute(GET_TAXONOMY_DETAILS_BY_ID_ONE_CYPHER_QUERY, params)) {
-            result = Optional.ofNullable(getTaxonomyFromQueryResult(basePath, queryResult).getOrDefault(taxonomyId,
-                    null));
+            Optional<ArrayList<TaxonomyNode>> node = getTaxonomyFromQueryResult(basePath, queryResult);
+            if(node.isPresent()){
+                result = Optional.of(node.get().get(0));
+            }
             queryResult.close();
             tx.success();
         }
@@ -171,24 +172,23 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
 
     @Override
     public Optional<Taxonomies> getTaxonomyDetailsByName(String taxonomyName, String basePath) {
-        Collection<TaxonomyNode> result = null;
+        Optional<ArrayList<TaxonomyNode>> result = null;
         long startTime = System.currentTimeMillis();
         Map<String, Object> params = new HashMap<>();
-        //params.put( "name", "(?i).*"+taxonomyName+".*" );
         params.put( "name", taxonomyName.toLowerCase() );
 
         try ( Transaction tx = neo4jDb.beginTx();
                 Result queryResult = neo4jDb.execute(GET_TAXONOMY_DETAILS_BY_NAME_CYPHER_QUERY,params ) )
         {
-            result =  getTaxonomyFromQueryResult(basePath, queryResult).values();
+            result =  getTaxonomyFromQueryResult(basePath, queryResult);
             queryResult.close();
             tx.success();
             tx.close();
         }
         Optional<Taxonomies> taxonomies = Optional.empty();
-        if(result != null && !result.isEmpty()){
+        if(result.isPresent()){
             Taxonomies nodeList = new Taxonomies();
-            nodeList.setTaxonomies(new ArrayList<>(result));
+            nodeList.setTaxonomies(result.get());
             taxonomies = Optional.of(nodeList);
         }
         long elapsed = System.currentTimeMillis() - startTime;
@@ -210,7 +210,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
             if ( queryResult.hasNext() ) {
                 Optional<Object> value = getProperty(queryResult.next(),"path");
                 if (value.isPresent()) {
-                    PathImpl path = (PathImpl) value.get();
+                    org.neo4j.graphalgo.impl.util.PathImpl path = (org.neo4j.graphalgo.impl.util.PathImpl) value.get();
                     result = Optional.ofNullable(getTaxonomyNodePath(taxonomyId1,path));
                 }
 
@@ -312,69 +312,66 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
         return result;
     }
 
-    private Map<Long,TaxonomyNode> getTaxonomyFromQueryResult(String basePath, Result queryResult) {
-        Map<Long,TaxonomyNode> result = new HashMap<>();
-        Set<String> siblings = new HashSet<>();
-        Set<String> children = new HashSet<>();
-        Long currentTaxonomy = -1L;
-        TaxonomyNode currentNode = null;
+    private Optional<ArrayList<TaxonomyNode>> getTaxonomyFromQueryResult(String basePath, Result queryResult) {
+        ArrayList<TaxonomyNode> result = new ArrayList<>();
         while (queryResult.hasNext()) {
             Map<String, Object> row = queryResult.next();
+            TaxonomyNode taxonomyNode = null;
 
             Optional<Object> value = getProperty(row, "node");
             if (value.isPresent()) {
                 Node node = (Node) value.get();
-                Long rowTaxonomy = Long.parseLong(""+node.getProperty("taxonomyId"));
-                if(currentNode == null){// first iteration
-                    currentNode = getTaxonomyNodeWithParentLink(basePath, row, node);
-                }else if(!currentTaxonomy.equals(rowTaxonomy)){ // if result has more than one result
-                    updateSiblingsAndChildrenLinksForNode(basePath,siblings, children, currentTaxonomy,currentNode);
-                    result.put(currentTaxonomy, currentNode);
-
-                    siblings = new HashSet<>();
-                    children = new HashSet<>();
-                    currentNode = getTaxonomyNodeWithParentLink(basePath, row, node);
-                }
-                currentTaxonomy = rowTaxonomy;
-            }
-            value = getProperty(row, "childId");
-            if (value.isPresent()) {
-                children.add(basePath + value.get());
-            }
-            value = getProperty(row, "siblingId");
-            if (value.isPresent()) {
-                siblings.add(basePath + value.get());
+                taxonomyNode = getTaxonomyBaseNodeFromQueryResult(node);
+                Long taxId = taxonomyNode.getTaxonomyId();
+                taxonomyNode.setParentLink(getTaxonomyParentLink(basePath, row));
+                taxonomyNode.setChildrenLinks(getLinkList("children",row,taxId,basePath));
+                taxonomyNode.setSiblingsLinks(getLinkList("siblings",row,taxId,basePath));
+                result.add(taxonomyNode);
             }
         }
-        if(currentNode != null) {
-            updateSiblingsAndChildrenLinksForNode(basePath,siblings, children, currentTaxonomy,currentNode);
-            result.put(currentTaxonomy, currentNode);
+        if(result.isEmpty()){
+            return Optional.empty();
+        }else{
+            return Optional.of(result);
+        }
+    }
+
+    private ArrayList<String> getLinkList(String propertyName,Map<String,Object> row,long id,String basePath) {
+        ArrayList<String> result = null;
+        Optional<Object> value = getProperty(row, propertyName);
+        if (value.isPresent()) {
+            Set<String> list = new HashSet<>();
+            Iterable<PathImpl> pathList = (Iterable<PathImpl>) value.get();
+            for (PathImpl path : pathList) {
+                for (Relationship relationship : path.relationships()) {
+                    String taxonomyId = (String) relationship.getStartNode().getProperty("taxonomyId");
+                    list.add(basePath + taxonomyId);
+                }
+            }
+            list.remove(basePath + id);
+            if (!list.isEmpty()){
+                result = new ArrayList<>(list);
+            }
         }
         return result;
     }
 
-    private void updateSiblingsAndChildrenLinksForNode(String basePath, Set<String> siblings, Set<String> children,
-            Long currentTaxonomy, TaxonomyNode currentNode) {
-        if (!siblings.isEmpty()) {
-            siblings.remove(basePath + currentTaxonomy);
-            currentNode.setSiblingsLinks(new ArrayList<>(siblings));
-        }
-        if (!children.isEmpty()) {
-            currentNode.setChildrenLinks(new ArrayList<>(children));
-        }
-    }
-
-    private TaxonomyNode getTaxonomyNodeWithParentLink(String basePath, Map<String, Object> row, Node node) {
-        TaxonomyNode currentNode = getTaxonomyBaseNodeFromQueryResult(node);
+    private String getTaxonomyParentLink(String basePath, Map<String, Object> row) {
+        String result = null;
         Optional<Object> parentIdValue = getProperty(row, "parentId");
         if (parentIdValue.isPresent()) {
-            currentNode.setParentLink(basePath + parentIdValue.get());
+            result = basePath + parentIdValue.get();
         }
-        return currentNode;
+        return result;
     }
 
     private Optional<Object> getProperty(Map<String, Object> row, String propertyName){
-        return Optional.ofNullable(row.getOrDefault(propertyName,null));
+        Object propertyValue = row.getOrDefault(propertyName,null);
+        if(propertyValue != null && !propertyValue.toString().isEmpty()){
+            return Optional.of(propertyValue);
+        }else{
+            return Optional.empty();
+        }
     }
 
     private Taxonomies getNodeBaseList(String cypherSQL,long taxonomyId){
@@ -407,7 +404,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
         return taxonomies;
     }
 
-    private TaxonomyNode getTaxonomyNodePath(long initialTaxonomyId, PathImpl path) {
+    private TaxonomyNode getTaxonomyNodePath(long initialTaxonomyId, org.neo4j.graphalgo.impl.util.PathImpl path) {
         return getTaxonomyNodePath(initialTaxonomyId,path.relationships(), null);
     }
 
