@@ -3,6 +3,7 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint.IsEnumValue;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint.NameMinSizeForPartialSearches;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiParam;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.PathParam;
@@ -55,6 +56,7 @@ public class NameRequestParams {
         this.searchType = searchType;
     }
 
+    @JsonIgnore
     public String getSearchTypeQueryKeyword(){
         SearchType searchType = SearchType.valueOf(this.searchType.toUpperCase());
         String searchQueryKeyword = null;
