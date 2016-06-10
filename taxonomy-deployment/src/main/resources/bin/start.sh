@@ -58,7 +58,7 @@ nohup $JAVA_HOME/bin/java -server -XX:+UseG1GC $TAXONOMY_RESTFUL_JVM_MEM_MAX $TA
 -Dcom.sun.management.jmxremote.authenticate=false \
 -Dcom.sun.management.jmxremote.ssl=false  \
 -Dcom.sun.management.jmxremote.port=$JXM_REMOTE_PORT \
--jar $TAXONOMY_JAR_PATH $CONTEXT_PATH $ACCESS_LOG_PATH > $LOGFILE 2>&1 &
+-jar $TAXONOMY_JAR_PATH > $LOGFILE 2>&1 &
 
 sleep 5
 
@@ -70,7 +70,7 @@ grep "ready to service requests" $LOGFILE || {
 popd  .
 
 echo "testing Taxonomy service"
-curl http://127.0.0.1:9090/$CONTEXT_PATH/taxonomy/id/269 > /dev/null || {
+curl http://127.0.0.1:9090/uniprot/api/taxonomy/id/269 > /dev/null || {
     echo "Taxonomy service is still not available, please check."
     exit 1;
 }
