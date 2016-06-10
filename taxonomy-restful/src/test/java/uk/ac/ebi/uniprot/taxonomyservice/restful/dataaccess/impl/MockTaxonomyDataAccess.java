@@ -2,6 +2,7 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.impl;
 
 import uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.TaxonomyDataAccess;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.NameRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.PathRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
 
@@ -83,9 +84,9 @@ public class MockTaxonomyDataAccess implements TaxonomyDataAccess {
     }
 
     @Override
-    public Optional<Taxonomies> getTaxonomyDetailsByName(String taxonomyName, String basePath) {
+    public Optional<Taxonomies> getTaxonomyDetailsByName(NameRequestParams nameRequestParams, String basePath) {
         Taxonomies response = null;
-        if (Arrays.binarySearch(validNames, taxonomyName.toLowerCase()) > 0) {
+        if (Arrays.binarySearch(validNames, nameRequestParams.getTaxonomyName().toLowerCase()) > 0) {
             List<TaxonomyNode> detailList = new ArrayList<>();
             detailList.add(getTaxonomyDetailsById(validIds[1],basePath).get());
             detailList.add(getTaxonomyDetailsById(validIds[2],basePath).get());

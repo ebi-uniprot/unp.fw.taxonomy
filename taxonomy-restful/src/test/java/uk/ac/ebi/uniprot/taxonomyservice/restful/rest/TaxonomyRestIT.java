@@ -506,7 +506,7 @@ public class TaxonomyRestIT {
 
     @Test
     public void lookupTaxonomyNameWithSmallNameReturnsBadRequestStatusWithErrorMessage() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/name/a";
+        String requestedURL = TAXONOMY_BASE_PATH + "/name/a?searchType=contains";
 
         ExtractableResponse<Response> jsonResponse = when()
                 .get(requestedURL)
@@ -515,7 +515,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.NAME_PARAMETER_MIN_SIZE);
+        errorMessages.add(SwaggerConstant.NAME_PARAMETER_MIN_SIZE_FOR_PARTIAL_SEARCHES);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 

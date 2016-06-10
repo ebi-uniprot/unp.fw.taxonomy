@@ -1,6 +1,7 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.impl;
 
 import uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.NameRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.PathRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
 
@@ -36,9 +37,10 @@ public class Neo4jTaxonomyDataAccessTest {
 
     private static final String IMPORT_CYPHER_NODE_QUERY = LOAD_CSV +
             "MERGE (node:Node { taxonomyId : row.TAX_ID }) " +
-                "SET node += {taxonomyId : row.TAX_ID, mnemonic : row.SPTR_CODE, scientificName : row.SPTR_SCIENTIFIC, " +
-                    "scientificNameLowerCase : lower(row.SPTR_SCIENTIFIC), commonName : row.SPTR_COMMON, " +
-                    "synonym : row .SPTR_SYNONYM, rank : row.RANK} " +
+                "SET node += {taxonomyId : row.TAX_ID, mnemonic : row.SPTR_CODE, mnemonicLowerCase : " +
+                    "lower(row.SPTR_CODE), scientificName : row.SPTR_SCIENTIFIC, scientificNameLowerCase : " +
+                    "lower(row.SPTR_SCIENTIFIC), commonName : row.SPTR_COMMON, commonNameLowerCase : " +
+                    "lower(row.SPTR_COMMON), synonym : row .SPTR_SYNONYM, rank : row.RANK} " +
             "MERGE (parent:Node {taxonomyId:row.PARENT_ID}) " +
             "MERGE (node)-[:CHILD_OF]-(parent)";
 
@@ -144,27 +146,93 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
-    public void getTaxonomyDetailsByNameWithValidSimilarNames() throws Exception {
-        Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomyDetailsByName("Name",baseURL);
+    public void getTaxonomyDetailsByNameWithEqualsToValidExactName() throws Exception {
+        NameRequestParams nameParams = new NameRequestParams();
+        nameParams.setSearchType("EQUALSTO");
+        nameParams.setTaxonomyName("equals to only");
+        Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomyDetailsByName(nameParams,baseURL);
         assertThat(nodeOptional.isPresent(),is(true));
         Taxonomies nodes = nodeOptional.get();
         assertThat(nodes.getTaxonomies(),notNullValue());
         assertThat(nodes.getTaxonomies().size(),is(1));
+        assertBaseNode(10000,nodes.getTaxonomies().get(0));
     }
 
     @Test
-    public void getTaxonomyDetailsByNameWithValidExactName() throws Exception {
-        Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomyDetailsByName("MyCompleteName",baseURL);
-        assertThat(nodeOptional.isPresent(),is(true));
+    public void getTaxonomyDetailsByNameWithEqualsToInvalidSimilarNames() throws Exception {
+        NameRequestParams nameParams = new NameRequestParams();
+        nameParams.setSearchType("EQUALSTO");
+        nameParams.setTaxonomyName("equalsto only");
+        Optional<Taxonomies> nodes = neo4jDataAccess.getTaxonomyDetailsByName(nameParams,baseURL);
+        assertThat(nodes.isPresent(),is(false));
+    }
+
+    @Test
+    public void getTaxonomyDetailsByNameEqualsToInValidName() throws Exception {
+        NameRequestParams nameParams = new NameRequestParams();
+        nameParams.setSearchType("EQUALSTO");
+        nameParams.setTaxonomyName("INVALID");
+        Optional<Taxonomies> nodes = neo4jDataAccess.getTaxonomyDetailsByName(nameParams,baseURL);
+        assertThat(nodes.isPresent(),is(false));
+    }
+
+    @Test
+    public void getTaxonomyDetailsByNameContainsValidName() throws Exception {
+        NameRequestParams nameParams = new NameRequestParams();
+        nameParams.setSearchType("CONTAINS");
+        nameParams.setTaxonomyName("name");
+        Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomyDetailsByName(nameParams,baseURL);
         Taxonomies nodes = nodeOptional.get();
         assertThat(nodes.getTaxonomies(),notNullValue());
-        assertThat(nodes.getTaxonomies().size(),is(1));
-        assertBaseNode(100000L,nodes.getTaxonomies().get(0));
+        assertThat(nodes.getTaxonomies().size(),is(4));
     }
 
     @Test
-    public void getTaxonomyDetailsByNameWithInValidName() throws Exception {
-        Optional<Taxonomies> nodes = neo4jDataAccess.getTaxonomyDetailsByName("INVALID",baseURL);
+    public void getTaxonomyDetailsByNameContainsInValidName() throws Exception {
+        NameRequestParams nameParams = new NameRequestParams();
+        nameParams.setSearchType("CONTAINS");
+        nameParams.setTaxonomyName("invalid");
+        Optional<Taxonomies> nodes = neo4jDataAccess.getTaxonomyDetailsByName(nameParams,baseURL);
+        assertThat(nodes.isPresent(),is(false));
+    }
+
+    @Test
+    public void getTaxonomyDetailsByNameEndsWithValidName() throws Exception {
+        NameRequestParams nameParams = new NameRequestParams();
+        nameParams.setSearchType("ENDSWITH");
+        nameParams.setTaxonomyName("ended");
+        Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomyDetailsByName(nameParams,baseURL);
+        Taxonomies nodes = nodeOptional.get();
+        assertThat(nodes.getTaxonomies(),notNullValue());
+        assertThat(nodes.getTaxonomies().size(),is(4));
+    }
+
+    @Test
+    public void getTaxonomyDetailsByNameEndsWithInValidName() throws Exception {
+        NameRequestParams nameParams = new NameRequestParams();
+        nameParams.setSearchType("ENDSWITH");
+        nameParams.setTaxonomyName("INVALID");
+        Optional<Taxonomies> nodes = neo4jDataAccess.getTaxonomyDetailsByName(nameParams,baseURL);
+        assertThat(nodes.isPresent(),is(false));
+    }
+
+    @Test
+    public void getTaxonomyDetailsByNameStartsWithValidName() throws Exception {
+        NameRequestParams nameParams = new NameRequestParams();
+        nameParams.setSearchType("STARTSWITH");
+        nameParams.setTaxonomyName("start");
+        Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomyDetailsByName(nameParams,baseURL);
+        Taxonomies nodes = nodeOptional.get();
+        assertThat(nodes.getTaxonomies(),notNullValue());
+        assertThat(nodes.getTaxonomies().size(),is(4));
+    }
+
+    @Test
+    public void getTaxonomyDetailsByNameStartsWithInValidName() throws Exception {
+        NameRequestParams nameParams = new NameRequestParams();
+        nameParams.setSearchType("STARTSWITH");
+        nameParams.setTaxonomyName("invalid");
+        Optional<Taxonomies> nodes = neo4jDataAccess.getTaxonomyDetailsByName(nameParams,baseURL);
         assertThat(nodes.isPresent(),is(false));
     }
 

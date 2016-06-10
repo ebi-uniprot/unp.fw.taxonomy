@@ -1,6 +1,7 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess;
 
 import uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.NameRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.PathRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
 
@@ -46,13 +47,14 @@ public interface TaxonomyDataAccess {
     Optional<Taxonomies> getTaxonomyChildrenById(long taxonomyId);
 
     /**
-     * This method return the details of all taxonomies names that contains {@param taxonomyName}
+     * This method return the details of all taxonomies names that contains {@param nameRequestParams.taxonomyName}
+     * based on {@param nameRequestParams.searchType}
      *
-     * @param taxonomyName Name given to a taxonomy element
+     * @param nameRequestParams contains taxonomyName and searchType that will be executed the filter
      * @param basePath base path to build taxonomy parent, children and sibling links
      * @return List of taxonomies
      */
-    Optional<Taxonomies> getTaxonomyDetailsByName(String taxonomyName, String basePath);
+    Optional<Taxonomies> getTaxonomyDetailsByName(NameRequestParams nameRequestParams, String basePath);
 
     /**
      * This method return all nodes that are between  {@param from} and {@param to}

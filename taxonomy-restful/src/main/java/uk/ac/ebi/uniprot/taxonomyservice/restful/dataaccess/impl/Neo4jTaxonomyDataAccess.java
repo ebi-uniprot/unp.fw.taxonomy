@@ -2,6 +2,7 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.impl;
 
 import uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.TaxonomyDataAccess;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.NameRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.PathDirections;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.PathRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
@@ -50,7 +51,9 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
             "MATCH (n:Node) WHERE n.taxonomyId = {id} "+GET_TAXONOMY_DETAIL_MATCH_BASE;
 
     private static final String GET_TAXONOMY_DETAILS_BY_NAME_CYPHER_QUERY =
-            "MATCH (n:Node) WHERE n.scientificNameLowerCase = {name} "+GET_TAXONOMY_DETAIL_MATCH_BASE;
+            "MATCH (n:Node) WHERE n.scientificNameLowerCase {searchType} {name} OR " +
+                    "n.commonNameLowerCase {searchType} {name} OR " +
+                    "n.mnemonicLowerCase {searchType} {name} "+GET_TAXONOMY_DETAIL_MATCH_BASE;
 
     private static final String GET_TAXONOMY_RELATIONSHIP_CYPHER_QUERY =
             "MATCH (n1:Node),(n2:Node), path = shortestpath((n1)-[r:CHILD_OF*]-(n2)) where n1" +
@@ -66,7 +69,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
             "MATCH (n1:Node)-[r:MERGED_TO]->(n2:Node) where n1.taxonomyId = {id} RETURN n2.taxonomyId as taxonomyId";
 
     @Inject
-    public Neo4jTaxonomyDataAccess(@Named("neo4j.database.path") String filePath){
+    public Neo4jTaxonomyDataAccess(@Named("NEO4J_DATABASE_PATH") String filePath){
         this.filePath = filePath;
     }
 
@@ -77,7 +80,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
         if (this.neo4jDb == null) {
             logger.debug("Creating an instance for Neo4jTaxonomyDataAccess and using neo4jDb filePath: "+filePath);
             neo4jDb = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(new File(filePath))
-                    .setConfig("dbms.threads.worker_count", "10" )
+                    .setConfig("dbms.threads.worker_count", "20" )
                     .setConfig(GraphDatabaseSettings.read_only,"true")
                     //.setConfig( GraphDatabaseSettings.pagecache_memory, "1g" )
                     //.setConfig( GraphDatabaseSettings.string_block_size, "120" )
@@ -121,7 +124,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
             tx.success();
         }
         long elapsed = System.currentTimeMillis() - startTime;
-        logger.debug("NeoQuery Time for getTaxonomyDetailsById: "+elapsed+ "for id "+taxonomyId);
+        logger.debug("NeoQuery Time for getTaxonomyDetailsById: "+elapsed+ " for id "+taxonomyId);
         return result;
     }
 
@@ -161,7 +164,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
             tx.close();
         }
         long elapsed = System.currentTimeMillis() - startTime;
-        logger.debug("NeoQuery Time for getTaxonomyParentById: "+elapsed+ "for id "+taxonomyId);
+        logger.debug("NeoQuery Time for getTaxonomyParentById: "+elapsed+ " for id "+taxonomyId);
         return result;
     }
 
@@ -171,14 +174,16 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
     }
 
     @Override
-    public Optional<Taxonomies> getTaxonomyDetailsByName(String taxonomyName, String basePath) {
+    public Optional<Taxonomies> getTaxonomyDetailsByName(NameRequestParams nameParams, String basePath) {
         Optional<ArrayList<TaxonomyNode>> result = null;
         long startTime = System.currentTimeMillis();
         Map<String, Object> params = new HashMap<>();
-        params.put( "name", taxonomyName.toLowerCase() );
+        params.put( "name", nameParams.getTaxonomyName().toLowerCase() );
 
+        String query = GET_TAXONOMY_DETAILS_BY_NAME_CYPHER_QUERY.replaceAll("\\{searchType\\}", nameParams
+                .getSearchTypeQueryKeyword());
         try ( Transaction tx = neo4jDb.beginTx();
-                Result queryResult = neo4jDb.execute(GET_TAXONOMY_DETAILS_BY_NAME_CYPHER_QUERY,params ) )
+                Result queryResult = neo4jDb.execute(query,params ) )
         {
             result =  getTaxonomyFromQueryResult(basePath, queryResult);
             queryResult.close();
@@ -192,7 +197,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
             taxonomies = Optional.of(nodeList);
         }
         long elapsed = System.currentTimeMillis() - startTime;
-        logger.debug("NeoQuery Time for getTaxonomyDetailsByName: "+elapsed+ "for name "+taxonomyName);
+        logger.debug("NeoQuery Time for getTaxonomyDetailsByName: "+elapsed+ " for "+params);
         return taxonomies;
     }
 
@@ -252,7 +257,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
             tx.close();
         }
         long elapsed = System.currentTimeMillis() - startTime;
-        logger.debug("NeoQuery Time for getTaxonomyPath: "+elapsed+ "for path param "+nodePathParams);
+        logger.debug("NeoQuery Time for getTaxonomyPath: "+elapsed+ " for path param "+nodePathParams);
         return Optional.ofNullable(result);
     }
 
@@ -278,7 +283,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
             tx.close();
         }
         long elapsed = System.currentTimeMillis() - startTime;
-        logger.debug("NeoQuery Time for getTaxonomyHistoricalChange: "+elapsed+ "for id "+id);
+        logger.debug("NeoQuery Time for getTaxonomyHistoricalChange: "+elapsed+ " for id "+id);
         return Optional.ofNullable(result);
     }
 
@@ -400,7 +405,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
             taxonomies.setTaxonomies(queryResultList);
         }
         long elapsed = System.currentTimeMillis() - startTime;
-        logger.debug("NeoQuery Time for getNodeBaseList: "+elapsed);
+        logger.debug("NeoQuery Time for getNodeBaseList: "+elapsed+" for id "+taxonomyId);
         return taxonomies;
     }
 

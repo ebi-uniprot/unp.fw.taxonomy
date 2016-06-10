@@ -1,11 +1,12 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.main;
 
+import uk.ac.ebi.uniprot.taxonomyservice.restful.main.TaxonomyProperties.APP_PROPERTY_NAME;
+
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.Servlet;
-import javax.ws.rs.ProcessingException;
 import jersey.repackaged.com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.glassfish.grizzly.http.server.HttpHandlerRegistration;
 import org.glassfish.grizzly.http.server.HttpServer;
@@ -14,11 +15,8 @@ import org.glassfish.grizzly.http.server.ServerConfiguration;
 import org.glassfish.grizzly.http.server.accesslog.AccessLogBuilder;
 import org.glassfish.grizzly.servlet.ServletRegistration;
 import org.glassfish.grizzly.servlet.WebappContext;
-import org.glassfish.grizzly.threadpool.GrizzlyExecutorService;
 import org.glassfish.grizzly.threadpool.ThreadPoolConfig;
 import org.glassfish.grizzly.utils.Charsets;
-import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
-import org.glassfish.jersey.grizzly2.httpserver.internal.LocalizationMessages;
 import org.glassfish.jersey.process.JerseyProcessingUncaughtExceptionHandler;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.slf4j.Logger;
@@ -32,13 +30,10 @@ import org.slf4j.LoggerFactory;
  */
 public class RestAppMain {
 
-    public static final Logger logger = LoggerFactory.getLogger(RestAppMain.class);
+    private static final Logger logger = LoggerFactory.getLogger(RestAppMain.class);
 
     public static final String baseUri =
             "http://0.0.0.0:" + (System.getenv("PORT") != null ? System.getenv("PORT") : "9090");
-
-    public static final String DEFAULT_TAXONOMY_SERVICE_CONTEXT_PATH = "/uniprot/api/taxonomy";
-    public static final String DEFAULT_ACCESS_LOG_PATH = "./logs/access.log";
 
     /**
      * Main method that start the application
@@ -51,45 +46,11 @@ public class RestAppMain {
 
         initParams.put("javax.ws.rs.Application", "uk.ac.ebi.uniprot.taxonomyservice.restful.main.RestApp");
 
-        String taxonomyServiceContextPath = getContextPathFromMainArgument(args);
-        String accessLogPath = getAccessLogPathFromMainArgument(args);
+        HttpServer httpServer = create(URI.create(baseUri), ServletContainer.class, null, initParams, null);
 
-        HttpServer httpServer =
-                create(URI.create(baseUri), ServletContainer.class, null, initParams, null, taxonomyServiceContextPath);
-
-        enableAccessLog(httpServer,accessLogPath);
+        enableAccessLog(httpServer);
 
         httpServer.start();
-    }
-
-    /*
-     * This method check if received an argument[1] from main method for access log path and return it, if does not
-     * receive, it return de default access log from {@link #DEFAULT_ACCESS_LOG_PATH}
-     *
-     * @param args Arguments received in main method
-     * @return  access log file path
-     */
-    private static String getAccessLogPathFromMainArgument(String[] args) {
-        String accessLogPath = DEFAULT_ACCESS_LOG_PATH;
-        if (args != null && args.length > 1 && !args[1].isEmpty()) {
-            accessLogPath = args[1];
-        }
-        return accessLogPath;
-    }
-
-    /*
-     * This method check if received an argument[0] from main method for application context and return it, if does not
-     * receive, it return de default context path from {@link #DEFAULT_TAXONOMY_SERVICE_CONTEXT_PATH}
-     *
-     * @param args Arguments received in main method
-     * @return  application ContextPath
-     */
-    private static String getContextPathFromMainArgument(String[] args) {
-        String taxonomyServiceContextPath = DEFAULT_TAXONOMY_SERVICE_CONTEXT_PATH;
-        if (args != null && args.length > 0 && !args[0].isEmpty()) {
-            taxonomyServiceContextPath = args[0];
-        }
-        return taxonomyServiceContextPath;
     }
 
     /**
@@ -100,12 +61,11 @@ public class RestAppMain {
      * @param servlet a servlet object
      * @param initParams Grizzly server initial parameters
      * @param contextInitParams Grizzly server initial context parameters
-     * @param taxonomyServiceContextPath Application context path
      * @return Grizzly http server
      * @throws IOException
      */
     public static HttpServer create(URI baseUri, Class<? extends Servlet> servletClass, Servlet servlet,
-            Map<String, String> initParams, Map<String, String> contextInitParams, String taxonomyServiceContextPath)
+            Map<String, String> initParams, Map<String, String> contextInitParams)
             throws IOException {
 
         String host = baseUri.getHost() == null?"0.0.0.0":baseUri.getHost();
@@ -115,8 +75,10 @@ public class RestAppMain {
         ThreadPoolConfig threadPoolConfig = listener.getTransport().getWorkerThreadPoolConfig();
         threadPoolConfig.setThreadFactory((new ThreadFactoryBuilder()).setNameFormat("grizzly-http-server-%d")
                 .setUncaughtExceptionHandler(new JerseyProcessingUncaughtExceptionHandler()).build());
-        threadPoolConfig.setCorePoolSize(10);
-        threadPoolConfig.setMaxPoolSize(100);
+        threadPoolConfig.setCorePoolSize(TaxonomyProperties.getIntProperty(APP_PROPERTY_NAME
+                .TAXONOMY_GRIZZLY_CORE_THREAD_POOL_SIZE));
+        threadPoolConfig.setMaxPoolSize(TaxonomyProperties.getIntProperty(APP_PROPERTY_NAME
+                .TAXONOMY_GRIZZLY_MAX_THREAD_POOL_SIZE));
         listener.setSecure(false);
 
         HttpServer server = new HttpServer();
@@ -128,7 +90,8 @@ public class RestAppMain {
 
 
         // adding services
-        WebappContext context = new WebappContext("GrizzlyContext", taxonomyServiceContextPath);
+        WebappContext context = new WebappContext("GrizzlyContext", TaxonomyProperties.getProperty(
+                APP_PROPERTY_NAME.TAXONOMY_SERVICE_CONTEXT_PATH));
         ServletRegistration registration;
         if (servletClass != null) {
             registration = context.addServlet(servletClass.getName(), servletClass);
@@ -140,7 +103,7 @@ public class RestAppMain {
 
         //adding mapping for docs.
         HttpHandlerRegistration docHandler = new HttpHandlerRegistration.Builder().contextPath
-                ("/uniprot/api/taxonomy/docs")
+                (TaxonomyProperties.getProperty(APP_PROPERTY_NAME.TAXONOMY_DOCS_CONTEXT_PATH))
                 .urlPattern("/*").build();
         server.getServerConfiguration().addHttpHandler(new CLStaticHttpHandlerWithCORS(RestAppMain.class.getClassLoader(),
                 "staticContent/"), docHandler);
@@ -163,10 +126,10 @@ public class RestAppMain {
     /** This method configure Grizzly HttpServer accessLog
      *
      * @param httpServer GrizzlyHttpServer
-     * @param accessLogPath access log file path
      */
-    private static void enableAccessLog(HttpServer httpServer,String accessLogPath) {
-        final AccessLogBuilder builder = new AccessLogBuilder(accessLogPath);
+    private static void enableAccessLog(HttpServer httpServer) {
+        final AccessLogBuilder builder = new AccessLogBuilder(TaxonomyProperties.getProperty(
+                APP_PROPERTY_NAME.TAXONOMY_LOGS_PATH));
         builder.synchronous(true);
         builder.rotatedHourly();
         builder.instrument(httpServer.getServerConfiguration());

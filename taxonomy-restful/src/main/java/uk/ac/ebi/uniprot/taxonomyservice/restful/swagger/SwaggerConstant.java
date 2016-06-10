@@ -57,7 +57,11 @@ public class SwaggerConstant {
 
     public static final String ID_PARAMETER_IS_REQUIRED = "id parameter is required";
     public static final String NAME_PARAMETER_IS_REQUIRED = "name parameter is required";
-    public static final String NAME_PARAMETER_MIN_SIZE= "name parameter minimun size are 4 characters";
+    public static final String SEARCHTYPE_PARAMETER_IS_REQUIRED = "searchType parameter is required";
+    public static final String NAME_PARAMETER_MIN_SIZE_FOR_PARTIAL_SEARCHES = "name parameter minimun size is 5 " +
+            "characters for startWith, endsWith or contains searchType value";
+    public static final String SEARCH_TYPE_VALID_VALUES = "searchType parameter value must be equalsto, startsWith, " +
+            "endsWith or contains";
     public static final String DEPTH_PARAMETER_IS_REQUIRED = "depth parameter is required";
     public static final String DEPTH_PARAM_MIN_MAX = "depth param value must be between 1 and 5";
     public static final String DIRECTION_VALID_VALUES = "direction parameter value must be top or bottom";

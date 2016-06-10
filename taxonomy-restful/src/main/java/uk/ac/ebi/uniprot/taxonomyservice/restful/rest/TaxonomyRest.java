@@ -2,6 +2,7 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.rest;
 
 import uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.TaxonomyDataAccess;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.NameRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.PathRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.RelationshipRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.ErrorMessage;
@@ -15,7 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
@@ -150,15 +150,12 @@ public class TaxonomyRest {
             @ApiResponse(code = 404, message = API_RESPONSE_404, response = ErrorMessage.class),
             @ApiResponse(code = 500, message = API_RESPONSE_500, response = ErrorMessage.class)})
     @Path("/name/{name}")
-    public Response getTaxonomiesDetailsByName(
-            @ApiParam(value = "name", required = true)
-            @NotNull(message = NAME_PARAMETER_IS_REQUIRED)
-            @Size(min = 2,message = NAME_PARAMETER_MIN_SIZE) // there are names Aa (id 152839), Zu ( id 143324)...
-            @PathParam("name") String taxonomyName) {
+    public Response getTaxonomiesDetailsByName(@Valid @BeanParam NameRequestParams params) {
 
-        Optional<Taxonomies> response = dataAccess.getTaxonomyDetailsByName(taxonomyName,URLUtil.getTaxonomyIdBasePath(request));
-        if (response != null) {
-            return Response.ok(response).build();
+        Optional<Taxonomies> response = dataAccess.getTaxonomyDetailsByName(params,URLUtil.getTaxonomyIdBasePath
+                (request));
+        if (response.isPresent()) {
+            return Response.ok(response.get()).build();
         } else {
             return buildNotFoundResponse();
         }
