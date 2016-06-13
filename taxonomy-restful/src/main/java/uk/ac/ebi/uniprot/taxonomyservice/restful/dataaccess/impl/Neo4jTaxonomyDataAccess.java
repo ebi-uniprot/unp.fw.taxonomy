@@ -58,8 +58,8 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
             " UNION MATCH (n:Node) WHERE n.mnemonicLowerCase {searchType} {name} "+GET_TAXONOMY_DETAIL_MATCH_BASE;
 
     private static final String GET_TAXONOMY_RELATIONSHIP_CYPHER_QUERY =
-            "MATCH (n1:Node),(n2:Node), path = shortestpath((n1)-[r:CHILD_OF*]-(n2)) where n1" +
-                    ".taxonomyId = {from} and n2.taxonomyId = {to} return path";
+            "MATCH (n1:Node),(n2:Node) where n1.taxonomyId = {from} and n2.taxonomyId = {to} " +
+                    "return shortestpath((n1)-[:CHILD_OF*]-(n2)) as path";
 
     private static final String GET_TAXONOMY_PATH_DOWN_CYPHER_QUERY =
             "MATCH (n1:Node)<-[r:CHILD_OF*1..{depth}]-(n2:Node) where n1.taxonomyId = {id} return r";
