@@ -12,7 +12,6 @@ import com.google.inject.name.Named;
 import java.io.File;
 import java.util.*;
 import javax.annotation.PostConstruct;
-import org.neo4j.cypher.internal.compiler.v3_0.commands.expressions.PathImpl;
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.graphdb.factory.GraphDatabaseSettings;
@@ -44,16 +43,19 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
             "MATCH (n:Node)-[r:CHILD_OF]->(p:Node) WHERE p.taxonomyId = {id} RETURN n as node";
 
     private static final String GET_TAXONOMY_DETAIL_MATCH_BASE = "OPTIONAL MATCH (n)-[rp:CHILD_OF]->(p:Node) " +
-            "with n,p return n as node,p.taxonomyId as parentId,(:Node)-[:CHILD_OF]->(n) as children," +
-            "(p)<-[:CHILD_OF]-(:Node) as siblings";
+            "with n,p return n as node,p.taxonomyId as parentId," +
+            "extract(path in (:Node)-[:CHILD_OF]->(n) | extract( r in relationships(path) | startNode(r).taxonomyId ))"+
+            " as children," +
+            "extract(path in (p)<-[:CHILD_OF]-(:Node) | extract( r in relationships(path) | startNode(r).taxonomyId ))"+
+            " as siblings";
 
     private static final String GET_TAXONOMY_DETAILS_BY_ID_ONE_CYPHER_QUERY =
             "MATCH (n:Node) WHERE n.taxonomyId = {id} "+GET_TAXONOMY_DETAIL_MATCH_BASE;
 
     private static final String GET_TAXONOMY_DETAILS_BY_NAME_CYPHER_QUERY =
-            "MATCH (n:Node) WHERE n.scientificNameLowerCase {searchType} {name} OR " +
-                    "n.commonNameLowerCase {searchType} {name} OR " +
-                    "n.mnemonicLowerCase {searchType} {name} "+GET_TAXONOMY_DETAIL_MATCH_BASE;
+            "MATCH (n:Node) WHERE n.scientificNameLowerCase {searchType} {name} " +GET_TAXONOMY_DETAIL_MATCH_BASE +
+            " UNION MATCH (n:Node) WHERE n.commonNameLowerCase {searchType} {name} " +GET_TAXONOMY_DETAIL_MATCH_BASE +
+            " UNION MATCH (n:Node) WHERE n.mnemonicLowerCase {searchType} {name} "+GET_TAXONOMY_DETAIL_MATCH_BASE;
 
     private static final String GET_TAXONOMY_RELATIONSHIP_CYPHER_QUERY =
             "MATCH (n1:Node),(n2:Node), path = shortestpath((n1)-[r:CHILD_OF*]-(n2)) where n1" +
@@ -182,6 +184,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
 
         String query = GET_TAXONOMY_DETAILS_BY_NAME_CYPHER_QUERY.replaceAll("\\{searchType\\}", nameParams
                 .getSearchTypeQueryKeyword());
+        logger.debug(query +" for "+nameParams.getTaxonomyName().toLowerCase());
         try ( Transaction tx = neo4jDb.beginTx();
                 Result queryResult = neo4jDb.execute(query,params ) )
         {
@@ -346,13 +349,8 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
         Optional<Object> value = getProperty(row, propertyName);
         if (value.isPresent()) {
             Set<String> list = new HashSet<>();
-            Iterable<PathImpl> pathList = (Iterable<PathImpl>) value.get();
-            for (PathImpl path : pathList) {
-                for (Relationship relationship : path.relationships()) {
-                    String taxonomyId = (String) relationship.getStartNode().getProperty("taxonomyId");
-                    list.add(basePath + taxonomyId);
-                }
-            }
+            Iterable<Iterable<String>> pathList = (Iterable<Iterable<String>>) value.get();
+            pathList.forEach(wrapper -> wrapper.forEach(item -> list.add(basePath + item)));
             list.remove(basePath + id);
             if (!list.isEmpty()){
                 result = new ArrayList<>(list);

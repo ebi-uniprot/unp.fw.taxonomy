@@ -36,10 +36,6 @@ public class NameRequestParams {
     @QueryParam("searchType")
     private String searchType;
 
-    public NameRequestParams(){
-        this.searchType = SearchType.EQUALSTO.toString();
-    }
-
     public String getTaxonomyName() {
         return taxonomyName;
     }
@@ -49,6 +45,9 @@ public class NameRequestParams {
     }
 
     public String getSearchType() {
+        if(searchType == null){
+            this.searchType = SearchType.EQUALSTO.toString();
+        }
         return searchType;
     }
 
