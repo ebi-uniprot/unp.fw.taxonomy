@@ -57,7 +57,7 @@ public class TaxonomyProperties {
     }
 
     public static int getIntProperty(APP_PROPERTY_NAME propertyName){
-        return new Integer(getProperty(propertyName));
+        return Integer.valueOf(getProperty(propertyName));
     }
 
     public static Properties getConfigProperties(){

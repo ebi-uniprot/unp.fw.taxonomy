@@ -97,13 +97,13 @@ public class NameRequestParams {
                 that.getTaxonomyName() != null) {
             return false;
         }
-        return getSearchType() != null ? getSearchType().equals(that.getSearchType()) : that.getSearchType() == null;
+        return getSearchType().equals(that.getSearchType());
 
     }
 
     @Override public int hashCode() {
         int result = getTaxonomyName() != null ? getTaxonomyName().hashCode() : 0;
-        result = 31 * result + (getSearchType() != null ? getSearchType().hashCode() : 0);
+        result = 31 * result + getSearchType().hashCode();
         return result;
     }
 }
