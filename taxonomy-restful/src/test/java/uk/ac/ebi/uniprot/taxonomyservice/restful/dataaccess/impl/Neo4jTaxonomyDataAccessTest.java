@@ -168,6 +168,19 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
+    public void getTaxonomyDetailsByNameWithEqualsToSmallNamesReturnValidTaxonomies() throws Exception {
+        NameRequestParams nameParams = new NameRequestParams();
+        nameParams.setSearchType("EQUALSTO");
+        nameParams.setTaxonomyName("sn");
+        Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomyDetailsByName(nameParams,baseURL);
+        assertThat(nodeOptional.isPresent(),is(true));
+        Taxonomies nodes = nodeOptional.get();
+        assertThat(nodes.getTaxonomies(),notNullValue());
+        assertThat(nodes.getTaxonomies().size(),is(1));
+        assertBaseNode(10000005,nodes.getTaxonomies().get(0));
+    }
+
+    @Test
     public void getTaxonomyDetailsByNameEqualsToInValidName() throws Exception {
         NameRequestParams nameParams = new NameRequestParams();
         nameParams.setSearchType("EQUALSTO");

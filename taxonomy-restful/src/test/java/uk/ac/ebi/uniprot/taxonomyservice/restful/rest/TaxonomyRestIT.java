@@ -36,7 +36,7 @@ import static org.hamcrest.Matchers.isEmptyOrNullString;
  */
 public class TaxonomyRestIT {
 
-    private static final String TAXONOMY_BASE_PATH = "/taxonomy";
+    private static final String TAXONOMY_BASE_PATH = "";
 
     @ClassRule
     public static RestContainer restContainer = new RestContainer();
@@ -238,7 +238,6 @@ public class TaxonomyRestIT {
         errorMessages.add(SwaggerConstant.API_RESPONSE_404);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
-
 
     @Test
     public void lookupTaxonomyChildrenWithHistoricalChangeReturnsSeeOtherStatusXmlFormatAndTheCorrectId() {
@@ -489,6 +488,12 @@ public class TaxonomyRestIT {
                 restContainer.baseURL+requestedURL);
     }
 
+    /*
+        END: Test with /taxonomy/id/{subresources}
+
+        START: Test with /taxonomy/name
+    */
+
     @Test
     public void lookupTaxonomyNameWithEmptyIdReturnsNotFoundStatusWithErrorMessage() {
         String requestedURL = TAXONOMY_BASE_PATH + "/name/";
@@ -505,8 +510,8 @@ public class TaxonomyRestIT {
     }
 
     @Test
-    public void lookupTaxonomyNameWithSmallNameReturnsBadRequestStatusWithErrorMessage() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/name/a?searchType=contains";
+    public void lookupTaxonomyNameWithSmallNameContainsReturnsBadRequestStatusWithErrorMessage() {
+        String requestedURL = TAXONOMY_BASE_PATH + "/name/sn?searchType=contains";
 
         ExtractableResponse<Response> jsonResponse = when()
                 .get(requestedURL)
@@ -517,6 +522,35 @@ public class TaxonomyRestIT {
         List<String> errorMessages = new ArrayList<>();
         errorMessages.add(SwaggerConstant.NAME_PARAMETER_MIN_SIZE_FOR_PARTIAL_SEARCHES);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
+    }
+
+    @Test
+    public void lookupTaxonomyNameWithSmallNameStartsWithReturnsBadRequestStatusWithErrorMessage() {
+        String requestedURL = TAXONOMY_BASE_PATH + "/name/sn?searchType=startswith";
+
+        ExtractableResponse<Response> jsonResponse = when()
+                .get(requestedURL)
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode())
+                .extract();
+
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(SwaggerConstant.NAME_PARAMETER_MIN_SIZE_FOR_PARTIAL_SEARCHES);
+        assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
+    }
+
+    @Test
+    public void lookupTaxonomyNameWithSmallNameEqualsToReturnsCorrectTaxonomies() {
+        String requestedURL = TAXONOMY_BASE_PATH + "/name/sn?searchType=equalsto";
+
+        ExtractableResponse<Response> jsonResponse = when()
+                .get(requestedURL)
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract();
+
+        assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(jsonResponse, ContentType.JSON,
+                true);
     }
 
     @Test
@@ -576,6 +610,12 @@ public class TaxonomyRestIT {
         assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.JSON,
                 true);
     }
+
+    /*
+        END: Test with /taxonomy/name
+
+        START: Test with /taxonomy/path
+    */
 
     @Test
     public void lookupTaxonomyPathWithoutParametersReturnsBadRequest() {
@@ -687,7 +727,6 @@ public class TaxonomyRestIT {
         assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response,ContentType.JSON,12345,false);
     }
 
-
     @Test
     public void lookupTaxonomyPathBottomDirectionParametersReturnsBadRequest() {
         ExtractableResponse<Response> response = when()
@@ -715,6 +754,12 @@ public class TaxonomyRestIT {
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
+
+    /*
+        END: Test with /taxonomy/path
+
+        START: Test with /taxonomy/relationship
+    */
 
     @Test
     public void lookupTaxonomyRelationshipWithTwoHistoricalChangesReturnsSeeOtherWithJsonContentType() {
@@ -818,7 +863,6 @@ public class TaxonomyRestIT {
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
-
     @Test
     public void lookupTaxonomyRelationshipWithValidIdsReturnsOkWithJsonContentType() {
         String requestedURL = TAXONOMY_BASE_PATH + "/relationship?from=12345&to=22222";
@@ -831,6 +875,10 @@ public class TaxonomyRestIT {
 
         assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response,ContentType.JSON,12345,false);
     }
+
+    /*
+        END: Test with /taxonomy/relationship
+    */
 
     private void assertErrorResponseReturnCorrectContentTypeAndResponseBody(ExtractableResponse<Response>
             response, ContentType contentType, List<String> errorMessages, String requestedURL) {

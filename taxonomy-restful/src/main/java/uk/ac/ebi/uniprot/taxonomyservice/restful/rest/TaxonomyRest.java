@@ -186,11 +186,15 @@ public class TaxonomyRest {
             if(newFromTaxonomyId.isPresent()){
                 newURL = URLUtil.getNewRedirectHeaderLocationURL(newURL,from, newFromTaxonomyId.get());
                 from = newFromTaxonomyId.get();
+            }else{
+                from = -1;
             }
             Optional<Long> newToTaxonomyId = dataAccess.getTaxonomyHistoricalChange(to);
             if(newToTaxonomyId.isPresent()){
                 newURL = URLUtil.getNewRedirectHeaderLocationURL(newURL,to, newToTaxonomyId.get());
                 to = newToTaxonomyId.get();
+            }else{
+                to = -1;
             }
             if(newFromTaxonomyId.isPresent() || newToTaxonomyId.isPresent()){
                 return buildRedirectResponse(newURL,from,to);

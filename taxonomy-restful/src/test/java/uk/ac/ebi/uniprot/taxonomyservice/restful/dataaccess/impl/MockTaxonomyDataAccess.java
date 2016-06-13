@@ -23,9 +23,7 @@ public class MockTaxonomyDataAccess implements TaxonomyDataAccess {
 
     private static final long[] changedIds = {23232,33333,34343, 44444};
 
-    private static final String[] validNames = {"gnathostomata", "human", "metazoa"};
-
-    private static final String TAXONOMY_BASE_LINK = "https://localhost:9090/uniprot/services/restful/taxonomy/id/";
+    private static final String[] validNames = {"gnathostomata", "human", "metazoa", "sn", "zzzzz"};
 
     @Override
     public Optional<TaxonomyNode> getTaxonomyDetailsById(long taxonomyId,String basePath) {
@@ -86,6 +84,7 @@ public class MockTaxonomyDataAccess implements TaxonomyDataAccess {
     @Override
     public Optional<Taxonomies> getTaxonomyDetailsByName(NameRequestParams nameRequestParams, String basePath) {
         Taxonomies response = null;
+        System.out.println("nameRequestParams: "+nameRequestParams);
         if (Arrays.binarySearch(validNames, nameRequestParams.getTaxonomyName().toLowerCase()) > 0) {
             List<TaxonomyNode> detailList = new ArrayList<>();
             detailList.add(getTaxonomyDetailsById(validIds[1],basePath).get());
