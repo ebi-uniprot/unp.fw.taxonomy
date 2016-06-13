@@ -26,7 +26,7 @@ import static org.junit.Assert.assertThat;
 public class FilterResourceURLIT {
 
 
-    private static final String TAXONOMY_BASE_PATH = "/taxonomy";
+    private static final String TAXONOMY_BASE_PATH = "";
 
     @ClassRule
     public static RestContainer restContainer = new RestContainer();
