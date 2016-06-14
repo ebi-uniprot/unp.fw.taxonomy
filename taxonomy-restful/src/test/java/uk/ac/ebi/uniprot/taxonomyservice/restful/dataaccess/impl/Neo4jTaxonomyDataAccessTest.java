@@ -5,18 +5,11 @@ import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.NameRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.PathRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
 
-import java.net.URL;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Result;
-import org.neo4j.graphdb.Transaction;
-import org.neo4j.test.TestGraphDatabaseFactory;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -33,47 +26,11 @@ public class Neo4jTaxonomyDataAccessTest {
 
     private static final String baseURL = "http://localhost:9090/uniprot/services/restful/taxonomy/id/";
 
-    private static final String LOAD_CSV = "LOAD CSV WITH HEADERS FROM {csvPath} AS row FIELDTERMINATOR ',' ";
-
-    private static final String IMPORT_CYPHER_NODE_QUERY = LOAD_CSV +
-            "MERGE (node:Node { taxonomyId : row.TAX_ID }) " +
-                "SET node += {taxonomyId : row.TAX_ID, mnemonic : row.SPTR_CODE, mnemonicLowerCase : " +
-                    "lower(row.SPTR_CODE), scientificName : row.SPTR_SCIENTIFIC, scientificNameLowerCase : " +
-                    "lower(row.SPTR_SCIENTIFIC), commonName : row.SPTR_COMMON, commonNameLowerCase : " +
-                    "lower(row.SPTR_COMMON), synonym : row .SPTR_SYNONYM, rank : row.RANK} " +
-            "MERGE (parent:Node {taxonomyId:row.PARENT_ID}) " +
-            "MERGE (node)-[:CHILD_OF]-(parent)";
-
-    private static final String IMPORT_CYPHER_MERGED_QUERY  = LOAD_CSV +
-            "MERGE (node:Node { taxonomyId : row.OLD_TAX_ID })-[:MERGED_TO]-(node1:Node { taxonomyId : row.NEW_TAX_ID})";
-
-    private static final String IMPORT_CYPHER_DELETED_QUERY  = LOAD_CSV +
-            "MERGE(n:Node {taxonomyId:row.TAX_ID}) SET n:Deleted REMOVE n:Node";
-
-    private static MockedNeo4jTaxonomyDataAccess neo4jDataAccess;
+    private static FakeTaxonomyDataAccess neo4jDataAccess;
 
     @BeforeClass
     public static void setUpAndLoadMockDataFromCSVFile() throws Exception {
-        GraphDatabaseService neo4jDb = new TestGraphDatabaseFactory().newImpermanentDatabase();
-
-        importNeo4JData(neo4jDb,"/neo4JMockNodeData.csv",IMPORT_CYPHER_NODE_QUERY);
-        importNeo4JData(neo4jDb,"/neo4JMockMergedData.csv",IMPORT_CYPHER_MERGED_QUERY);
-        importNeo4JData(neo4jDb,"/neo4JMockDeletedData.csv",IMPORT_CYPHER_DELETED_QUERY);
-
-        neo4jDataAccess = new MockedNeo4jTaxonomyDataAccess("");
-        neo4jDataAccess.setNeo4jDb(neo4jDb);
-    }
-
-    private static void importNeo4JData(GraphDatabaseService neo4jDb,String resourcePath, String query) {
-        URL csvFilePath = Neo4jTaxonomyDataAccessTest.class.getResource(resourcePath);
-        Map<String, Object> params = new HashMap<>();
-        params.put( "csvPath",csvFilePath.toString());
-
-        try ( Transaction tx = neo4jDb.beginTx();
-                Result queryResult = neo4jDb.execute(query,params ) )
-        {
-            tx.success();
-        }
+        neo4jDataAccess = new FakeTaxonomyDataAccess("");
     }
 
     @AfterClass
@@ -445,20 +402,5 @@ public class Neo4jTaxonomyDataAccessTest {
 
         assertThat(chidrenLevels, is(expectedChildrenLevels));
         assertThat(parentLevels, is(expectedParentLevel));
-    }
-
-    private static class MockedNeo4jTaxonomyDataAccess extends Neo4jTaxonomyDataAccess {
-
-        public MockedNeo4jTaxonomyDataAccess(String filePath) {
-            super(filePath);
-        }
-
-        public void setNeo4jDb(GraphDatabaseService neo4jDb){
-            this.neo4jDb = neo4jDb;
-        }
-
-        public GraphDatabaseService getNeo4jDb(){
-            return this.neo4jDb;
-        }
     }
 }

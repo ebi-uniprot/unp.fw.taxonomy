@@ -1,7 +1,7 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.rest;
 
 import uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.TaxonomyDataAccess;
-import uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.impl.MockTaxonomyDataAccess;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.impl.FakeTaxonomyDataAccess;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.main.GuiceModule;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.main.RestApp;
 
@@ -79,7 +79,7 @@ public class RestContainer extends ExternalResource {
             return new AbstractModule() {
                 @Override
                 protected void configure() {
-                    bind(TaxonomyDataAccess.class).to(MockTaxonomyDataAccess.class);
+                    bind(TaxonomyDataAccess.class).to(FakeTaxonomyDataAccess.class);
                     packages(GuiceModule.PACKAGE_SCAN);
                 }
             };

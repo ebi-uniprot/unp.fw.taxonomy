@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.neo4j.graphdb.DynamicLabel;
-import org.neo4j.graphdb.DynamicRelationshipType;
 import org.neo4j.graphdb.Label;
 import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.unsafe.batchinsert.BatchInserter;
@@ -32,13 +30,13 @@ public class Neo4JMergedItemWriterWithBatchInserter implements ItemWriter<Taxono
 
     protected RelationshipType mergedRelationship;
 
-    protected Label nodeLabel;
+    protected Label mergeLabel;
 
 
     public Neo4JMergedItemWriterWithBatchInserter(BatchInserter batchInserter) {
         this.batchInserter = batchInserter;
-        mergedRelationship = DynamicRelationshipType.withName("MERGED_TO");
-        nodeLabel = DynamicLabel.label("Node");
+        mergedRelationship = RelationshipType.withName("MERGED_TO");
+        mergeLabel = Label.label("Merged");
     }
 
     @Override
@@ -46,7 +44,7 @@ public class Neo4JMergedItemWriterWithBatchInserter implements ItemWriter<Taxono
         for (TaxonomyImportMerge nodeModel : list) {
             Map<String, Object> properties = new HashMap<>();
             properties.put("taxonomyId", "" + nodeModel.getOldTaxonomyId());
-            batchInserter.createNode(nodeModel.getOldTaxonomyId(),properties,nodeLabel);
+            batchInserter.createNode(nodeModel.getOldTaxonomyId(),properties,mergeLabel);
             batchInserter.createRelationship(nodeModel.getOldTaxonomyId(),nodeModel.getNewTaxonomyId(),
                     mergedRelationship,null);
         }

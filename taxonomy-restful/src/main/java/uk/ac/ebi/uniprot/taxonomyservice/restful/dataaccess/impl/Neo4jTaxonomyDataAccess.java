@@ -68,7 +68,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
             "MATCH (n1:Node)-[r:CHILD_OF*1..{depth}]->(n2:Node) where n1.taxonomyId = {id} return r";
 
     private static final String CHECK_HISTORICAL_CHANGE_CYPHER_QUERY =
-            "MATCH (n1:Node)-[r:MERGED_TO]->(n2:Node) where n1.taxonomyId = {id} RETURN n2.taxonomyId as taxonomyId";
+            "MATCH (m:Merged)-[r:MERGED_TO]->(n:Node) where m.taxonomyId = {id} RETURN n.taxonomyId as taxonomyId";
 
     @Inject
     public Neo4jTaxonomyDataAccess(@Named("NEO4J_DATABASE_PATH") String filePath){

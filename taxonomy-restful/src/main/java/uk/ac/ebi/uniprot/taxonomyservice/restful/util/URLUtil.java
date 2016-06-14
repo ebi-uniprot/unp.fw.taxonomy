@@ -33,11 +33,15 @@ public class URLUtil {
         return currentURL;
     }
 
-    public static String getNewRedirectHeaderLocationURL(String currentURL,long oldId, long newId) {
+    public static String getNewRedirectHeaderLocationURL(String currentURL,String paramName, long oldId, long newId) {
         if(currentURL == null){
             return null;
         }else{
-            return currentURL.replace(""+oldId,""+newId);
+            if(paramName == null) {
+                return currentURL.replace("" + oldId, "" + newId);
+            }else{
+                return currentURL.replace(paramName+"=" + oldId, paramName+"=" + newId);
+            }
         }
 
     }

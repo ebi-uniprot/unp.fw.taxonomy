@@ -125,80 +125,83 @@ public class TaxonomyRestIT {
     @Test
     public void lookupTaxonomyIdWithValidIdReturnsOKStatusInDefaultJsonFormatAndTheCorrectId() {
         ExtractableResponse<Response> response = when()
-                .get(TAXONOMY_BASE_PATH + "/id/12345")
+                .get(TAXONOMY_BASE_PATH + "/id/10")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response, ContentType.JSON, 12345, true);
+        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response, ContentType.JSON, 10, true);
     }
 
     @Test
     public void lookupTaxonomyIdWithValidIdReturnsOKStatusInJsonFormatAndTheCorrectId() {
         ExtractableResponse<Response> response = when()
-                .get(TAXONOMY_BASE_PATH + "/id/12345?format=json")
+                .get(TAXONOMY_BASE_PATH + "/id/10?format=json")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response, ContentType.JSON, 12345, true);
+        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response, ContentType.JSON, 10, true);
     }
 
     @Test
     public void lookupTaxonomyIdWithResourceXmlPathReturnsOKStatusXmlFormatAndTheCorrectId() {
         ExtractableResponse<Response> response = when()
-                .get(TAXONOMY_BASE_PATH + "/id/12345?format=xml")
+                .get(TAXONOMY_BASE_PATH + "/id/10?format=xml")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response, ContentType.XML, 12345, true);
+        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response, ContentType.XML, 10, true);
     }
 
     @Test
     public void lookupTaxonomyIdWithHistoricalChangeReturnsSeeOtherStatusXmlFormatAndTheCorrectId() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/id/33333";
+        String requestedURL = TAXONOMY_BASE_PATH + "/id/9";
 
         ExtractableResponse<Response> response = given().redirects().follow(false)
                 .when().get(requestedURL)
                 .then()
                 .statusCode(SEE_OTHER.getStatusCode())
-                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/55555") //redirect Location header
+                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/10") //redirect Location
+                // header
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","55555"));
+        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
 
     @Test
     public void lookupTaxonomyIdWithHistoricalChangeAndXmlPathReturnsSeeOtherStatusXmlFormatAndTheCorrectId() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/id/33333?format=xml";
+        String requestedURL = TAXONOMY_BASE_PATH + "/id/9?format=xml";
 
         ExtractableResponse<Response> response = given().redirects().follow(false)
                 .when().get(requestedURL)
                 .then()
                 .statusCode(SEE_OTHER.getStatusCode())
-                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/55555?format=xml") //redirect Location header
+                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/10?format=xml")
+                //redirect Location header
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","55555"));
+        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.XML,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
 
     @Test
     public void lookupTaxonomyIdWithHistoricalChangeAndJsonPathReturnsSeeOtherStatusXmlFormatAndTheCorrectId() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/id/33333?format=json";
+        String requestedURL = TAXONOMY_BASE_PATH + "/id/9?format=json";
 
         ExtractableResponse<Response> response = given().redirects().follow(false)
                 .when().get(requestedURL)
                 .then()
                 .statusCode(SEE_OTHER.getStatusCode())
-                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/55555?format=json") //redirect Location header
+                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/10?format=json")
+                //redirect Location header
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","55555"));
+        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -211,7 +214,7 @@ public class TaxonomyRestIT {
 
     @Test
     public void lookupTaxonomyIdWithInvalidSubResourcePathReturnsNotFoundStatus() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/id/12345/invalid";
+        String requestedURL = TAXONOMY_BASE_PATH + "/id/10/invalid";
 
         ExtractableResponse<Response> response = when()
                 .get(requestedURL)
@@ -241,17 +244,17 @@ public class TaxonomyRestIT {
 
     @Test
     public void lookupTaxonomyChildrenWithHistoricalChangeReturnsSeeOtherStatusXmlFormatAndTheCorrectId() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/id/33333/children";
+        String requestedURL = TAXONOMY_BASE_PATH + "/id/9/children";
 
         ExtractableResponse<Response> response = given().redirects().follow(false)
                 .when().get(requestedURL)
                 .then()
                 .statusCode(SEE_OTHER.getStatusCode())
-                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/55555/children") //redirect Location header
+                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/10/children") //redirect Location header
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","55555"));
+        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -259,7 +262,7 @@ public class TaxonomyRestIT {
     @Test
     public void lookupTaxonomyChildrenWithDefaultResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
         ExtractableResponse<Response> response = when()
-                .get(TAXONOMY_BASE_PATH + "/id/12345/children")
+                .get(TAXONOMY_BASE_PATH + "/id/10/children")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
@@ -270,7 +273,7 @@ public class TaxonomyRestIT {
     @Test
     public void lookupTaxonomyChildrenWithJsonResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
         ExtractableResponse<Response> response = when()
-                .get(TAXONOMY_BASE_PATH + "/id/12345/children?format=json")
+                .get(TAXONOMY_BASE_PATH + "/id/10/children?format=json")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
@@ -280,17 +283,17 @@ public class TaxonomyRestIT {
 
     @Test
     public void lookupTaxonomyChildrenWithHistoricalChangeAndJsonPathReturnsSeeOtherStatusXmlFormatAndTheCorrectId() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/id/33333/children?format=json";
+        String requestedURL = TAXONOMY_BASE_PATH + "/id/9/children?format=json";
 
         ExtractableResponse<Response> response = given().redirects().follow(false)
                 .when().get(requestedURL)
                 .then()
                 .statusCode(SEE_OTHER.getStatusCode())
-                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/55555/children?format=json")
+                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/10/children?format=json")
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","55555"));
+        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -298,7 +301,7 @@ public class TaxonomyRestIT {
     @Test
     public void lookupTaxonomyChildrenWithXmlResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
         ExtractableResponse<Response> response = when()
-                .get(TAXONOMY_BASE_PATH + "/id/12345/children?format=xml")
+                .get(TAXONOMY_BASE_PATH + "/id/10/children?format=xml")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
@@ -308,17 +311,17 @@ public class TaxonomyRestIT {
 
     @Test
     public void lookupTaxonomyChildrenWithHistoricalChangeAndXmlPathReturnsSeeOtherStatusXmlFormatAndTheCorrectId() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/id/33333/children?format=xml";
+        String requestedURL = TAXONOMY_BASE_PATH + "/id/9/children?format=xml";
 
         ExtractableResponse<Response> response = given().redirects().follow(false)
                 .when().get(requestedURL)
                 .then()
                 .statusCode(SEE_OTHER.getStatusCode())
-                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/55555/children?format=xml")
+                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/10/children?format=xml")
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","55555"));
+        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.XML,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -326,7 +329,7 @@ public class TaxonomyRestIT {
     @Test
     public void lookupTaxonomySiblingsWithDefaultResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
         ExtractableResponse<Response> response = when()
-                .get(TAXONOMY_BASE_PATH + "/id/12345/siblings")
+                .get(TAXONOMY_BASE_PATH + "/id/10/siblings")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
@@ -336,17 +339,17 @@ public class TaxonomyRestIT {
 
     @Test
     public void lookupTaxonomySiblingsWithHistoricalChangeReturnsSeeOtherStatusXmlFormatAndTheCorrectId() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/id/33333/siblings";
+        String requestedURL = TAXONOMY_BASE_PATH + "/id/9/siblings";
 
         ExtractableResponse<Response> response = given().redirects().follow(false)
                 .when().get(requestedURL)
                 .then()
                 .statusCode(SEE_OTHER.getStatusCode())
-                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/55555/siblings") //redirect Location header
+                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/10/siblings") //redirect Location header
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","55555"));
+        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -354,7 +357,7 @@ public class TaxonomyRestIT {
     @Test
     public void lookupTaxonomySiblingsWithJsonResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
         ExtractableResponse<Response> response = when()
-                .get(TAXONOMY_BASE_PATH + "/id/12345/siblings?format=json")
+                .get(TAXONOMY_BASE_PATH + "/id/10/siblings?format=json")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
@@ -364,17 +367,17 @@ public class TaxonomyRestIT {
 
     @Test
     public void lookupTaxonomySiblingsWithHistoricalChangeAndJsonPathReturnsSeeOtherStatusXmlFormatAndTheCorrectId() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/id/33333/siblings?format=json";
+        String requestedURL = TAXONOMY_BASE_PATH + "/id/9/siblings?format=json";
 
         ExtractableResponse<Response> response = given().redirects().follow(false)
                 .when().get(requestedURL)
                 .then()
                 .statusCode(SEE_OTHER.getStatusCode())
-                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/55555/siblings?format=json")
+                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/10/siblings?format=json")
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","55555"));
+        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -382,7 +385,7 @@ public class TaxonomyRestIT {
     @Test
     public void lookupTaxonomySiblingsWithXmlResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
         ExtractableResponse<Response> response = when()
-                .get(TAXONOMY_BASE_PATH + "/id/12345/siblings?format=xml")
+                .get(TAXONOMY_BASE_PATH + "/id/10/siblings?format=xml")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
@@ -392,17 +395,17 @@ public class TaxonomyRestIT {
 
     @Test
     public void lookupTaxonomySiblingsWithHistoricalChangeAndXmlPathReturnsSeeOtherStatusXmlFormatAndTheCorrectId() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/id/33333/siblings?format=xml";
+        String requestedURL = TAXONOMY_BASE_PATH + "/id/9/siblings?format=xml";
 
         ExtractableResponse<Response> response = given().redirects().follow(false)
                 .when().get(requestedURL)
                 .then()
                 .statusCode(SEE_OTHER.getStatusCode())
-                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/55555/siblings?format=xml")
+                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/10/siblings?format=xml")
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","55555"));
+        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.XML,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -410,26 +413,26 @@ public class TaxonomyRestIT {
     @Test
     public void lookupTaxonomyParentWithDefaultResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
         ExtractableResponse<Response> response = when()
-                .get(TAXONOMY_BASE_PATH + "/id/12345/parent")
+                .get(TAXONOMY_BASE_PATH + "/id/10/parent")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response, ContentType.JSON, 999, false);
+        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response, ContentType.JSON, 1, false);
     }
 
     @Test
     public void lookupTaxonomyParentWithHistoricalChangeAndDefaultResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/id/33333/parent";
+        String requestedURL = TAXONOMY_BASE_PATH + "/id/9/parent";
 
         ExtractableResponse<Response> response = given().redirects().follow(false)
                 .when().get(requestedURL)
                 .then()
                 .statusCode(SEE_OTHER.getStatusCode())
-                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/55555/parent")
+                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/10/parent")
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","55555"));
+        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -437,26 +440,26 @@ public class TaxonomyRestIT {
     @Test
     public void lookupTaxonomyParentWithJsonResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
         ExtractableResponse<Response> response = when()
-                .get(TAXONOMY_BASE_PATH + "/id/12345/parent?format=json")
+                .get(TAXONOMY_BASE_PATH + "/id/10/parent?format=json")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response, ContentType.JSON, 999, false);
+        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response, ContentType.JSON, 1, false);
     }
 
     @Test
     public void lookupTaxonomyParentWithHistoricalChangeAndJsonResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/id/33333/parent?format=json";
+        String requestedURL = TAXONOMY_BASE_PATH + "/id/9/parent?format=json";
 
         ExtractableResponse<Response> response = given().redirects().follow(false)
                 .when().get(requestedURL)
                 .then()
                 .statusCode(SEE_OTHER.getStatusCode())
-                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/55555/parent?format=json")
+                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/10/parent?format=json")
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","55555"));
+        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -464,26 +467,26 @@ public class TaxonomyRestIT {
     @Test
     public void lookupTaxonomyParentWithXmlResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
         ExtractableResponse<Response> xmlResponse = when()
-                .get(TAXONOMY_BASE_PATH + "/id/12345/parent?format=xml")
+                .get(TAXONOMY_BASE_PATH + "/id/10/parent?format=xml")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(xmlResponse, ContentType.XML, 999, false);
+        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(xmlResponse, ContentType.XML, 1, false);
     }
 
     @Test
     public void lookupTaxonomyParentWithHistoricalChangeAndXmlResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/id/33333/parent?format=xml";
+        String requestedURL = TAXONOMY_BASE_PATH + "/id/9/parent?format=xml";
 
         ExtractableResponse<Response> response = given().redirects().follow(false)
                 .when().get(requestedURL)
                 .then()
                 .statusCode(SEE_OTHER.getStatusCode())
-                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/55555/parent?format=xml")
+                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/id/10/parent?format=xml")
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","55555"));
+        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.XML,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -550,7 +553,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(jsonResponse, ContentType.JSON,
-                true);
+                false);
     }
 
     @Test
@@ -571,29 +574,29 @@ public class TaxonomyRestIT {
     @Test
     public void lookupTaxonomyNameValidReturnsOkWithDefaultContentTypeAndCorrectTaxonomies() {
         ExtractableResponse<Response> response = when()
-                .get(TAXONOMY_BASE_PATH + "/name/HUMAN")
+                .get(TAXONOMY_BASE_PATH + "/name/Equals to Only")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
         assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.JSON,
-                true);
+                false);
     }
 
     @Test
     public void lookupTaxonomyNameCaseInsensitiveValidReturnsOkWithDefaultContentTypeAndCorrectTaxonomies() {
         ExtractableResponse<Response> response = when()
-                .get(TAXONOMY_BASE_PATH + "/name/human")
+                .get(TAXONOMY_BASE_PATH + "/name/EQUALS tO OnLY")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
         assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.JSON,
-                true);
+                false);
     }
 
     @Test
     public void lookupTaxonomyNameValidReturnsOkWithXmlContentTypeAndCorrectTaxonomies() {
         ExtractableResponse<Response> response = when()
-                .get(TAXONOMY_BASE_PATH + "/name/human?format=xml")
+                .get(TAXONOMY_BASE_PATH + "/name/Equals to Only?format=xml")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
@@ -603,7 +606,7 @@ public class TaxonomyRestIT {
     @Test
     public void lookupTaxonomyNameValidReturnsOkWithJsonContentTypeAndCorrectTaxonomies() {
         ExtractableResponse<Response> response = when()
-                .get(TAXONOMY_BASE_PATH + "/name/human?format=json")
+                .get(TAXONOMY_BASE_PATH + "/name/Equals to Only?format=json")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
@@ -654,7 +657,7 @@ public class TaxonomyRestIT {
 
     @Test
     public void lookupTaxonomyPathWithoutDirectionParametersReturnsBadRequest() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/path?id=12345&depth=3";
+        String requestedURL = TAXONOMY_BASE_PATH + "/path?id=10&depth=3";
 
         ExtractableResponse<Response> response = when()
                 .get(requestedURL)
@@ -671,7 +674,7 @@ public class TaxonomyRestIT {
 
     @Test
     public void lookupTaxonomyPathWithoutDepthParametersReturnsBadRequest() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/path?id=12345&direction=TOP";
+        String requestedURL = TAXONOMY_BASE_PATH + "/path?id=100000&direction=TOP";
 
         ExtractableResponse<Response> response = when()
                 .get(requestedURL)
@@ -687,7 +690,7 @@ public class TaxonomyRestIT {
 
     @Test
     public void lookupTaxonomyPathMaxDepthParametersReturnsBadRequest() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/path?id=12345&direction=TOP&depth=6";
+        String requestedURL = TAXONOMY_BASE_PATH + "/path?id=10&direction=TOP&depth=6";
 
         ExtractableResponse<Response> response = when()
                 .get(requestedURL)
@@ -703,7 +706,7 @@ public class TaxonomyRestIT {
 
     @Test
     public void lookupTaxonomyPathMinDepthParametersReturnsBadRequest() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/path?id=12345&direction=TOP&depth=0";
+        String requestedURL = TAXONOMY_BASE_PATH + "/path?id=10&direction=TOP&depth=0";
 
         ExtractableResponse<Response> response = when()
                 .get(requestedURL)
@@ -720,37 +723,37 @@ public class TaxonomyRestIT {
     @Test
     public void lookupTaxonomyPathValidReturnsOkWithJsonContentTypeAndCorrectTaxonomyNode() {
         ExtractableResponse<Response> response = when()
-                .get(TAXONOMY_BASE_PATH + "/path?id=12345&direction=TOP&depth=3")
+                .get(TAXONOMY_BASE_PATH + "/path?id=100000&direction=TOP&depth=3")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response,ContentType.JSON,12345,false);
+        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response,ContentType.JSON,100000,false);
     }
 
     @Test
     public void lookupTaxonomyPathBottomDirectionParametersReturnsBadRequest() {
         ExtractableResponse<Response> response = when()
-                .get(TAXONOMY_BASE_PATH + "/path?id=12345&direction=BOTTOM&depth=3")
+                .get(TAXONOMY_BASE_PATH + "/path?id=10&direction=BOTTOM&depth=3")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response,ContentType.JSON,12345,false);
+        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response,ContentType.JSON,10,false);
     }
 
     @Test
     public void lookupTaxonomyPathWithHistoricalChangesReturnsSeeOtherWithJsonContentType() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/path?id=33333&direction=TOP&depth=3";
+        String requestedURL = TAXONOMY_BASE_PATH + "/path?id=9&direction=TOP&depth=3";
 
         ExtractableResponse<Response> response = given().redirects().follow(false)
                 .when().get(requestedURL)
                 .then()
                 .statusCode(SEE_OTHER.getStatusCode())
                 .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH +
-                        "/path?id=55555&direction=TOP&depth=3")
+                        "/path?id=10&direction=TOP&depth=3")
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","55555"));
+        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -763,55 +766,55 @@ public class TaxonomyRestIT {
 
     @Test
     public void lookupTaxonomyRelationshipWithTwoHistoricalChangesReturnsSeeOtherWithJsonContentType() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/relationship?from=33333&to=34343";
+        String requestedURL = TAXONOMY_BASE_PATH + "/relationship?from=9&to=99";
 
         ExtractableResponse<Response> response = given().redirects().follow(false)
                 .when().get(requestedURL)
                 .then()
                 .statusCode(SEE_OTHER.getStatusCode())
                 .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH +
-                        "/relationship?from=55555&to=55555")
+                        "/relationship?from=10&to=100")
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","55555"));
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","55555"));
+        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
+        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","100"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
 
     @Test
     public void lookupTaxonomyRelationshipWithFromHistoricalChangesReturnsSeeOtherWithJsonContentType() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/relationship?from=33333&to=12345";
+        String requestedURL = TAXONOMY_BASE_PATH + "/relationship?from=9&to=10";
 
         ExtractableResponse<Response> response = given().redirects().follow(false)
                 .when().get(requestedURL)
                 .then()
                 .statusCode(SEE_OTHER.getStatusCode())
                 .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH +
-                        "/relationship?from=55555&to=12345")
+                        "/relationship?from=10&to=10")
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","55555"));
+        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
 
     @Test
     public void lookupTaxonomyRelationshipWithToHistoricalChangesReturnsSeeOtherWithJsonContentType() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/relationship?from=12345&to=33333";
+        String requestedURL = TAXONOMY_BASE_PATH + "/relationship?from=10&to=9";
 
         ExtractableResponse<Response> response = given().redirects().follow(false)
                 .when().get(requestedURL)
                 .then()
                 .statusCode(SEE_OTHER.getStatusCode())
                 .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH +
-                        "/relationship?from=12345&to=55555")
+                        "/relationship?from=10&to=10")
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","55555"));
+        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -865,7 +868,7 @@ public class TaxonomyRestIT {
 
     @Test
     public void lookupTaxonomyRelationshipWithValidIdsReturnsOkWithJsonContentType() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/relationship?from=12345&to=22222";
+        String requestedURL = TAXONOMY_BASE_PATH + "/relationship?from=10&to=100000";
 
         ExtractableResponse<Response> response = when()
                 .get(requestedURL)
@@ -873,7 +876,7 @@ public class TaxonomyRestIT {
                 .statusCode(OK.getStatusCode())
                 .extract();
 
-        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response,ContentType.JSON,12345,false);
+        assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent(response,ContentType.JSON,10,false);
     }
 
     /*

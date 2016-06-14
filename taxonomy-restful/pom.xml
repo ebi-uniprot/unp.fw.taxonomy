@@ -149,31 +149,28 @@
                 </configuration>
             </plugin>
 
-<!--            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>2.4.3</version>
-                <configuration>
-                    &lt;!&ndash; put your configurations here &ndash;&gt;
-                </configuration>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>1.9.1</version>
                 <executions>
                     <execution>
-                        <phase>package</phase>
+                        <id>add-integration-test-resources</id>
+                        <phase>generate-test-resources</phase>
                         <goals>
-                            <goal>shade</goal>
+                            <goal>add-test-resource</goal>
                         </goals>
-
                         <configuration>
-                            <transformers>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>uk.ac.ebi.uniprot.taxonomyservice.restful.main.RestAppMain</mainClass>
-                                </transformer>
-                            </transformers>
+                            <resources>
+                                <resource>
+                                    <directory>src/test/resources</directory>
+                                </resource>
+                            </resources>
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>-->
+            </plugin>
+
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

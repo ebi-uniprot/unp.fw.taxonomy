@@ -184,14 +184,14 @@ public class TaxonomyRest {
             String newURL = URLUtil.getCurrentURL(request);
             Optional<Long> newFromTaxonomyId = dataAccess.getTaxonomyHistoricalChange(from);
             if(newFromTaxonomyId.isPresent()){
-                newURL = URLUtil.getNewRedirectHeaderLocationURL(newURL,from, newFromTaxonomyId.get());
+                newURL = URLUtil.getNewRedirectHeaderLocationURL(newURL,"from",from, newFromTaxonomyId.get());
                 from = newFromTaxonomyId.get();
             }else{
                 from = -1;
             }
             Optional<Long> newToTaxonomyId = dataAccess.getTaxonomyHistoricalChange(to);
             if(newToTaxonomyId.isPresent()){
-                newURL = URLUtil.getNewRedirectHeaderLocationURL(newURL,to, newToTaxonomyId.get());
+                newURL = URLUtil.getNewRedirectHeaderLocationURL(newURL,"to",to, newToTaxonomyId.get());
                 to = newToTaxonomyId.get();
             }else{
                 to = -1;
@@ -245,7 +245,7 @@ public class TaxonomyRest {
         Optional<Long> newTaxonomyId = dataAccess.getTaxonomyHistoricalChange(taxonomyId);
         if(newTaxonomyId.isPresent()){
             String currentURL = URLUtil.getCurrentURL(request);
-            String newURL = URLUtil.getNewRedirectHeaderLocationURL(currentURL,taxonomyId,newTaxonomyId.get());
+            String newURL = URLUtil.getNewRedirectHeaderLocationURL(currentURL,null,taxonomyId,newTaxonomyId.get());
             return buildRedirectResponse(newURL,newTaxonomyId.get());
         }else {
             return buildNotFoundResponse();
