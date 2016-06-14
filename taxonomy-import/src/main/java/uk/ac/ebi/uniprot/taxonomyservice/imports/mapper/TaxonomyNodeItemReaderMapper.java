@@ -16,11 +16,20 @@ public class TaxonomyNodeItemReaderMapper implements RowMapper<TaxonomyImportNod
 
     @Override public TaxonomyImportNode mapRow(ResultSet resultSet, int i) throws SQLException {
         TaxonomyImportNode node = new TaxonomyImportNode();
-        node.setCommonName(resultSet.getString("SPTR_COMMON"));
-        node.setMnemonic(resultSet.getString("SPTR_CODE"));
+        String common = resultSet.getString("SPTR_COMMON");
+        if(common == null){
+            common = resultSet.getString("NCBI_COMMON");
+        }
+        node.setCommonName(common);
+
+        node.setMnemonic(resultSet.getString("TAX_CODE"));
         node.setParentId(resultSet.getLong("PARENT_ID"));
         node.setRank(resultSet.getString("RANK"));
-        node.setScientificName(resultSet.getString("SPTR_SCIENTIFIC"));
+        String scientificName = resultSet.getString("SPTR_SCIENTIFIC");
+        if(scientificName == null){
+            scientificName = resultSet.getString("NCBI_SCIENTIFIC");
+        }
+        node.setScientificName(scientificName);
         node.setSynonym(resultSet.getString("SPTR_SYNONYM"));
         node.setTaxonomyId(resultSet.getLong("TAX_ID"));
         return node;
