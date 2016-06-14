@@ -69,6 +69,19 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
+    public void getTaxonomyParentByIdWithIdThatDoesNoteReturnParent() throws Exception {
+        Optional<TaxonomyNode> node = neo4jDataAccess.getTaxonomyParentById(1L);
+        assertThat(node.isPresent(),is(false));
+    }
+
+    @Test
+    public void getTaxonomyParentByIdWithIdThatReturnValidParent() throws Exception {
+        Optional<TaxonomyNode> node = neo4jDataAccess.getTaxonomyParentById(10L);
+        assertThat(node.isPresent(),is(true));
+        assertBaseNode(1L,node.get());
+    }
+
+    @Test
     public void getTaxonomySiblingsByIdWithIdThatReturnTwoSiblings() throws Exception {
         Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomySiblingsById(10L);
         assertThat(nodeOptional.isPresent(),is(true));

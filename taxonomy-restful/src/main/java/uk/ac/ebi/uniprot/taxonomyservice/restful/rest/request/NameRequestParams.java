@@ -10,11 +10,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
 import org.glassfish.jersey.process.internal.RequestScoped;
 
-import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.NAME_PARAMETER_IS_REQUIRED;
-import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant
-        .NAME_PARAMETER_MIN_SIZE_FOR_PARTIAL_SEARCHES;
-import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.SEARCHTYPE_PARAMETER_IS_REQUIRED;
-import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.SEARCH_TYPE_VALID_VALUES;
+import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.*;
 
 /**
  * This class contains request parameters for /taxonomy/name requests
@@ -25,14 +21,13 @@ import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.
 @NameMinSizeForPartialSearches(message = NAME_PARAMETER_MIN_SIZE_FOR_PARTIAL_SEARCHES, min = 4)
 public class NameRequestParams {
 
-    @ApiParam(value = "name", required = true)
+    @ApiParam(value = TAXONOMY_NAME_PARAM, required = true)
     @NotNull(message = NAME_PARAMETER_IS_REQUIRED)
     @PathParam("name")
     private String taxonomyName;
 
-    @ApiParam(value = "searchType")
+    @ApiParam(value = TAXONOMY_SEARCH_TYPE_PARAM,defaultValue = "EQUALSTO")
     @IsEnumValue(enumClass = SearchType.class,message = SEARCH_TYPE_VALID_VALUES, ignoreCase = true)
-    @NotNull(message = SEARCHTYPE_PARAMETER_IS_REQUIRED)
     @QueryParam("searchType")
     private String searchType;
 

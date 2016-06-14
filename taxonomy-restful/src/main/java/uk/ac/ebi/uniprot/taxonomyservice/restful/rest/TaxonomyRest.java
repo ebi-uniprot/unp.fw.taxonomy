@@ -59,7 +59,7 @@ public class TaxonomyRest {
             @ApiResponse(code = 500, message = API_RESPONSE_500, response = ErrorMessage.class)})
     @Path("/id/{id}")
     public Response getTaxonomyDetailsById(
-            @ApiParam(value = "id", required = true)
+            @ApiParam(value = TAXONOMY_ID_PARAM, required = true)
             @NotNull(message = ID_PARAMETER_IS_REQUIRED)
             @PathParam("id")
             @Pattern(regexp = "[0-9]+", message = ID_PARAMETER_VALID_NUMBER)
@@ -83,7 +83,7 @@ public class TaxonomyRest {
             @ApiResponse(code = 500, message = API_RESPONSE_500, response = ErrorMessage.class)})
     @Path("/id/{id}/siblings")
     public Response getTaxonomyNodesSiblingsById(
-            @ApiParam(value = "id", required = true)
+            @ApiParam(value = TAXONOMY_ID_PARAM, required = true)
             @NotNull(message = ID_PARAMETER_IS_REQUIRED)
             @PathParam("id")
             @Pattern(regexp = "[0-9]+", message = ID_PARAMETER_VALID_NUMBER)
@@ -107,7 +107,7 @@ public class TaxonomyRest {
             @ApiResponse(code = 500, message = API_RESPONSE_500, response = ErrorMessage.class)})
     @Path("/id/{id}/children")
     public Response getTaxonomyNodesChildrenById(
-            @ApiParam(value = "id", required = true)
+            @ApiParam(value = TAXONOMY_ID_PARAM, required = true)
             @NotNull(message = ID_PARAMETER_IS_REQUIRED)
             @PathParam("id")
             @Pattern(regexp = "[0-9]+", message = ID_PARAMETER_VALID_NUMBER)
@@ -127,7 +127,7 @@ public class TaxonomyRest {
     @ApiResponses(value = {@ApiResponse(code = 400, message = ID_PARAMETER_IS_REQUIRED)})
     @Path("/id/{id}/parent")
     public Response getTaxonomyNodeParentById(
-            @ApiParam(value = "id", required = true)
+            @ApiParam(value = TAXONOMY_ID_PARAM, required = true)
             @NotNull(message = ID_PARAMETER_IS_REQUIRED)
             @PathParam("id")
             @Pattern(regexp = "[0-9]+", message = ID_PARAMETER_VALID_NUMBER)

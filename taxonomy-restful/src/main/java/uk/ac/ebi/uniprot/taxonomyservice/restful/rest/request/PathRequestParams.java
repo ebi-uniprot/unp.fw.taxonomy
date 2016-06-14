@@ -24,21 +24,21 @@ public class PathRequestParams {
     @NotNull(message = ID_PARAMETER_IS_REQUIRED)
     @Pattern(regexp = "[0-9]+", message = ID_PARAMETER_VALID_NUMBER)
     @QueryParam(value = "id")
-    @ApiParam(value = "id", required = true)
+    @ApiParam(value = TAXONOMY_ID_PARAM, required = true)
     private String id;
 
     @NotNull(message = DEPTH_PARAMETER_IS_REQUIRED)
     @Min(value = 1, message = DEPTH_PARAM_MIN_MAX)
     @Max(value = 5, message = DEPTH_PARAM_MIN_MAX)
     @QueryParam(value = "depth")
-    @ApiParam(value = "depth", required = true)
+    @ApiParam(value = TAXONOMY_DEPTH_PARAM, required = true)
     private Integer depth;
 
     @IsEnumValue(enumClass = PathDirections.class,message = DIRECTION_VALID_VALUES,
             ignoreCase = true)
     @NotNull(message = DIRECTION_PARAMETER_IS_REQUIRED)
     @QueryParam(value = "direction")
-    @ApiParam(value = "direction", required = true)
+    @ApiParam(value = TAXONOMY_DIRECTION_PARAM, required = true)
     private String direction;
 
     public String getId() {

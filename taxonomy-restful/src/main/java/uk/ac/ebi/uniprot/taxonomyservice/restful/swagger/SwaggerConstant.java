@@ -47,6 +47,19 @@ public class SwaggerConstant {
     public static final String NOTE_TAXONOMY_PATH = "";
 
 
+    //TAXONOMY REQUEST PARAMETERS
+    public static final String TAXONOMY_ID_PARAM = " Taxonomy element unique identification";
+    public static final String TAXONOMY_NAME_PARAM = "Taxonomy name that will be searched in scientificName, " +
+            "commonName and mnemonic";
+    public static final String TAXONOMY_SEARCH_TYPE_PARAM = "Type of the search, valid values are EQUALSTO," +
+            "STARTSWITH,ENDSWITH or CONTAINS";
+    public static final String TAXONOMY_DEPTH_PARAM = "Number of depth levels for taxonomy path, valid values between" +
+            " 1 and 5";
+    public static final String TAXONOMY_DIRECTION_PARAM = "Direction for taxonomy path, valid values are TOP and " +
+            "BOTTOM";
+    public static final String TAXONOMY_FROM_PARAM = "Initial taxonomy element unique identification for relationship";
+    public static final String TAXONOMY_TO_PARAM = "Final taxonomy element unique identification for relationship";
+
     //ERROR MESSAGES
     public static final String API_RESPONSE_303 = "Taxonomy identification changed and new identification is now " +
             "{newId}.";

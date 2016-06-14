@@ -6,10 +6,7 @@ import javax.validation.constraints.Pattern;
 import javax.ws.rs.QueryParam;
 import org.glassfish.jersey.process.internal.RequestScoped;
 
-import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.FROM_PARAMETER_IS_REQUIRED;
-import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.FROM_PARAMETER_VALID_NUMBER;
-import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.TO_PARAMETER_IS_REQUIRED;
-import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.TO_PARAMETER_VALID_NUMBER;
+import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.*;
 
 /**
  * This class contains request parameter for /taxonomy/relationship requests
@@ -22,13 +19,13 @@ public class RelationshipRequestParams {
     @NotNull(message = FROM_PARAMETER_IS_REQUIRED)
     @Pattern(regexp = "[0-9]+", message = FROM_PARAMETER_VALID_NUMBER)
     @QueryParam(value = "from")
-    @ApiParam(value = "from", required = true)
+    @ApiParam(value = TAXONOMY_FROM_PARAM, required = true)
     private String from;
 
     @NotNull(message = TO_PARAMETER_IS_REQUIRED)
     @Pattern(regexp = "[0-9]+", message = TO_PARAMETER_VALID_NUMBER)
     @QueryParam(value = "to")
-    @ApiParam(value = "to", required = true)
+    @ApiParam(value = TAXONOMY_TO_PARAM, required = true)
     private String to;
 
 
