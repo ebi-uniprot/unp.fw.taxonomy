@@ -1,22 +1,8 @@
 <configuration>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-<!--        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>info</level>
-        </filter>-->
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %level %logger - %msg%n</pattern>
-        </encoder>
-    </appender>
-
-    <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>../logs/taxonomy.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>taxonomy-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
-            <maxFileSize>10MB</maxFileSize>
-            <maxHistory>30</maxHistory>
-            <totalSizeCap>1GB</totalSizeCap>
-        </rollingPolicy>
+        <!-- encoders are assigned the type
+             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %level %logger - %msg%n</pattern>
         </encoder>
@@ -28,8 +14,7 @@
     <!-- interested in debug+ info from anything written by ebi -->
     <logger name="uk.ac.ebi" level="DEBUG"/>
 
-    <root level="DEBUG">
-        <appender-ref ref="ROLLING"/>
+    <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>
