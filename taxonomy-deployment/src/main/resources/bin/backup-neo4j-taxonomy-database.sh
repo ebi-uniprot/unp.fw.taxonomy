@@ -22,6 +22,12 @@ SERVICE_BIN_PATH="$(pwd -P)"
 TAXONOMY_DATABASE_DIR_PATH="$(readlink -f $SERVICE_BIN_PATH/../$TAXONOMY_DATABASE_DIR)"
 TAXONOMY_BACKUP_DIR="$(readlink -f $SERVICE_BIN_PATH/../$BACKUP_DIR)"
 
+if [ ! -d "$TAXONOMY_DATABASE_DIR_PATH" ]; then
+    mkdir -p $TAXONOMY_DATABASE_DIR_PATH
+fi
+if [ ! -d "$TAXONOMY_BACKUP_DIR" ]; then
+    mkdir -p $TAXONOMY_BACKUP_DIR
+fi
 # creating a date to to use as postfix in the backup file
 DATE=$(date +%Y_%m_%d_%H_%M)
 # cleaning old backup files, keeping last 10 for lib folder jar files

@@ -70,6 +70,12 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
     private static final String CHECK_HISTORICAL_CHANGE_CYPHER_QUERY =
             "MATCH (m:Merged)-[r:MERGED_TO]->(n:Node) where m.taxonomyId = {id} RETURN n.taxonomyId as taxonomyId";
 
+    private static final String LIENAGE_CYPHER_QUERY = "MATCH p=(n:Node)-[r:CHILD_OF*]->(:Node) " +
+            "where n.taxonomyId = {id} with n,collect(p) as paths, max(length(p)) AS maxLength " +
+            "RETURN extract(lastPath in FILTER(path IN paths WHERE length(path)= maxLength) | " +
+            "extract( r in relationships(lastPath) | endNode(r).scientificName))  AS lineage, " +
+            "n.scientificName as firstName";
+
     @Inject
     public Neo4jTaxonomyDataAccess(@Named("NEO4J_DATABASE_PATH") String filePath){
         this.filePath = filePath;
@@ -84,9 +90,6 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
             neo4jDb = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(new File(filePath))
                     .setConfig("dbms.threads.worker_count", "20" )
                     .setConfig(GraphDatabaseSettings.read_only,"true")
-                    //.setConfig( GraphDatabaseSettings.pagecache_memory, "1g" )
-                    //.setConfig( GraphDatabaseSettings.string_block_size, "120" )
-                    //.setConfig( GraphDatabaseSettings.array_block_size, "600" )
                     .newGraphDatabase();
             registerStop(neo4jDb);
         }

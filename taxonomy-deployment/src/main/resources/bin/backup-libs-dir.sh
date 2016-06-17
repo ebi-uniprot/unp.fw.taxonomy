@@ -24,6 +24,12 @@ TAXONOMY_BACKUP_DIR="$(readlink -f $SERVICE_BIN_PATH/../$BACKUP_DIR)"
 
 # creating a date to to use as postfix in the backup file
 DATE=$(date +%Y_%m_%d_%H_%M)
+if [ ! -d "$TAXONOMY_LIB_DIR" ]; then
+    mkdir -p $TAXONOMY_LIB_DIR
+fi
+if [ ! -d "$TAXONOMY_BACKUP_DIR" ]; then
+    mkdir -p $TAXONOMY_BACKUP_DIR
+fi
 # cleaning old backup files, keeping last 10 for lib folder jar files
 echo "cleaning old backup files, keeping only 10"
 ls -t $TAXONOMY_BACKUP_DIR/$LIB_DIR*| sed -e '1,10d' | xargs -d '\n' rm || {
