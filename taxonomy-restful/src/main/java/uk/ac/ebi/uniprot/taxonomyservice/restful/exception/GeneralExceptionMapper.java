@@ -15,7 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.API_RESPONSE_400;
-import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.API_RESPONSE_404;
+import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.API_RESPONSE_404_GENERAL;
 import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.API_RESPONSE_500;
 
 /**
@@ -38,7 +38,7 @@ public class GeneralExceptionMapper implements ExceptionMapper<Exception> {
         error.setRequestedURL(URLUtil.getCurrentURL(request));
 
         if (exception instanceof NotFoundException) {
-            error.addErrorMessage(API_RESPONSE_404);
+            error.addErrorMessage(API_RESPONSE_404_GENERAL);
             return Response.status(Response.Status.NOT_FOUND).entity(error).type(MediaType.APPLICATION_JSON_TYPE)
                     .build();
         } else if (exception instanceof BadRequestException) {

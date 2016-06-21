@@ -33,6 +33,8 @@ public class FakeTaxonomyDataAccess extends Neo4jTaxonomyDataAccess {
     private static final String IMPORT_CYPHER_DELETED_QUERY  = LOAD_CSV +
             "MERGE(n:Node {taxonomyId:row.TAX_ID}) SET n:Deleted REMOVE n:Node";
 
+    private static final String DELETE_NODE_CYPHER_QUERY = "MATCH (n:Node)-[r]-() WHERE n.taxonomyId={id} DELETE n,r";
+
     public FakeTaxonomyDataAccess(){
         this("");
     }
@@ -44,6 +46,7 @@ public class FakeTaxonomyDataAccess extends Neo4jTaxonomyDataAccess {
         importNeo4JData(neo4jDbTest, "/neo4JMockNodeData.csv",IMPORT_CYPHER_NODE_QUERY);
         importNeo4JData(neo4jDbTest, "/neo4JMockMergedData.csv",IMPORT_CYPHER_MERGED_QUERY);
         importNeo4JData(neo4jDbTest, "/neo4JMockDeletedData.csv",IMPORT_CYPHER_DELETED_QUERY);
+        deleteUnWantedRoot(neo4jDbTest,"0",DELETE_NODE_CYPHER_QUERY);
 
         setNeo4jDb(neo4jDbTest);
         registerStop(neo4jDbTest);
@@ -65,6 +68,21 @@ public class FakeTaxonomyDataAccess extends Neo4jTaxonomyDataAccess {
         try ( Transaction tx = neo4jDb.beginTx();
                 Result queryResult = neo4jDb.execute(query,params ) )
         {
+            tx.success();
+        }
+    }
+
+    private static void deleteUnWantedRoot(GraphDatabaseService neo4jDb,String id, String query) {
+        Map<String, Object> params = new HashMap<>();
+        params.put( "id",id);
+
+        try ( Transaction tx = neo4jDb.beginTx();
+                Result queryResult = neo4jDb.execute(query,params ) )
+        {
+            while (queryResult.hasNext()) {
+                Map<String, Object> row = queryResult.next();
+                System.out.println(row);
+            }
             tx.success();
         }
     }

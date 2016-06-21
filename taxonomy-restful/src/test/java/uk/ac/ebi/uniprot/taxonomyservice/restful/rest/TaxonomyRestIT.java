@@ -56,7 +56,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_404);
+        errorMessages.add(SwaggerConstant.API_RESPONSE_404_GENERAL);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -72,7 +72,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_404);
+        errorMessages.add(SwaggerConstant.API_RESPONSE_404_ENTRY);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
@@ -223,7 +223,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_404);
+        errorMessages.add(SwaggerConstant.API_RESPONSE_404_GENERAL);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
@@ -238,7 +238,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_404);
+        errorMessages.add(SwaggerConstant.API_RESPONSE_404_ENTRY);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
@@ -508,7 +508,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_404);
+        errorMessages.add(SwaggerConstant.API_RESPONSE_404_GENERAL);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
@@ -567,7 +567,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_404);
+        errorMessages.add(SwaggerConstant.API_RESPONSE_404_NAME);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
@@ -830,7 +830,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_404);
+        errorMessages.add(SwaggerConstant.API_RESPONSE_404_RELATIONSHIP);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
@@ -881,6 +881,73 @@ public class TaxonomyRestIT {
 
     /*
         END: Test with /taxonomy/relationship
+
+        START: Test with /taxonomy/lineage
+    */
+
+    @Test
+    public void lookupTaxonomyLineageWithInvalidIdsReturnsNotFoundWithJsonContentType() {
+        String requestedURL = TAXONOMY_BASE_PATH + "/lineage/3";
+
+        ExtractableResponse<Response> response = when()
+                .get(requestedURL)
+                .then()
+                .statusCode(NOT_FOUND.getStatusCode())
+                .extract();
+
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(SwaggerConstant.API_RESPONSE_404_LINEAGE);
+        assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
+    }
+
+    @Test
+    public void lookupTaxonomyLineageWithFromHistoricalChangesReturnsSeeOtherWithJsonContentType(){
+        String requestedURL = TAXONOMY_BASE_PATH + "/lineage/999";
+
+        ExtractableResponse<Response> response = given().redirects().follow(false)
+                .when().get(requestedURL)
+                .then()
+                .statusCode(SEE_OTHER.getStatusCode())
+                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH + "/lineage/1000")
+                .extract();
+
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","1000"));
+        assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
+                restContainer.baseURL+requestedURL);
+    }
+
+    @Test
+    public void lookupTaxonomyLineageWithValidIdsReturnsOkWithJsonContentType() {
+        String requestedURL = TAXONOMY_BASE_PATH + "/lineage/100000";
+
+        ExtractableResponse<Response> response = when()
+                .get(requestedURL)
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract();
+
+        assertValidTaxonomiesResponseForLineageWithCorrectContentTypeNotEmptyListAndValidContent(response,ContentType
+                .JSON,100000,1);
+    }
+
+    @Test
+    public void lookupTaxonomyLineageWithRootIdsReturnsOkWithJsonContentType() {
+        String requestedURL = TAXONOMY_BASE_PATH + "/lineage/1";
+
+        ExtractableResponse<Response> response = when()
+                .get(requestedURL)
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract();
+
+        assertValidTaxonomiesResponseForLineageWithCorrectContentTypeNotEmptyListAndValidContent(response,ContentType
+                .JSON,1,1);
+    }
+
+   /*
+        END: Test with /taxonomy/lineage
+
     */
 
     private void assertErrorResponseReturnCorrectContentTypeAndResponseBody(ExtractableResponse<Response>
@@ -922,6 +989,24 @@ public class TaxonomyRestIT {
         TaxonomyNode node = taxonomies.getTaxonomies().get(0);
         assertThat(node, notNullValue());
         assertTaxonomyNodeAttributesHasValues(node, node.getTaxonomyId(), checkLinks);
+    }
+
+    private void assertValidTaxonomiesResponseForLineageWithCorrectContentTypeNotEmptyListAndValidContent(
+            ExtractableResponse<Response> response, ContentType contentType, long first, long last) {
+        assertThat(response, notNullValue());
+        assertThat(response.contentType(), equalTo(contentType.toString()));
+
+        Taxonomies taxonomies = response.as(Taxonomies.class);
+        assertThat(taxonomies.getTaxonomies(), notNullValue());
+        assertThat(taxonomies.getTaxonomies(), not(emptyIterable()));
+
+        TaxonomyNode node = taxonomies.getTaxonomies().get(0);
+        assertThat(node, notNullValue());
+        assertThat(node.getTaxonomyId(), equalTo(first));
+
+        node = taxonomies.getTaxonomies().get(taxonomies.getTaxonomies().size()-1);
+        assertThat(node, notNullValue());
+        assertThat(node.getTaxonomyId(), equalTo(last));
     }
 
     private void assertTaxonomyNodeAttributesHasValues(TaxonomyNode node, long taxonomyId, boolean checkLinks) {

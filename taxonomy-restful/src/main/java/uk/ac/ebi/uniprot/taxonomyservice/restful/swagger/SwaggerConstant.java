@@ -64,13 +64,21 @@ public class SwaggerConstant {
     public static final String API_RESPONSE_303 = "Taxonomy identification changed and new identification is now " +
             "{newId}.";
 
-    public static final String API_RESPONSE_404 = "Taxonomy entry is not found.";
+    public static final String API_RESPONSE_404_GENERAL = "Taxonomy entry was not found for searched resource.";
+    public static final String API_RESPONSE_404_ENTRY = "Taxonomy entry was not found for this taxonomy " +
+            "identification.";
+    public static final String API_RESPONSE_404_LINEAGE = "Taxonomy lineage was not found for this taxonomy " +
+            "identification.";
+    public static final String API_RESPONSE_404_NAME = "Taxonomy entries were not found for search name criteria.";
+    public static final String API_RESPONSE_404_RELATIONSHIP = "Taxonomy entries were not found for searched " +
+            "relationship.";
+    public static final String API_RESPONSE_404_PATH = "Taxonomy entries were not found for searched " +
+            "path.";
 
     public static final String API_RESPONSE_400 = "Invalid request parameters.";
 
     public static final String ID_PARAMETER_IS_REQUIRED = "id parameter is required";
     public static final String NAME_PARAMETER_IS_REQUIRED = "name parameter is required";
-    public static final String SEARCHTYPE_PARAMETER_IS_REQUIRED = "searchType parameter is required";
     public static final String NAME_PARAMETER_MIN_SIZE_FOR_PARTIAL_SEARCHES = "name parameter minimun size is 5 " +
             "characters for startWith, endsWith or contains searchType value";
     public static final String SEARCH_TYPE_VALID_VALUES = "searchType parameter value must be equalsto, startsWith, " +

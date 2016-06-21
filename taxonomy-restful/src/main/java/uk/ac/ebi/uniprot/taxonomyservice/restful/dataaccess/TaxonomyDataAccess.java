@@ -83,4 +83,12 @@ public interface TaxonomyDataAccess {
      */
     Optional<Long> getTaxonomyHistoricalChange(long id);
 
+    /**
+     * This method return taxonomy lineage for {@param taxonomyId}. Lineage is the taxonomy path with TOP direction
+     * until taxonomy root
+     *
+     * @param taxonomyId identification of taxonomy
+     * @return List of taxonomies
+     */
+    Optional<Taxonomies> getTaxonomyLineageById(long taxonomyId);
 }

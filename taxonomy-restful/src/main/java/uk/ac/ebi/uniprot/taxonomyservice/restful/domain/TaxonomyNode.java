@@ -1,6 +1,7 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.domain;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import java.util.ArrayList;
@@ -18,6 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  * Created by lgonzales on 19/02/16.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 @XmlRootElement
 @XmlType(name = "taxonomyNode", propOrder = {"taxonomyId","mnemonic","scientificName","commonName","synonym","rank",
         "parent","parentLink","children","childrenLinks","siblings","siblingsLinks"})

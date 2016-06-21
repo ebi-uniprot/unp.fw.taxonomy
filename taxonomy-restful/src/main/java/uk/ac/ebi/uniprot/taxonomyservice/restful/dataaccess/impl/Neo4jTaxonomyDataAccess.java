@@ -70,11 +70,10 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
     private static final String CHECK_HISTORICAL_CHANGE_CYPHER_QUERY =
             "MATCH (m:Merged)-[r:MERGED_TO]->(n:Node) where m.taxonomyId = {id} RETURN n.taxonomyId as taxonomyId";
 
-    private static final String LIENAGE_CYPHER_QUERY = "MATCH p=(n:Node)-[r:CHILD_OF*]->(:Node) " +
+    private static final String GET_TAXONOMY_LIENAGE_CYPHER_QUERY = "MATCH p=(n:Node)-[r:CHILD_OF*]->(:Node) " +
             "where n.taxonomyId = {id} with n,collect(p) as paths, max(length(p)) AS maxLength " +
             "RETURN extract(lastPath in FILTER(path IN paths WHERE length(path)= maxLength) | " +
-            "extract( r in relationships(lastPath) | endNode(r).scientificName))  AS lineage, " +
-            "n.scientificName as firstName";
+            "extract( r in relationships(lastPath) | endNode(r)))  AS lineage, n as firstNode";
 
     @Inject
     public Neo4jTaxonomyDataAccess(@Named("NEO4J_DATABASE_PATH") String filePath){
@@ -291,6 +290,61 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
         long elapsed = System.currentTimeMillis() - startTime;
         logger.debug("NeoQuery Time for getTaxonomyHistoricalChange: "+elapsed+ " for id "+id);
         return Optional.ofNullable(result);
+    }
+
+    @Override public Optional<Taxonomies> getTaxonomyLineageById(long taxonomyId) {
+        ArrayList<TaxonomyNode> result = new ArrayList<>();
+        long startTime = System.currentTimeMillis();
+        Map<String, Object> params = new HashMap<>();
+        params.put( "id", ""+taxonomyId );
+
+        try ( Transaction tx = neo4jDb.beginTx();
+                Result queryResult = neo4jDb.execute(GET_TAXONOMY_LIENAGE_CYPHER_QUERY,params ) )
+        {
+            if (queryResult.hasNext()) {
+                Map<String, Object> row = queryResult.next();
+                addTaxonomyLineageNode(result, getProperty(row, "firstNode"));
+                Optional<Object> value = getProperty(row, "lineage");
+                if (value.isPresent()) {
+                    Iterable<Iterable<Node>> nodeList = (Iterable<Iterable<Node>>) value.get();
+                    nodeList.forEach(wrapper -> wrapper.forEach(node -> addTaxonomyLineageNode(result,node)));
+                }
+            }
+            queryResult.close();
+            tx.success();
+            tx.close();
+        }
+        Optional<Taxonomies> taxonomies = Optional.empty();
+        if(!result.isEmpty()){
+            Taxonomies nodeList = new Taxonomies();
+            nodeList.setTaxonomies(result);
+            taxonomies = Optional.of(nodeList);
+        }
+        long elapsed = System.currentTimeMillis() - startTime;
+        logger.debug("NeoQuery Time for getTaxonomyLineageById: "+elapsed+ " for "+params);
+        return taxonomies;
+    }
+
+    private void addTaxonomyLineageNode(ArrayList<TaxonomyNode> result,Optional<Object> value) {
+        TaxonomyNode taxonomyNode = null;
+        if (value.isPresent()) {
+            Node node = (Node) value.get();
+            addTaxonomyLineageNode(result,node);
+        }
+    }
+
+    private void addTaxonomyLineageNode(ArrayList<TaxonomyNode> result,Node node) {
+        if(node.hasProperty("taxonomyId")) {
+            String id = "" + node.getProperty("taxonomyId");
+            if (!id.isEmpty()) {
+                TaxonomyNode taxonomyNode = new TaxonomyNode();
+                taxonomyNode.setTaxonomyId(Long.parseLong(id));
+                if(node.hasProperty("scientificName")) {
+                    taxonomyNode.setScientificName("" + node.getProperty("scientificName"));
+                }
+                result.add(taxonomyNode);
+            }
+        }
     }
 
     private TaxonomyNode getTaxonomyBaseNodeFromQueryResult(Node node) {

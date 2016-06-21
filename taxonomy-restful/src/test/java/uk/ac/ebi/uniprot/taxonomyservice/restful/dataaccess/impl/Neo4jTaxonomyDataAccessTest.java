@@ -69,6 +69,15 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
+    public void getTaxonomyDetailsByIdWithAnInvalidIdNodeReturnOptionalEmpty() throws Exception {
+        boolean hasChildrenLink = false;
+        boolean hasSiblingsLink = true;
+        boolean hasParentLink = true;
+        Optional<TaxonomyNode> node = neo4jDataAccess.getTaxonomyDetailsById(5,baseURL);
+        assertThat(node.isPresent(),is(false));
+    }
+
+    @Test
     public void getTaxonomyParentByIdWithIdThatDoesNoteReturnParent() throws Exception {
         Optional<TaxonomyNode> node = neo4jDataAccess.getTaxonomyParentById(1L);
         assertThat(node.isPresent(),is(false));
@@ -339,6 +348,29 @@ public class Neo4jTaxonomyDataAccessTest {
     public void getTaxonomyHistoricalChangeThatDoesNotReturnNewId() throws Exception {
         Optional<Long> newId = neo4jDataAccess.getTaxonomyHistoricalChange(5L);
         assertThat(newId.isPresent(), is(false));
+    }
+
+    @Test
+    public void getTaxonomyLineageWithRootNodeThatReturnOnlyRootLineage() throws Exception {
+        Optional<Taxonomies> taxonomies = neo4jDataAccess.getTaxonomyLineageById(1L);
+        assertThat(taxonomies.isPresent(), is(true));
+        Taxonomies nodes = taxonomies.get();
+        assertThat(nodes.getTaxonomies(),notNullValue());
+        assertThat(nodes.getTaxonomies().size(),is(1));
+        assertThat(nodes.getTaxonomies().get(0).getTaxonomyId(),is(1L));
+    }
+
+    @Test
+    public void getTaxonomyLineageWithInvalidIdThatDoesNotReturnLineage() throws Exception {
+        Optional<Taxonomies> taxonomies = neo4jDataAccess.getTaxonomyLineageById(5L);
+        assertThat(taxonomies.isPresent(), is(false));
+    }
+
+    @Test
+    public void getTaxonomyLineageWithValidIdThatReturnLineage() throws Exception {
+        Optional<Taxonomies> taxonomies = neo4jDataAccess.getTaxonomyLineageById(10000000L);
+        assertThat(taxonomies.isPresent(), is(true));
+
     }
 
     private void assertNodeDetail(long expectedTaxonomyId, TaxonomyNode node,boolean hasChildrenLink,boolean

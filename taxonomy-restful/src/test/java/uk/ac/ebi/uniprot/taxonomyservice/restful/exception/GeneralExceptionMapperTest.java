@@ -36,7 +36,7 @@ public class GeneralExceptionMapperTest {
     public void assertNotFoundExceptionReturnErrorMessage() {
         ErrorMessage expectedError = new ErrorMessage();
         expectedError.setRequestedURL(ResponseAssert.REQUEST_URL);
-        expectedError.addErrorMessage(SwaggerConstant.API_RESPONSE_404);
+        expectedError.addErrorMessage(SwaggerConstant.API_RESPONSE_404_GENERAL);
 
         when(request.getRequestURL()).thenReturn(new StringBuffer(ResponseAssert.REQUEST_URL));
 
