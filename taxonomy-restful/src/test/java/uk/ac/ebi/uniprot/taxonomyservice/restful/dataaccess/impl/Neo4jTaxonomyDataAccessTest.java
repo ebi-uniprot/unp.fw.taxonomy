@@ -93,12 +93,7 @@ public class Neo4jTaxonomyDataAccessTest {
     @Test
     public void getTaxonomySiblingsByIdWithIdThatReturnTwoSiblings() throws Exception {
         Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomySiblingsById(10L);
-        assertThat(nodeOptional.isPresent(),is(true));
-        Taxonomies nodes = nodeOptional.get();
-        assertThat(nodes.getTaxonomies(),notNullValue());
-        assertThat(nodes.getTaxonomies().size(),is(2));
-        Collections.sort(nodes.getTaxonomies());
-        assertBaseNode(11L,nodes.getTaxonomies().get(0));
+        assertTaxonomiesResult(nodeOptional,2,2,null, 11);
     }
 
     @Test
@@ -110,12 +105,7 @@ public class Neo4jTaxonomyDataAccessTest {
     @Test
     public void getTaxonomyChildrenByIdThatReturnThreeChildren() throws Exception {
         Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomyChildrenById(1L);
-        assertThat(nodeOptional.isPresent(),is(true));
-        Taxonomies nodes = nodeOptional.get();
-        assertThat(nodes.getTaxonomies(),notNullValue());
-        assertThat(nodes.getTaxonomies().size(),is(3));
-        Collections.sort(nodes.getTaxonomies());
-        assertBaseNode(10L,nodes.getTaxonomies().get(0));
+        assertTaxonomiesResult(nodeOptional,3,3,null, 10);
     }
 
     @Test
@@ -130,11 +120,7 @@ public class Neo4jTaxonomyDataAccessTest {
         nameParams.setSearchType("EQUALSTO");
         nameParams.setTaxonomyName("equals to only");
         Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomyDetailsByName(nameParams,baseURL);
-        assertThat(nodeOptional.isPresent(),is(true));
-        Taxonomies nodes = nodeOptional.get();
-        assertThat(nodes.getTaxonomies(),notNullValue());
-        assertThat(nodes.getTaxonomies().size(),is(1));
-        assertBaseNode(10000,nodes.getTaxonomies().get(0));
+        assertTaxonomiesResult(nodeOptional,1,1,nameParams, 10000);
     }
 
     @Test
@@ -152,11 +138,7 @@ public class Neo4jTaxonomyDataAccessTest {
         nameParams.setSearchType("EQUALSTO");
         nameParams.setTaxonomyName("sn");
         Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomyDetailsByName(nameParams,baseURL);
-        assertThat(nodeOptional.isPresent(),is(true));
-        Taxonomies nodes = nodeOptional.get();
-        assertThat(nodes.getTaxonomies(),notNullValue());
-        assertThat(nodes.getTaxonomies().size(),is(1));
-        assertBaseNode(10000005,nodes.getTaxonomies().get(0));
+        assertTaxonomiesResult(nodeOptional,1,1,nameParams, 10000005);
     }
 
     @Test
@@ -174,9 +156,7 @@ public class Neo4jTaxonomyDataAccessTest {
         nameParams.setSearchType("CONTAINS");
         nameParams.setTaxonomyName("name");
         Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomyDetailsByName(nameParams,baseURL);
-        Taxonomies nodes = nodeOptional.get();
-        assertThat(nodes.getTaxonomies(),notNullValue());
-        assertThat(nodes.getTaxonomies().size(),is(4));
+        assertTaxonomiesResult(nodeOptional,4,4,nameParams, 100000);
     }
 
     @Test
@@ -194,9 +174,7 @@ public class Neo4jTaxonomyDataAccessTest {
         nameParams.setSearchType("ENDSWITH");
         nameParams.setTaxonomyName("ended");
         Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomyDetailsByName(nameParams,baseURL);
-        Taxonomies nodes = nodeOptional.get();
-        assertThat(nodes.getTaxonomies(),notNullValue());
-        assertThat(nodes.getTaxonomies().size(),is(4));
+        assertTaxonomiesResult(nodeOptional,4,4,nameParams, 1000000);
     }
 
     @Test
@@ -214,9 +192,55 @@ public class Neo4jTaxonomyDataAccessTest {
         nameParams.setSearchType("STARTSWITH");
         nameParams.setTaxonomyName("start");
         Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomyDetailsByName(nameParams,baseURL);
-        Taxonomies nodes = nodeOptional.get();
-        assertThat(nodes.getTaxonomies(),notNullValue());
-        assertThat(nodes.getTaxonomies().size(),is(4));
+        assertTaxonomiesResult(nodeOptional,4,4,nameParams, 1000000);
+    }
+
+    @Test
+    public void getTaxonomyDetailsByNameSecondPageWithValidName() throws Exception {
+        NameRequestParams nameParams = new NameRequestParams();
+        nameParams.setSearchType("CONTAINS");
+        nameParams.setTaxonomyName("common");
+        nameParams.setFieldName("commonName");
+        nameParams.setPageNumber("2");
+        nameParams.setPageSize("10");
+        Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomyDetailsByName(nameParams,baseURL);
+        assertTaxonomiesResult(nodeOptional,10,50,nameParams, 120);
+    }
+
+    @Test
+    public void getTaxonomyDetailsByNameLastPageWithValidName() throws Exception {
+        NameRequestParams nameParams = new NameRequestParams();
+        nameParams.setSearchType("CONTAINS");
+        nameParams.setTaxonomyName("common");
+        nameParams.setFieldName("commonName");
+        nameParams.setPageNumber("5");
+        nameParams.setPageSize("10");
+        Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomyDetailsByName(nameParams,baseURL);
+        assertTaxonomiesResult(nodeOptional,10,50,nameParams, 10000);
+    }
+
+    @Test
+    public void getTaxonomyDetailsByNameInvalidPageWithValidName() throws Exception {
+        NameRequestParams nameParams = new NameRequestParams();
+        nameParams.setSearchType("CONTAINS");
+        nameParams.setTaxonomyName("common");
+        nameParams.setFieldName("commonName");
+        nameParams.setPageNumber("6");
+        nameParams.setPageSize("10");
+        Optional<Taxonomies> nodes = neo4jDataAccess.getTaxonomyDetailsByName(nameParams,baseURL);
+        assertThat(nodes.isPresent(),is(false));
+    }
+
+    @Test
+    public void getTaxonomyDetailsByCommonNameContainsWithValidName() throws Exception {
+        NameRequestParams nameParams = new NameRequestParams();
+        nameParams.setSearchType("CONTAINS");
+        nameParams.setTaxonomyName("common");
+        nameParams.setFieldName("commonName");
+        nameParams.setPageNumber("2");
+        nameParams.setPageSize("10");
+        Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomyDetailsByName(nameParams,baseURL);
+        assertTaxonomiesResult(nodeOptional,10,50,nameParams, 120);
     }
 
     @Test
@@ -371,6 +395,23 @@ public class Neo4jTaxonomyDataAccessTest {
         Optional<Taxonomies> taxonomies = neo4jDataAccess.getTaxonomyLineageById(10000000L);
         assertThat(taxonomies.isPresent(), is(true));
 
+    }
+
+    private void assertTaxonomiesResult(Optional<Taxonomies> nodeOptional,int size,int totalRecords, NameRequestParams
+            nameParams, long
+     firstTaxonomyId) {
+        assertThat(nodeOptional.isPresent(),is(true));
+        Taxonomies nodes = nodeOptional.get();
+        assertThat(nodes.getTaxonomies(),notNullValue());
+        assertThat(nodes.getTaxonomies().size(),is(size));
+        Collections.sort(nodes.getTaxonomies());
+        assertBaseNode(firstTaxonomyId,nodes.getTaxonomies().get(0));
+        if(nameParams != null) {
+            assertThat(nodes.getPageInfo(), notNullValue());
+            assertThat(nodes.getPageInfo().getCurrentPage(), is(Integer.parseInt(nameParams.getPageNumber())));
+            assertThat(nodes.getPageInfo().getResultsPerPage(), is(nameParams.getPageSizeInt()));
+            assertThat(nodes.getPageInfo().getTotalRecords(), is(totalRecords));
+        }
     }
 
     private void assertNodeDetail(long expectedTaxonomyId, TaxonomyNode node,boolean hasChildrenLink,boolean

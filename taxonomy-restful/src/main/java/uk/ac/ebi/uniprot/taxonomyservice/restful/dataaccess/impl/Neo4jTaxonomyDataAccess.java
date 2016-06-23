@@ -3,8 +3,9 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.impl;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.TaxonomyDataAccess;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.NameRequestParams;
-import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.PathDirections;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.PathRequestParams;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.param.values.PathDirections;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.PageInformation;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
 
 import com.google.inject.Inject;
@@ -52,10 +53,15 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
     private static final String GET_TAXONOMY_DETAILS_BY_ID_ONE_CYPHER_QUERY =
             "MATCH (n:Node) WHERE n.taxonomyId = {id} "+GET_TAXONOMY_DETAIL_MATCH_BASE;
 
+    private static final String GET_TAXONOMY_DETAILS_BY_NAME_CYPHER_QUERY_BASE =
+            "MATCH (n:Node) WHERE n.{fieldName} {searchType} {name} ";
+
     private static final String GET_TAXONOMY_DETAILS_BY_NAME_CYPHER_QUERY =
-            "MATCH (n:Node) WHERE n.scientificNameLowerCase {searchType} {name} " +GET_TAXONOMY_DETAIL_MATCH_BASE +
-            " UNION MATCH (n:Node) WHERE n.commonNameLowerCase {searchType} {name} " +GET_TAXONOMY_DETAIL_MATCH_BASE +
-            " UNION MATCH (n:Node) WHERE n.mnemonicLowerCase {searchType} {name} "+GET_TAXONOMY_DETAIL_MATCH_BASE;
+            GET_TAXONOMY_DETAILS_BY_NAME_CYPHER_QUERY_BASE +GET_TAXONOMY_DETAIL_MATCH_BASE + " SKIP {skip} LIMIT " +
+                    "{limit}";
+
+    private static final String GET_TAXONOMY_DETAILS_BY_NAME_TOTAL_RECORDS_CYPHER_QUERY =
+            GET_TAXONOMY_DETAILS_BY_NAME_CYPHER_QUERY_BASE + "RETURN count(n) as totalRecords";
 
     private static final String GET_TAXONOMY_RELATIONSHIP_CYPHER_QUERY =
             "MATCH (n1:Node),(n2:Node) where n1.taxonomyId = {from} and n2.taxonomyId = {to} " +
@@ -179,31 +185,44 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
 
     @Override
     public Optional<Taxonomies> getTaxonomyDetailsByName(NameRequestParams nameParams, String basePath) {
-        Optional<ArrayList<TaxonomyNode>> result = null;
-        long startTime = System.currentTimeMillis();
-        Map<String, Object> params = new HashMap<>();
-        params.put( "name", nameParams.getTaxonomyName().toLowerCase() );
-
-        String query = GET_TAXONOMY_DETAILS_BY_NAME_CYPHER_QUERY.replaceAll("\\{searchType\\}", nameParams
-                .getSearchTypeQueryKeyword());
-        logger.debug(query +" for "+nameParams.getTaxonomyName().toLowerCase());
-        try ( Transaction tx = neo4jDb.beginTx();
-                Result queryResult = neo4jDb.execute(query,params ) )
-        {
-            result =  getTaxonomyFromQueryResult(basePath, queryResult);
-            queryResult.close();
-            tx.success();
-            tx.close();
-        }
         Optional<Taxonomies> taxonomies = Optional.empty();
-        if(result.isPresent()){
-            Taxonomies nodeList = new Taxonomies();
-            nodeList.setTaxonomies(result.get());
-            taxonomies = Optional.of(nodeList);
+        int totalRecords = getTaxonomyDetailsByNameTotalRecords(nameParams);
+        if(nameParams.getSkip() < totalRecords) {
+            Optional<ArrayList<TaxonomyNode>> result = null;
+            long startTime = System.currentTimeMillis();
+            Map<String, Object> params = new HashMap<>();
+            params.put("name", nameParams.getTaxonomyName().toLowerCase());
+            params.put("skip", nameParams.getSkip());
+            params.put("limit", nameParams.getPageSizeInt());
+
+            String query = GET_TAXONOMY_DETAILS_BY_NAME_CYPHER_QUERY.replace("{searchType}", nameParams
+                    .getSearchTypeQueryKeyword()).replace("{fieldName}", nameParams.getFieldNameQueryKeyword());
+            logger.debug(query + " for " + nameParams.getTaxonomyName().toLowerCase());
+            try (Transaction tx = neo4jDb.beginTx();
+                    Result queryResult = neo4jDb.execute(query, params)) {
+                result = getTaxonomyFromQueryResult(basePath, queryResult);
+                queryResult.close();
+                tx.success();
+                tx.close();
+            }
+            if (result.isPresent()) {
+                Taxonomies nodeList = new Taxonomies();
+                nodeList.setTaxonomies(result.get());
+                nodeList.setPageInfo(buildPageInfo(nameParams,totalRecords));
+                taxonomies = Optional.of(nodeList);
+            }
+            long elapsed = System.currentTimeMillis() - startTime;
+            logger.debug("NeoQuery Time for getTaxonomyDetailsByName: " + elapsed + " for " + params);
         }
-        long elapsed = System.currentTimeMillis() - startTime;
-        logger.debug("NeoQuery Time for getTaxonomyDetailsByName: "+elapsed+ " for "+params);
         return taxonomies;
+    }
+
+    private PageInformation buildPageInfo(NameRequestParams nameParams, Integer totalRecords) {
+        PageInformation pageInfo = new PageInformation();
+        pageInfo.setCurrentPage(Integer.parseInt(nameParams.getPageNumber()));
+        pageInfo.setResultsPerPage(nameParams.getPageSizeInt());
+        pageInfo.setTotalRecords(totalRecords);
+        return pageInfo;
     }
 
     @Override
@@ -345,6 +364,33 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
                 result.add(taxonomyNode);
             }
         }
+    }
+
+    private int getTaxonomyDetailsByNameTotalRecords(NameRequestParams nameParams) {
+        int result = 0;
+        long startTime = System.currentTimeMillis();
+        Map<String, Object> params = new HashMap<>();
+        params.put( "name", nameParams.getTaxonomyName().toLowerCase() );
+
+        String query = GET_TAXONOMY_DETAILS_BY_NAME_TOTAL_RECORDS_CYPHER_QUERY.replace("{searchType}", nameParams
+                .getSearchTypeQueryKeyword()).replace("{fieldName}",nameParams.getFieldNameQueryKeyword());
+        try ( Transaction tx = neo4jDb.beginTx();
+                Result queryResult = neo4jDb.execute(query,params ) )
+        {
+            if (queryResult.hasNext()) {
+                Map<String, Object> row = queryResult.next();
+                Optional<Object> totalRecords = getProperty(row, "totalRecords");
+                if(totalRecords.isPresent()){
+                    result = Integer.parseInt(totalRecords.get().toString());
+                }
+            }
+            queryResult.close();
+            tx.success();
+            tx.close();
+        }
+        long elapsed = System.currentTimeMillis() - startTime;
+        logger.debug("NeoQuery Time for getTaxonomyDetailsByNameTotalRecords: "+elapsed+ " for "+nameParams);
+        return result;
     }
 
     private TaxonomyNode getTaxonomyBaseNodeFromQueryResult(Node node) {

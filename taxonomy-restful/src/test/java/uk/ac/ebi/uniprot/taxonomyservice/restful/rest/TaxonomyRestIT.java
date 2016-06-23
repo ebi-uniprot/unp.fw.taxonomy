@@ -2,6 +2,7 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.rest;
 
 import uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.ErrorMessage;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.PageInformation;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant;
 
@@ -614,6 +615,145 @@ public class TaxonomyRestIT {
                 true);
     }
 
+    @Test
+    public void lookupTaxonomyNameInvalidSearchTypeReturnsBadRequestStatusWithErrorMessage() {
+        String requestedURL = TAXONOMY_BASE_PATH + "/name/sn?searchType=INVALID";
+
+        ExtractableResponse<Response> jsonResponse = when()
+                .get(requestedURL)
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode())
+                .extract();
+
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(SwaggerConstant.SEARCH_TYPE_VALID_VALUES);
+        assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
+    }
+
+    @Test
+    public void lookupTaxonomyNameInvalidFieldNameReturnsBadRequestStatusWithErrorMessage() {
+        String requestedURL = TAXONOMY_BASE_PATH + "/name/validName?fieldName=INVALID";
+
+        ExtractableResponse<Response> jsonResponse = when()
+                .get(requestedURL)
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode())
+                .extract();
+
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(SwaggerConstant.FIELD_NAME_VALID_VALUES);
+        assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
+    }
+
+    @Test
+    public void lookupTaxonomyNameInvalidPageNumberReturnsBadRequestStatusWithErrorMessage() {
+        String requestedURL = TAXONOMY_BASE_PATH + "/name/validName?pageNumber=0";
+
+        ExtractableResponse<Response> jsonResponse = when()
+                .get(requestedURL)
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode())
+                .extract();
+
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(SwaggerConstant.PAGE_NUMBER_PARAMETER_MIN_VALUE);
+        assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
+    }
+
+    @Test
+    public void lookupTaxonomyNameInvalidPageSizeReturnsBadRequestStatusWithErrorMessage() {
+        String requestedURL = TAXONOMY_BASE_PATH + "/name/validName?pageSize=201";
+
+        ExtractableResponse<Response> jsonResponse = when()
+                .get(requestedURL)
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode())
+                .extract();
+
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(SwaggerConstant.PAGE_SIZE_PARAMETER_MAX_VALUE);
+        assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
+    }
+
+    @Test
+    public void lookupTaxonomyNameInvalidPageSizeAndNameReturnsBadRequestStatusWithErrorMessage() {
+        String requestedURL = TAXONOMY_BASE_PATH + "/name/validName?pageSize=INVALID&pageNumber=INVALID";
+
+        ExtractableResponse<Response> jsonResponse = when()
+                .get(requestedURL)
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode())
+                .extract();
+
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(SwaggerConstant.PAGE_NUMBER_PARAMETER_VALID_NUMBER);
+        errorMessages.add(SwaggerConstant.PAGE_SIZE_PARAMETER_VALID_NUMBER);
+        assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
+    }
+
+    @Test
+    public void lookupTaxonomyNameValidPageMetadataPage2ReturnsOkWithValidPageMetadata() {
+        PageInformation expectedPageInfo = new PageInformation();
+        expectedPageInfo.setTotalRecords(50);
+        expectedPageInfo.setResultsPerPage(10);
+        expectedPageInfo.setCurrentPage(2);
+        ExtractableResponse<Response> response = when()
+                .get(TAXONOMY_BASE_PATH + "/name/common?searchType=startswith&fieldName=commonName&pageNumber=2" +
+                        "&pageSize=10&format=xml")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract();
+        assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidPageMetadataAndContent(response,
+                ContentType.XML,true,expectedPageInfo);
+    }
+
+    @Test
+    public void lookupTaxonomyNameValidPageMetadataLastPageReturnsOkWithValidPageMetadata() {
+        PageInformation expectedPageInfo = new PageInformation();
+        expectedPageInfo.setTotalRecords(50);
+        expectedPageInfo.setResultsPerPage(10);
+        expectedPageInfo.setCurrentPage(5);
+        ExtractableResponse<Response> response = when()
+                .get(TAXONOMY_BASE_PATH + "/name/common?searchType=startswith&fieldName=commonName&pageNumber=5" +
+                        "&pageSize=10")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract();
+        assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidPageMetadataAndContent(response,
+                ContentType.JSON,true,expectedPageInfo);
+    }
+
+    @Test
+    public void lookupTaxonomyNameInvalidPageNumberReturnsNotFoundStatusWithErrorMessage() {
+        String requestedURL =
+                TAXONOMY_BASE_PATH + "/name/common?searchType=startswith&fieldName=commonName&pageNumber=3";
+        ExtractableResponse<Response> jsonResponse = when()
+                .get(requestedURL)
+                .then()
+                .statusCode(NOT_FOUND.getStatusCode())
+                .extract();
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(SwaggerConstant.API_RESPONSE_404_NAME);
+        assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON, errorMessages,
+                restContainer.baseURL + requestedURL);
+    }
+
+    @Test
+    public void lookupTaxonomyNameFullValidParametersReturnsOkWithJsonContentTypeAndCorrectTaxonomies() {
+        PageInformation expectedPageInfo = new PageInformation();
+        expectedPageInfo.setTotalRecords(50);
+        expectedPageInfo.setResultsPerPage(5);
+        expectedPageInfo.setCurrentPage(3);
+        ExtractableResponse<Response> response = when()
+                .get(TAXONOMY_BASE_PATH + "/name/common?searchType=startswith&fieldName=commonName&pageNumber=3" +
+                        "&pageSize=5&format=xml")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract();
+        assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidPageMetadataAndContent(response,
+                ContentType.XML,true,expectedPageInfo);
+    }
+
     /*
         END: Test with /taxonomy/name
 
@@ -634,7 +774,6 @@ public class TaxonomyRestIT {
         errorMessages.add(SwaggerConstant.ID_PARAMETER_IS_REQUIRED);
         errorMessages.add(SwaggerConstant.DIRECTION_PARAMETER_IS_REQUIRED);
         errorMessages.add(SwaggerConstant.DEPTH_PARAMETER_IS_REQUIRED);
-        errorMessages.add(SwaggerConstant.DIRECTION_VALID_VALUES);
 
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
@@ -667,7 +806,6 @@ public class TaxonomyRestIT {
 
         List<String> errorMessages = new ArrayList<>();
         errorMessages.add(SwaggerConstant.DIRECTION_PARAMETER_IS_REQUIRED);
-        errorMessages.add(SwaggerConstant.DIRECTION_VALID_VALUES);
 
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
@@ -977,8 +1115,10 @@ public class TaxonomyRestIT {
         assertTaxonomyNodeAttributesHasValues(node, taxonomyId, checkLinks);
     }
 
-    private void assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(
-            ExtractableResponse<Response> response, ContentType contentType, boolean checkLinks) {
+    private void assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidPageMetadataAndContent(
+            ExtractableResponse<Response> response, ContentType contentType, boolean checkLinks,PageInformation
+            expectedPageInfo
+    ){
         assertThat(response, notNullValue());
         assertThat(response.contentType(), equalTo(contentType.toString()));
 
@@ -989,6 +1129,17 @@ public class TaxonomyRestIT {
         TaxonomyNode node = taxonomies.getTaxonomies().get(0);
         assertThat(node, notNullValue());
         assertTaxonomyNodeAttributesHasValues(node, node.getTaxonomyId(), checkLinks);
+
+        if(expectedPageInfo != null){
+            assertThat(taxonomies.getPageInfo(), notNullValue());
+            assertThat(taxonomies.getPageInfo(), equalTo(expectedPageInfo));
+        }
+    }
+
+    private void assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(
+            ExtractableResponse<Response> response, ContentType contentType, boolean checkLinks) {
+        assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidPageMetadataAndContent(response,
+                contentType,checkLinks,null);
     }
 
     private void assertValidTaxonomiesResponseForLineageWithCorrectContentTypeNotEmptyListAndValidContent(

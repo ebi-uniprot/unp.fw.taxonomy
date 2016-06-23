@@ -66,6 +66,14 @@ Created by lgonzales on 19/02/16.]]></xs:documentation>
     </xs:sequence>
   </xs:complexType>
 
+  <xs:complexType name="pageInfo">
+    <xs:sequence>
+      <xs:element name="resultsPerPage" type="xs:int"/>
+      <xs:element name="currentPage" type="xs:int"/>
+      <xs:element name="totalRecords" type="xs:int"/>
+    </xs:sequence>
+  </xs:complexType>
+
   <xs:complexType name="taxonomies">
     <xs:annotation>
       <xs:documentation><![CDATA[This class represents the REST response body object that will be returned when user request
@@ -81,6 +89,7 @@ Created by lgonzales on 08/03/16.]]></xs:documentation>
           </xs:sequence>
         </xs:complexType>
       </xs:element>
+      <xs:element minOccurs="0" name="pageInfo" type="tns:pageInfo"/>
     </xs:sequence>
   </xs:complexType>
 </xs:schema>

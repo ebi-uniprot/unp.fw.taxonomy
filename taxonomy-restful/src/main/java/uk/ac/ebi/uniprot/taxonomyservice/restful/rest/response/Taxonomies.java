@@ -21,10 +21,12 @@ import javax.xml.bind.annotation.XmlType;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlRootElement
-@XmlType(name = "taxonomies", propOrder = {"taxonomies"})
+@XmlType(name = "taxonomies", propOrder = {"taxonomies","pageInfo"})
 public class Taxonomies {
 
     private List<TaxonomyNode> taxonomies;
+
+    private PageInformation pageInfo;
 
     public Taxonomies() {
     }
@@ -46,9 +48,19 @@ public class Taxonomies {
         this.taxonomies = taxonomies;
     }
 
+    @XmlElement
+    public PageInformation getPageInfo() {
+        return pageInfo;
+    }
+
+    public void setPageInfo(PageInformation pageInfo) {
+        this.pageInfo = pageInfo;
+    }
+
     @Override public String toString() {
         return "Taxonomies{" +
                 "taxonomies=" + taxonomies +
+                ", pageInfo=" + pageInfo +
                 '}';
     }
 
@@ -62,12 +74,16 @@ public class Taxonomies {
 
         Taxonomies that = (Taxonomies) o;
 
-        return getTaxonomies() != null ? getTaxonomies().equals(that.getTaxonomies()) :
-                that.getTaxonomies() == null;
+        if (getTaxonomies() != null ? !getTaxonomies().equals(that.getTaxonomies()) : that.getTaxonomies() != null) {
+            return false;
+        }
+        return getPageInfo() != null ? getPageInfo().equals(that.getPageInfo()) : that.getPageInfo() == null;
 
     }
 
     @Override public int hashCode() {
-        return getTaxonomies() != null ? getTaxonomies().hashCode() : 0;
+        int result = getTaxonomies() != null ? getTaxonomies().hashCode() : 0;
+        result = 31 * result + (getPageInfo() != null ? getPageInfo().hashCode() : 0);
+        return result;
     }
 }

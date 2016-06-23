@@ -1,5 +1,6 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request;
 
+import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.param.values.PathDirections;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint.IsEnumValue;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;

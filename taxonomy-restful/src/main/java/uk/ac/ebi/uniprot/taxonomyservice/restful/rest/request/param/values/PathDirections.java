@@ -1,4 +1,4 @@
-package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request;
+package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.param.values;
 
 /**
  * This enum contains possible directions for a path search in taxonomy tree

@@ -1,7 +1,7 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint;
 
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.NameRequestParams;
-import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.SearchType;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.param.values.SearchType;
 
 import java.lang.annotation.*;
 import javax.validation.Constraint;

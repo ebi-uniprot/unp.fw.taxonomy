@@ -53,6 +53,11 @@ public class SwaggerConstant {
             "commonName and mnemonic";
     public static final String TAXONOMY_SEARCH_TYPE_PARAM = "Type of the search, valid values are EQUALSTO," +
             "STARTSWITH,ENDSWITH or CONTAINS";
+    public static final String TAXONOMY_FIELD_NAME_PARAM = "fieldName, valid values are SCIENTIFICNAME, COMMOMNAME " +
+            "or MNEMONIC";
+    public static final String TAXONOMY_PAGE_NUMBER_PARAM = "pageNumber is the current page number";
+    public static final String TAXONOMY_PAGE_SIZE_PARAM = "pageSize is the number of records returned in the request," +
+            " max value is 200";
     public static final String TAXONOMY_DEPTH_PARAM = "Number of depth levels for taxonomy path, valid values between" +
             " 1 and 5";
     public static final String TAXONOMY_DIRECTION_PARAM = "Direction for taxonomy path, valid values are TOP and " +
@@ -79,10 +84,16 @@ public class SwaggerConstant {
 
     public static final String ID_PARAMETER_IS_REQUIRED = "id parameter is required";
     public static final String NAME_PARAMETER_IS_REQUIRED = "name parameter is required";
-    public static final String NAME_PARAMETER_MIN_SIZE_FOR_PARTIAL_SEARCHES = "name parameter minimun size is 5 " +
+    public static final String NAME_PARAMETER_MIN_SIZE_FOR_PARTIAL_SEARCHES = "name parameter minimun size is 4 " +
             "characters for startWith, endsWith or contains searchType value";
     public static final String SEARCH_TYPE_VALID_VALUES = "searchType parameter value must be equalsto, startsWith, " +
             "endsWith or contains";
+    public static final String FIELD_NAME_VALID_VALUES = "fieldName parameter value must be scientificName, commonName, " +
+            "or mnemonic";
+    public static final String PAGE_NUMBER_PARAMETER_VALID_NUMBER = "The paramenter pageNumber must be a valid number";
+    public static final String PAGE_NUMBER_PARAMETER_MIN_VALUE = "The paramenter pageNumber must be more than 1";
+    public static final String PAGE_SIZE_PARAMETER_VALID_NUMBER = "The paramenter pageSize must be a valid number";
+    public static final String PAGE_SIZE_PARAMETER_MAX_VALUE = "The paramenter pageSize must be less than 200";
     public static final String DEPTH_PARAMETER_IS_REQUIRED = "depth parameter is required";
     public static final String DEPTH_PARAM_MIN_MAX = "depth param value must be between 1 and 5";
     public static final String DIRECTION_VALID_VALUES = "direction parameter value must be top or bottom";

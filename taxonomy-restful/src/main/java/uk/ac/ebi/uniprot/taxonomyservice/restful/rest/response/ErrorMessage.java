@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 @XmlType(name = "taxonomyError", propOrder = {"requestedURL","errorMessages"})
 public class ErrorMessage {
 
-    public static final Logger logger = LoggerFactory.getLogger(ErrorMessage.class);
+    private static final Logger logger = LoggerFactory.getLogger(ErrorMessage.class);
 
     private String requestedURL;
     private List<String> errorMessages;

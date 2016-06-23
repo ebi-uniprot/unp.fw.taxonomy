@@ -58,6 +58,8 @@ public @interface IsEnumValue {
                         }
                     }
                 }
+            }else{
+                result = true;
             }
 
             return result;
