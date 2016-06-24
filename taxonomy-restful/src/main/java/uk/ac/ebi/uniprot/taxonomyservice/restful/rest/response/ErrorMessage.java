@@ -8,8 +8,6 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class contains REST response body attributes when occur any error during Taxonomy request
@@ -20,8 +18,6 @@ import org.slf4j.LoggerFactory;
 @XmlRootElement
 @XmlType(name = "taxonomyError", propOrder = {"requestedURL","errorMessages"})
 public class ErrorMessage {
-
-    private static final Logger logger = LoggerFactory.getLogger(ErrorMessage.class);
 
     private String requestedURL;
     private List<String> errorMessages;

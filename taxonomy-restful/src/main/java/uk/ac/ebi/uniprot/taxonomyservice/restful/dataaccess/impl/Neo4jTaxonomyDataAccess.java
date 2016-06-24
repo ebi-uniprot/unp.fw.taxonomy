@@ -19,6 +19,8 @@ import org.neo4j.graphdb.factory.GraphDatabaseSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode.TAXONOMY_NODE_FIELDS.*;
+
 /**
  * Neo4J taxonomy data access class is responsible to query information from Neo4J Taxonomy database and build the
  * correct response TaxonomyNode or Taxonomies object
@@ -27,7 +29,8 @@ import org.slf4j.LoggerFactory;
  */
 public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
 
-    public static final Logger logger = LoggerFactory.getLogger(Neo4jTaxonomyDataAccess.class);
+    private static final Logger logger = LoggerFactory.getLogger(Neo4jTaxonomyDataAccess.class);
+    private static final String FOR_LOGGER = " for ";
 
     protected GraphDatabaseService neo4jDb;
 
@@ -134,7 +137,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
             tx.success();
         }
         long elapsed = System.currentTimeMillis() - startTime;
-        logger.debug("NeoQuery Time for getTaxonomyDetailsById: "+elapsed+ " for id "+taxonomyId);
+        logger.debug("NeoQuery Time for getTaxonomyDetailsById: "+elapsed+ FOR_LOGGER+taxonomyId);
         return result;
     }
 
@@ -174,7 +177,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
             tx.close();
         }
         long elapsed = System.currentTimeMillis() - startTime;
-        logger.debug("NeoQuery Time for getTaxonomyParentById: "+elapsed+ " for id "+taxonomyId);
+        logger.debug("NeoQuery Time for getTaxonomyParentById: "+elapsed+ FOR_LOGGER+taxonomyId);
         return result;
     }
 
@@ -197,7 +200,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
 
             String query = GET_TAXONOMY_DETAILS_BY_NAME_CYPHER_QUERY.replace("{searchType}", nameParams
                     .getSearchTypeQueryKeyword()).replace("{fieldName}", nameParams.getFieldNameQueryKeyword());
-            logger.debug(query + " for " + nameParams.getTaxonomyName().toLowerCase());
+            logger.debug(query + FOR_LOGGER + nameParams.getTaxonomyName().toLowerCase());
             try (Transaction tx = neo4jDb.beginTx();
                     Result queryResult = neo4jDb.execute(query, params)) {
                 result = getTaxonomyFromQueryResult(basePath, queryResult);
@@ -212,7 +215,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
                 taxonomies = Optional.of(nodeList);
             }
             long elapsed = System.currentTimeMillis() - startTime;
-            logger.debug("NeoQuery Time for getTaxonomyDetailsByName: " + elapsed + " for " + params);
+            logger.debug("NeoQuery Time for getTaxonomyDetailsByName: " + elapsed + FOR_LOGGER + params);
         }
         return taxonomies;
     }
@@ -281,7 +284,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
             tx.close();
         }
         long elapsed = System.currentTimeMillis() - startTime;
-        logger.debug("NeoQuery Time for getTaxonomyPath: "+elapsed+ " for path param "+nodePathParams);
+        logger.debug("NeoQuery Time for getTaxonomyPath: "+elapsed+  FOR_LOGGER +nodePathParams);
         return Optional.ofNullable(result);
     }
 
@@ -307,7 +310,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
             tx.close();
         }
         long elapsed = System.currentTimeMillis() - startTime;
-        logger.debug("NeoQuery Time for getTaxonomyHistoricalChange: "+elapsed+ " for id "+id);
+        logger.debug("NeoQuery Time for getTaxonomyHistoricalChange: "+elapsed + FOR_LOGGER +id);
         return Optional.ofNullable(result);
     }
 
@@ -340,12 +343,11 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
             taxonomies = Optional.of(nodeList);
         }
         long elapsed = System.currentTimeMillis() - startTime;
-        logger.debug("NeoQuery Time for getTaxonomyLineageById: "+elapsed+ " for "+params);
+        logger.debug("NeoQuery Time for getTaxonomyLineageById: "+elapsed+ FOR_LOGGER +params);
         return taxonomies;
     }
 
     private void addTaxonomyLineageNode(ArrayList<TaxonomyNode> result,Optional<Object> value) {
-        TaxonomyNode taxonomyNode = null;
         if (value.isPresent()) {
             Node node = (Node) value.get();
             addTaxonomyLineageNode(result,node);
@@ -353,13 +355,13 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
     }
 
     private void addTaxonomyLineageNode(ArrayList<TaxonomyNode> result,Node node) {
-        if(node.hasProperty("taxonomyId")) {
-            String id = "" + node.getProperty("taxonomyId");
+        if(node.hasProperty(taxonomyId.toString())) {
+            String id = "" + node.getProperty(taxonomyId.toString());
             if (!id.isEmpty()) {
                 TaxonomyNode taxonomyNode = new TaxonomyNode();
                 taxonomyNode.setTaxonomyId(Long.parseLong(id));
-                if(node.hasProperty("scientificName")) {
-                    taxonomyNode.setScientificName("" + node.getProperty("scientificName"));
+                if(node.hasProperty(scientificName.toString())) {
+                    taxonomyNode.setScientificName(""+node.getProperty(scientificName.toString()));
                 }
                 result.add(taxonomyNode);
             }
@@ -389,33 +391,33 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
             tx.close();
         }
         long elapsed = System.currentTimeMillis() - startTime;
-        logger.debug("NeoQuery Time for getTaxonomyDetailsByNameTotalRecords: "+elapsed+ " for "+nameParams);
+        logger.debug("NeoQuery Time for getTaxonomyDetailsByNameTotalRecords: "+elapsed+ FOR_LOGGER +nameParams);
         return result;
     }
 
     private TaxonomyNode getTaxonomyBaseNodeFromQueryResult(Node node) {
         TaxonomyNode result = null;
 
-        if(node.hasProperty("taxonomyId")) {
-            String taxonomyId = ""+node.getProperty("taxonomyId");
-            if(!taxonomyId.isEmpty()) {
+        if(node.hasProperty(taxonomyId.toString())) {
+            String taxId = ""+node.getProperty(taxonomyId.toString());
+            if(!taxId.isEmpty()) {
                 result = new TaxonomyNode();
-                result.setTaxonomyId(Long.parseLong(taxonomyId));
+                result.setTaxonomyId(Long.parseLong(taxId));
 
-                if(node.hasProperty("commonName")) {
-                    result.setCommonName("" + node.getProperty("commonName"));
+                if(node.hasProperty(commonName.toString())) {
+                    result.setCommonName("" + node.getProperty(commonName.toString()));
                 }
-                if(node.hasProperty("mnemonic")) {
-                    result.setMnemonic("" + node.getProperty("mnemonic"));
+                if(node.hasProperty(mnemonic.toString())) {
+                    result.setMnemonic("" + node.getProperty(mnemonic.toString()));
                 }
-                if(node.hasProperty("rank")) {
-                    result.setRank("" + node.getProperty("rank"));
+                if(node.hasProperty(rank.toString())) {
+                    result.setRank("" + node.getProperty(rank.toString()));
                 }
-                if(node.hasProperty("scientificName")) {
-                    result.setScientificName("" + node.getProperty("scientificName"));
+                if(node.hasProperty(scientificName.toString())) {
+                    result.setScientificName("" + node.getProperty(scientificName.toString()));
                 }
-                if(node.hasProperty("synonym")) {
-                    result.setSynonym("" + node.getProperty("synonym"));
+                if(node.hasProperty(synonym.toString())) {
+                    result.setSynonym("" + node.getProperty(synonym.toString()));
                 }
             }
         }
@@ -506,7 +508,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
             taxonomies.setTaxonomies(queryResultList);
         }
         long elapsed = System.currentTimeMillis() - startTime;
-        logger.debug("NeoQuery Time for getNodeBaseList: "+elapsed+" for id "+taxonomyId);
+        logger.debug("NeoQuery Time for getNodeBaseList: "+elapsed+FOR_LOGGER+taxonomyId);
         return taxonomies;
     }
 

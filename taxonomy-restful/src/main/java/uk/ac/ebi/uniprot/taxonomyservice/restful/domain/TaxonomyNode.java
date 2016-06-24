@@ -25,6 +25,11 @@ import javax.xml.bind.annotation.XmlType;
         "parent","parentLink","children","childrenLinks","siblings","siblingsLinks"})
 public class TaxonomyNode implements Comparable<TaxonomyNode>{
 
+    public enum TAXONOMY_NODE_FIELDS{
+        taxonomyId,mnemonic,scientificName,commonName,synonym,rank,
+        parent,parentLink,children,childrenLinks,siblings,siblingsLinks
+    }
+
     private long taxonomyId;
     private String mnemonic;
     private String scientificName;

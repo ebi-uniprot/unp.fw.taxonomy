@@ -36,7 +36,7 @@ import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.
 @Api(value = "/taxonomy", description = TAXONOMY_API_VALUE)
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class TaxonomyRest {
-    public static final Logger logger = LoggerFactory.getLogger(TaxonomyRest.class);
+    private static final Logger logger = LoggerFactory.getLogger(TaxonomyRest.class);
 
     public TaxonomyRest() {
         //logger.debug("created instance of TaxonomyRest");

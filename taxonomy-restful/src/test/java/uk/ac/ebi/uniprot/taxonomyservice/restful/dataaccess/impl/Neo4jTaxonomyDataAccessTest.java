@@ -29,17 +29,17 @@ public class Neo4jTaxonomyDataAccessTest {
     private static FakeTaxonomyDataAccess neo4jDataAccess;
 
     @BeforeClass
-    public static void setUpAndLoadMockDataFromCSVFile() throws Exception {
+    public static void setUpAndLoadMockDataFromCSVFile() {
         neo4jDataAccess = new FakeTaxonomyDataAccess("");
     }
 
     @AfterClass
-    public static void tearDown() throws Exception {
+    public static void tearDown() {
         neo4jDataAccess.getNeo4jDb().shutdown();
     }
 
     @Test
-    public void getTaxonomyDetailsByIdWithARootNodeAndReturnWithoutParentAndSiblingsLink() throws Exception {
+    public void getTaxonomyDetailsByIdWithARootNodeAndReturnWithoutParentAndSiblingsLink() {
         boolean hasChildrenLink = true;
         boolean hasSiblingsLink = false;
         boolean hasParentLink = false;
@@ -49,7 +49,7 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
-    public void getTaxonomyDetailsByIdWithACompleteNodeReturnChildrenSiblingsAndParentLink() throws Exception {
+    public void getTaxonomyDetailsByIdWithACompleteNodeReturnChildrenSiblingsAndParentLink() {
         boolean hasChildrenLink = true;
         boolean hasSiblingsLink = true;
         boolean hasParentLink = true;
@@ -59,7 +59,7 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
-    public void getTaxonomyDetailsByIdWithABottomNodeReturnWithoutChildrenLink() throws Exception {
+    public void getTaxonomyDetailsByIdWithABottomNodeReturnWithoutChildrenLink() {
         boolean hasChildrenLink = false;
         boolean hasSiblingsLink = true;
         boolean hasParentLink = true;
@@ -69,53 +69,50 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
-    public void getTaxonomyDetailsByIdWithAnInvalidIdNodeReturnOptionalEmpty() throws Exception {
-        boolean hasChildrenLink = false;
-        boolean hasSiblingsLink = true;
-        boolean hasParentLink = true;
+    public void getTaxonomyDetailsByIdWithAnInvalidIdNodeReturnOptionalEmpty() {
         Optional<TaxonomyNode> node = neo4jDataAccess.getTaxonomyDetailsById(5,baseURL);
         assertThat(node.isPresent(),is(false));
     }
 
     @Test
-    public void getTaxonomyParentByIdWithIdThatDoesNoteReturnParent() throws Exception {
+    public void getTaxonomyParentByIdWithIdThatDoesNoteReturnParent() {
         Optional<TaxonomyNode> node = neo4jDataAccess.getTaxonomyParentById(1L);
         assertThat(node.isPresent(),is(false));
     }
 
     @Test
-    public void getTaxonomyParentByIdWithIdThatReturnValidParent() throws Exception {
+    public void getTaxonomyParentByIdWithIdThatReturnValidParent() {
         Optional<TaxonomyNode> node = neo4jDataAccess.getTaxonomyParentById(10L);
         assertThat(node.isPresent(),is(true));
         assertBaseNode(1L,node.get());
     }
 
     @Test
-    public void getTaxonomySiblingsByIdWithIdThatReturnTwoSiblings() throws Exception {
+    public void getTaxonomySiblingsByIdWithIdThatReturnTwoSiblings() {
         Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomySiblingsById(10L);
         assertTaxonomiesResult(nodeOptional,2,2,null, 11);
     }
 
     @Test
-    public void getTaxonomySiblingsByIdWithIdThatDoesNoteReturnSiblings() throws Exception {
+    public void getTaxonomySiblingsByIdWithIdThatDoesNoteReturnSiblings() {
         Optional<Taxonomies> nodes = neo4jDataAccess.getTaxonomySiblingsById(1L);
         assertThat(nodes.isPresent(),is(false));
     }
 
     @Test
-    public void getTaxonomyChildrenByIdThatReturnThreeChildren() throws Exception {
+    public void getTaxonomyChildrenByIdThatReturnThreeChildren() {
         Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomyChildrenById(1L);
         assertTaxonomiesResult(nodeOptional,3,3,null, 10);
     }
 
     @Test
-    public void getTaxonomyChildrenByIdWithBottomIdThatDoesNoteReturnChildren() throws Exception {
+    public void getTaxonomyChildrenByIdWithBottomIdThatDoesNoteReturnChildren() {
         Optional<Taxonomies> nodes = neo4jDataAccess.getTaxonomyChildrenById(1233L);
         assertThat(nodes.isPresent(),is(false));
     }
 
     @Test
-    public void getTaxonomyDetailsByNameWithEqualsToValidExactName() throws Exception {
+    public void getTaxonomyDetailsByNameWithEqualsToValidExactName() {
         NameRequestParams nameParams = new NameRequestParams();
         nameParams.setSearchType("EQUALSTO");
         nameParams.setTaxonomyName("equals to only");
@@ -124,7 +121,7 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
-    public void getTaxonomyDetailsByNameWithEqualsToInvalidSimilarNames() throws Exception {
+    public void getTaxonomyDetailsByNameWithEqualsToInvalidSimilarNames() {
         NameRequestParams nameParams = new NameRequestParams();
         nameParams.setSearchType("EQUALSTO");
         nameParams.setTaxonomyName("equalsto only");
@@ -133,7 +130,7 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
-    public void getTaxonomyDetailsByNameWithEqualsToSmallNamesReturnValidTaxonomies() throws Exception {
+    public void getTaxonomyDetailsByNameWithEqualsToSmallNamesReturnValidTaxonomies() {
         NameRequestParams nameParams = new NameRequestParams();
         nameParams.setSearchType("EQUALSTO");
         nameParams.setTaxonomyName("sn");
@@ -142,7 +139,7 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
-    public void getTaxonomyDetailsByNameEqualsToInValidName() throws Exception {
+    public void getTaxonomyDetailsByNameEqualsToInValidName() {
         NameRequestParams nameParams = new NameRequestParams();
         nameParams.setSearchType("EQUALSTO");
         nameParams.setTaxonomyName("INVALID");
@@ -151,7 +148,7 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
-    public void getTaxonomyDetailsByNameContainsValidName() throws Exception {
+    public void getTaxonomyDetailsByNameContainsValidName() {
         NameRequestParams nameParams = new NameRequestParams();
         nameParams.setSearchType("CONTAINS");
         nameParams.setTaxonomyName("name");
@@ -160,7 +157,7 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
-    public void getTaxonomyDetailsByNameContainsInValidName() throws Exception {
+    public void getTaxonomyDetailsByNameContainsInValidName() {
         NameRequestParams nameParams = new NameRequestParams();
         nameParams.setSearchType("CONTAINS");
         nameParams.setTaxonomyName("invalid");
@@ -169,7 +166,7 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
-    public void getTaxonomyDetailsByNameEndsWithValidName() throws Exception {
+    public void getTaxonomyDetailsByNameEndsWithValidName()  {
         NameRequestParams nameParams = new NameRequestParams();
         nameParams.setSearchType("ENDSWITH");
         nameParams.setTaxonomyName("ended");
@@ -178,7 +175,7 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
-    public void getTaxonomyDetailsByNameEndsWithInValidName() throws Exception {
+    public void getTaxonomyDetailsByNameEndsWithInValidName() {
         NameRequestParams nameParams = new NameRequestParams();
         nameParams.setSearchType("ENDSWITH");
         nameParams.setTaxonomyName("INVALID");
@@ -187,7 +184,7 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
-    public void getTaxonomyDetailsByNameStartsWithValidName() throws Exception {
+    public void getTaxonomyDetailsByNameStartsWithValidName() {
         NameRequestParams nameParams = new NameRequestParams();
         nameParams.setSearchType("STARTSWITH");
         nameParams.setTaxonomyName("start");
@@ -196,7 +193,7 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
-    public void getTaxonomyDetailsByNameSecondPageWithValidName() throws Exception {
+    public void getTaxonomyDetailsByNameSecondPageWithValidName() {
         NameRequestParams nameParams = new NameRequestParams();
         nameParams.setSearchType("CONTAINS");
         nameParams.setTaxonomyName("common");
@@ -208,7 +205,7 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
-    public void getTaxonomyDetailsByNameLastPageWithValidName() throws Exception {
+    public void getTaxonomyDetailsByNameLastPageWithValidName() {
         NameRequestParams nameParams = new NameRequestParams();
         nameParams.setSearchType("CONTAINS");
         nameParams.setTaxonomyName("common");
@@ -220,7 +217,7 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
-    public void getTaxonomyDetailsByNameInvalidPageWithValidName() throws Exception {
+    public void getTaxonomyDetailsByNameInvalidPageWithValidName() {
         NameRequestParams nameParams = new NameRequestParams();
         nameParams.setSearchType("CONTAINS");
         nameParams.setTaxonomyName("common");
@@ -232,7 +229,7 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
-    public void getTaxonomyDetailsByCommonNameContainsWithValidName() throws Exception {
+    public void getTaxonomyDetailsByCommonNameContainsWithValidName() {
         NameRequestParams nameParams = new NameRequestParams();
         nameParams.setSearchType("CONTAINS");
         nameParams.setTaxonomyName("common");
@@ -244,7 +241,7 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
-    public void getTaxonomyDetailsByNameStartsWithInValidName() throws Exception {
+    public void getTaxonomyDetailsByNameStartsWithInValidName() {
         NameRequestParams nameParams = new NameRequestParams();
         nameParams.setSearchType("STARTSWITH");
         nameParams.setTaxonomyName("invalid");
@@ -253,40 +250,40 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
-    public void checkRelationshipBetweenTaxonomiesInvalidFromIdReturnNull() throws Exception {
+    public void checkRelationshipBetweenTaxonomiesInvalidFromIdReturnNull() {
         Optional<TaxonomyNode> node = neo4jDataAccess.getTaxonomiesRelationship(5L,10L);
         assertThat(node.isPresent(),is(false));
     }
 
     @Test
-    public void checkRelationshipBetweenTaxonomiesInvalidToIdReturnNull() throws Exception {
+    public void checkRelationshipBetweenTaxonomiesInvalidToIdReturnNull() {
         Optional<TaxonomyNode> node = neo4jDataAccess.getTaxonomiesRelationship(1L,6L);
         assertThat(node.isPresent(),is(false));
     }
 
     @Test
-    public void checkRelationshipBetweenTaxonomiesReturnOnlyParentRelationShip() throws Exception {
+    public void checkRelationshipBetweenTaxonomiesReturnOnlyParentRelationShip() {
         Optional<TaxonomyNode> node = neo4jDataAccess.getTaxonomiesRelationship(10000000L,1L);
         assertThat(node.isPresent(),is(true));
         assertNodePath(10000000L,node.get(),0,7);
     }
 
     @Test
-    public void checkRelationshipBetweenTaxonomiesReturnOnlyChildrenRelationShip() throws Exception {
+    public void checkRelationshipBetweenTaxonomiesReturnOnlyChildrenRelationShip() {
         Optional<TaxonomyNode> node = neo4jDataAccess.getTaxonomiesRelationship(1L,10000000L);
         assertThat(node.isPresent(),is(true));
         assertNodePath(1L,node.get(),7,0);
     }
 
     @Test
-    public void checkRelationshipBetweenTaxonomiesReturnParentAndChildrenRelationShip() throws Exception {
+    public void checkRelationshipBetweenTaxonomiesReturnParentAndChildrenRelationShip() {
         Optional<TaxonomyNode> node = neo4jDataAccess.getTaxonomiesRelationship(10000000,1222L);
         assertThat(node.isPresent(),is(true));
         assertNodePath(10000000L,node.get(),3,7);
     }
 
     @Test
-    public void getTaxonomyPathWithInvalidIdReturnNull() throws Exception {
+    public void getTaxonomyPathWithInvalidIdReturnNull() {
         PathRequestParams params = new PathRequestParams();
         params.setDepth(1);
         params.setDirection("bottom");
@@ -296,7 +293,7 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
-    public void getTaxonomyPathWithBottomDirectionOneDepth() throws Exception {
+    public void getTaxonomyPathWithBottomDirectionOneDepth() {
         PathRequestParams params = new PathRequestParams();
         params.setDepth(1);
         params.setDirection("bottom");
@@ -307,7 +304,7 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
-    public void getTaxonomyPathWithBottomDirectionFiveDepth() throws Exception {
+    public void getTaxonomyPathWithBottomDirectionFiveDepth() {
         PathRequestParams params = new PathRequestParams();
         params.setDepth(5);
         params.setDirection("bottom");
@@ -318,7 +315,7 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
-    public void getTaxonomyPathWithBottomDirectionFiveDepthThatThatHasBottominThreeDepth() throws Exception {
+    public void getTaxonomyPathWithBottomDirectionFiveDepthThatThatHasBottominThreeDepth() {
         PathRequestParams params = new PathRequestParams();
         params.setDepth(5);
         params.setDirection("bottom");
@@ -329,7 +326,7 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
-    public void getTaxonomyPathWithTopDirectionUntilRootDepthThatReturnOneDepth() throws Exception {
+    public void getTaxonomyPathWithTopDirectionUntilRootDepthThatReturnOneDepth() {
         PathRequestParams params = new PathRequestParams();
         params.setDepth(3);
         params.setDirection("top");
@@ -340,7 +337,7 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
-    public void getTaxonomyPathWithTopDirectionThreeDepth() throws Exception {
+    public void getTaxonomyPathWithTopDirectionThreeDepth()  {
         PathRequestParams params = new PathRequestParams();
         params.setDepth(3);
         params.setDirection("top");
@@ -351,7 +348,7 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
-    public void getTaxonomyPathWithTopDirectionFiveDepth() throws Exception {
+    public void getTaxonomyPathWithTopDirectionFiveDepth() {
         PathRequestParams params = new PathRequestParams();
         params.setDepth(5);
         params.setDirection("top");
@@ -362,20 +359,20 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
-    public void getTaxonomyHistoricalChangeThatReturnNewId() throws Exception {
+    public void getTaxonomyHistoricalChangeThatReturnNewId() {
         Optional<Long> newId = neo4jDataAccess.getTaxonomyHistoricalChange(9L);
         assertThat(newId.isPresent(),is(true));
         assertThat(newId.get(), is(10L));
     }
 
     @Test
-    public void getTaxonomyHistoricalChangeThatDoesNotReturnNewId() throws Exception {
+    public void getTaxonomyHistoricalChangeThatDoesNotReturnNewId() {
         Optional<Long> newId = neo4jDataAccess.getTaxonomyHistoricalChange(5L);
         assertThat(newId.isPresent(), is(false));
     }
 
     @Test
-    public void getTaxonomyLineageWithRootNodeThatReturnOnlyRootLineage() throws Exception {
+    public void getTaxonomyLineageWithRootNodeThatReturnOnlyRootLineage() {
         Optional<Taxonomies> taxonomies = neo4jDataAccess.getTaxonomyLineageById(1L);
         assertThat(taxonomies.isPresent(), is(true));
         Taxonomies nodes = taxonomies.get();
@@ -385,13 +382,13 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
-    public void getTaxonomyLineageWithInvalidIdThatDoesNotReturnLineage() throws Exception {
+    public void getTaxonomyLineageWithInvalidIdThatDoesNotReturnLineage() {
         Optional<Taxonomies> taxonomies = neo4jDataAccess.getTaxonomyLineageById(5L);
         assertThat(taxonomies.isPresent(), is(false));
     }
 
     @Test
-    public void getTaxonomyLineageWithValidIdThatReturnLineage() throws Exception {
+    public void getTaxonomyLineageWithValidIdThatReturnLineage() {
         Optional<Taxonomies> taxonomies = neo4jDataAccess.getTaxonomyLineageById(10000000L);
         assertThat(taxonomies.isPresent(), is(true));
 

@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 @PreMatching
 public class FilterResourceURL implements ContainerRequestFilter {
 
-    public static final Logger logger = LoggerFactory.getLogger(FilterResourceURL.class);
+    private static final Logger logger = LoggerFactory.getLogger(FilterResourceURL.class);
 
     private static final String[] acceptedContentType = {MediaType.APPLICATION_XML,MediaType.APPLICATION_JSON};
 

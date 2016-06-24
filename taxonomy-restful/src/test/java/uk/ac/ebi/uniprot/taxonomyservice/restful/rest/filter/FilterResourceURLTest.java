@@ -1,6 +1,8 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.filter;
 
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.*;
 import org.glassfish.jersey.server.ParamException;
@@ -28,7 +30,7 @@ public class FilterResourceURLTest {
     }
 
     @Test
-    public void assertJsonFormatQueryParameterReturnJsonAcceptHeader() throws Exception{
+    public void assertJsonFormatQueryParameterReturnJsonAcceptHeader() throws IOException{
         ContainerRequestContext requestContext = mock(ContainerRequestContext.class);
         UriInfo mockedInfo = mock(UriInfo.class);
         MultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
@@ -49,7 +51,7 @@ public class FilterResourceURLTest {
 
 
     @Test
-    public void assertXmlFormatQueryParameterReturnXmlAcceptHeader() throws Exception{
+    public void assertXmlFormatQueryParameterReturnXmlAcceptHeader() throws IOException{
         ContainerRequestContext requestContext = mock(ContainerRequestContext.class);
         UriInfo mockedInfo = mock(UriInfo.class);
         MultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
@@ -69,7 +71,8 @@ public class FilterResourceURLTest {
     }
 
     @Test
-    public void assertWithoutFormatAndAcceptHeaderParametersReturnDefaultJsonAcceptHeader() throws Exception{
+    public void assertWithoutFormatAndAcceptHeaderParametersReturnDefaultJsonAcceptHeader()
+            throws IOException, URISyntaxException {
         ContainerRequestContext requestContext = mock(ContainerRequestContext.class);
         UriInfo mockedInfo = mock(UriInfo.class);
         MultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
@@ -87,7 +90,7 @@ public class FilterResourceURLTest {
     }
 
     @Test
-    public void assertValidJsonAcceptHeaderHasPriorityOverXmlFormatParamReturnJsonAcceptHeader() throws Exception{
+    public void assertValidJsonAcceptHeaderHasPriorityOverXmlFormatParamReturnJsonAcceptHeader() throws IOException {
         ContainerRequestContext requestContext = mock(ContainerRequestContext.class);
         UriInfo mockedInfo = mock(UriInfo.class);
         MultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
@@ -129,7 +132,7 @@ public class FilterResourceURLTest {
     }
 
     @Test(expected = ParamException.QueryParamException.class)
-    public void assertInvalidFormatParamThrowsQueryParamException() throws Exception{
+    public void assertInvalidFormatParamThrowsQueryParamException() throws IOException {
         ContainerRequestContext requestContext = mock(ContainerRequestContext.class);
         UriInfo mockedInfo = mock(UriInfo.class);
         MultivaluedMap<String, String> headers = new MultivaluedHashMap<>();

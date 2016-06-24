@@ -53,9 +53,6 @@ public class NameRequestParams {
     @QueryParam("pageSize")
     private String pageSize;
 
-    public NameRequestParams(){
-    }
-
     public String getTaxonomyName() {
         return taxonomyName;
     }
@@ -115,21 +112,21 @@ public class NameRequestParams {
 
     @JsonIgnore
     public int getSkip() {
-        int pageSize = Integer.parseInt(getPageSize());
-        int pageNumber = Integer.parseInt(getPageNumber());
-        return ((pageNumber * pageSize) - pageSize);
+        int localPageSize = Integer.parseInt(getPageSize());
+        int localPageNumber = Integer.parseInt(getPageNumber());
+        return ((localPageNumber * localPageSize) - localPageSize);
     }
 
     @JsonIgnore
     public String getSearchTypeQueryKeyword(){
-        SearchType searchType = SearchType.valueOf(getSearchType().toUpperCase());
-        return searchType.getSearchQueryKeyWord();
+        SearchType searchTypeEnum = SearchType.valueOf(getSearchType().toUpperCase());
+        return searchTypeEnum.getSearchQueryKeyWord();
     }
 
     @JsonIgnore
     public String getFieldNameQueryKeyword(){
-        FieldNames fieldNames = FieldNames.valueOf(getFieldName().toUpperCase());
-        return fieldNames.getSearchFieldName();
+        FieldNames fieldNameEnum = FieldNames.valueOf(getFieldName().toUpperCase());
+        return fieldNameEnum.getSearchFieldName();
     }
 
     @Override public String toString() {

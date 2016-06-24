@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
  */
 public class URLUtil {
 
-    public static final Logger logger = LoggerFactory.getLogger(URLUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(URLUtil.class);
 
     public static String getCurrentURL(HttpServletRequest request){
         String currentURL = request.getRequestURL().toString();
