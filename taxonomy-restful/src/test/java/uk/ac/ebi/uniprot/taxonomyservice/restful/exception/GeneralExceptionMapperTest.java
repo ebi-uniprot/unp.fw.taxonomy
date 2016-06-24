@@ -1,7 +1,7 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.exception;
 
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.ErrorMessage;
-import uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstants;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.util.ResponseAssert;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,7 +36,7 @@ public class GeneralExceptionMapperTest {
     public void assertNotFoundExceptionReturnErrorMessage() {
         ErrorMessage expectedError = new ErrorMessage();
         expectedError.setRequestedURL(ResponseAssert.REQUEST_URL);
-        expectedError.addErrorMessage(SwaggerConstant.API_RESPONSE_404_GENERAL);
+        expectedError.addErrorMessage(TaxonomyConstants.API_RESPONSE_404_GENERAL);
 
         when(request.getRequestURL()).thenReturn(new StringBuffer(ResponseAssert.REQUEST_URL));
 
@@ -48,7 +48,7 @@ public class GeneralExceptionMapperTest {
     public void assertBadRequestExceptionReturnErrorMessage() {
         ErrorMessage expectedError = new ErrorMessage();
         expectedError.setRequestedURL(ResponseAssert.REQUEST_URL);
-        expectedError.addErrorMessage(SwaggerConstant.API_RESPONSE_400+" BadRequest");
+        expectedError.addErrorMessage(TaxonomyConstants.API_RESPONSE_400+" BadRequest");
 
         when(request.getRequestURL()).thenReturn(new StringBuffer(ResponseAssert.REQUEST_URL));
 
@@ -60,7 +60,7 @@ public class GeneralExceptionMapperTest {
     public void assertExceptionReturnErrorMessage() {
         ErrorMessage expectedError = new ErrorMessage();
         expectedError.setRequestedURL(ResponseAssert.REQUEST_URL);
-        expectedError.addErrorMessage(SwaggerConstant.API_RESPONSE_500);
+        expectedError.addErrorMessage(TaxonomyConstants.API_RESPONSE_500);
 
         when(request.getRequestURL()).thenReturn(new StringBuffer(ResponseAssert.REQUEST_URL));
 
@@ -72,7 +72,7 @@ public class GeneralExceptionMapperTest {
     public void assertWebApplicationExceptionReturnErrorMessage() {
         ErrorMessage expectedError = new ErrorMessage();
         expectedError.setRequestedURL(ResponseAssert.REQUEST_URL);
-        expectedError.addErrorMessage(SwaggerConstant.API_RESPONSE_500);
+        expectedError.addErrorMessage(TaxonomyConstants.API_RESPONSE_500);
 
         when(request.getRequestURL()).thenReturn(new StringBuffer(ResponseAssert.REQUEST_URL));
 

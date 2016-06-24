@@ -11,6 +11,8 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
+import static uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode.*;
+
 /**
  * This class represents a Taxonomy Element(node) in the taxonomy Tree.
  *
@@ -21,14 +23,22 @@ import javax.xml.bind.annotation.XmlType;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @XmlRootElement
-@XmlType(name = "taxonomyNode", propOrder = {"taxonomyId","mnemonic","scientificName","commonName","synonym","rank",
-        "parent","parentLink","children","childrenLinks","siblings","siblingsLinks"})
+@XmlType(name = "taxonomyNode", propOrder = {TAXONOMY_ID,MNEMONIC,SCIENTIFIC_NAME,COMMON_NAME,SYNONYM,RANK,
+        PARENT,PARENT_LINK,CHILDREN,CHILDREN_LINKS,SIBLINGS,SIBLINGS_LINKS})
 public class TaxonomyNode implements Comparable<TaxonomyNode>{
 
-    public enum TAXONOMY_NODE_FIELDS{
-        taxonomyId,mnemonic,scientificName,commonName,synonym,rank,
-        parent,parentLink,children,childrenLinks,siblings,siblingsLinks
-    }
+    public static final String TAXONOMY_ID = "taxonomyId";
+    public static final String MNEMONIC = "mnemonic";
+    public static final String SCIENTIFIC_NAME = "scientificName";
+    public static final String COMMON_NAME = "commonName";
+    public static final String SYNONYM = "synonym";
+    public static final String RANK = "rank";
+    public static final String PARENT = "parent";
+    public static final String PARENT_LINK = "parentLink";
+    public static final String CHILDREN = "children";
+    public static final String CHILDREN_LINKS = "childrenLinks";
+    public static final String SIBLINGS = "siblings";
+    public static final String SIBLINGS_LINKS = "siblingsLinks";
 
     private long taxonomyId;
     private String mnemonic;
@@ -126,8 +136,8 @@ public class TaxonomyNode implements Comparable<TaxonomyNode>{
     }
 
     @XmlElement(name = "child")
-    @XmlElementWrapper(name = "children")
-    @JsonGetter(value = "children")
+    @XmlElementWrapper(name = CHILDREN)
+    @JsonGetter(value = CHILDREN)
     public List<TaxonomyNode> getChildren() {
         return children;
     }
@@ -153,25 +163,25 @@ public class TaxonomyNode implements Comparable<TaxonomyNode>{
     }
 
     @XmlElement(name = "childLink")
-    @XmlElementWrapper(name = "childrenLinks")
-    @JsonGetter(value = "childrenLinks")
+    @XmlElementWrapper(name = CHILDREN_LINKS)
+    @JsonGetter(value = CHILDREN_LINKS)
     public List<String> getChildrenLinks() {
         return childrenLinks;
     }
 
-    @JsonSetter(value = "childrenLinks")
+    @JsonSetter(value = CHILDREN_LINKS)
     public void setChildrenLinks(List<String> childrenLinks) {
         this.childrenLinks = childrenLinks;
     }
 
     @XmlElement(name = "sibling")
-    @XmlElementWrapper(name = "siblings")
-    @JsonGetter(value = "siblings")
+    @XmlElementWrapper(name = SIBLINGS)
+    @JsonGetter(value = SIBLINGS)
     public List<TaxonomyNode> getSiblings() {
         return siblings;
     }
 
-    @JsonSetter(value = "siblings")
+    @JsonSetter(value = SIBLINGS)
     public void setSiblings(List<TaxonomyNode> siblings) {
         this.siblings = siblings;
     }
@@ -193,13 +203,13 @@ public class TaxonomyNode implements Comparable<TaxonomyNode>{
     }
 
     @XmlElement(name = "siblingLinks")
-    @XmlElementWrapper(name = "siblingsLinks")
-    @JsonGetter(value = "siblingsLinks")
+    @XmlElementWrapper(name = SIBLINGS_LINKS)
+    @JsonGetter(value = SIBLINGS_LINKS)
     public List<String> getSiblingsLinks() {
         return siblingsLinks;
     }
 
-    @JsonSetter(value = "siblingsLinks")
+    @JsonSetter(value = SIBLINGS_LINKS)
     public void setSiblingsLinks(List<String> siblingsLinks) {
         this.siblingsLinks = siblingsLinks;
     }

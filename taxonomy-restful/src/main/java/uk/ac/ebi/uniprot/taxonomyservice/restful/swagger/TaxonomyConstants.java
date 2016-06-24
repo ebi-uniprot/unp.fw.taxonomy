@@ -3,7 +3,9 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.swagger;
 /**
  * Created by lgonzales on 04/03/16.
  */
-public class SwaggerConstant {
+public class TaxonomyConstants {
+
+    private TaxonomyConstants(){}
 
     public static final String TAXONOMY_API_VALUE = "Rest services to return information about protein taxonomy " +
             "tree. Basically there are services that returns details about a taxonomy element and also details about " +

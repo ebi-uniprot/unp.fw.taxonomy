@@ -1,6 +1,6 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.filter;
 
-import uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstants;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -28,9 +28,9 @@ public class FilterResourceURL implements ContainerRequestFilter {
 
     private static final Logger logger = LoggerFactory.getLogger(FilterResourceURL.class);
 
-    private static final String[] acceptedContentType = {MediaType.APPLICATION_XML,MediaType.APPLICATION_JSON};
+    private static final String[] ACCEPTED_CONTENT_TYPE = {MediaType.APPLICATION_XML,MediaType.APPLICATION_JSON};
 
-    private static final String defaultContentType = MediaType.APPLICATION_JSON;
+    private static final String DEFAULT_CONTENT_TYPE = MediaType.APPLICATION_JSON;
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
@@ -38,16 +38,16 @@ public class FilterResourceURL implements ContainerRequestFilter {
         if (currentAcceptHeader == null || !isCurrentAcceptHeaderInAcceptedContentTypeList(currentAcceptHeader)) {
             Optional<String> formatParamValue = getFormatParamFromRequestContext(requestContext.getUriInfo());
             if(formatParamValue.isPresent()){
-                if(formatParamValue.get().equalsIgnoreCase("xml")){
+                if("xml".equalsIgnoreCase(formatParamValue.get())){
                     requestContext.getHeaders().addFirst(HttpHeaders.ACCEPT, MediaType.APPLICATION_XML);
-                }else if(formatParamValue.get().equalsIgnoreCase("json")){
+                }else if("json".equalsIgnoreCase(formatParamValue.get())){
                     requestContext.getHeaders().addFirst(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON);
                 }else{
-                   throw new ParamException.QueryParamException(new IllegalArgumentException( SwaggerConstant
+                   throw new ParamException.QueryParamException(new IllegalArgumentException( TaxonomyConstants
                            .REQUEST_PARAMETER_INVALID_VALUE),"format","");
                 }
             }else{
-                requestContext.getHeaders().addFirst(HttpHeaders.ACCEPT, defaultContentType);
+                requestContext.getHeaders().addFirst(HttpHeaders.ACCEPT, DEFAULT_CONTENT_TYPE);
             }
         }else{
             logger.debug("FilterResourceURL, we already have a valid accept header: "+currentAcceptHeader);
@@ -65,7 +65,7 @@ public class FilterResourceURL implements ContainerRequestFilter {
     }
 
     private boolean isCurrentAcceptHeaderInAcceptedContentTypeList(String currentAcceptHeader) {
-        return Stream.of(acceptedContentType).anyMatch(x -> x.equalsIgnoreCase(currentAcceptHeader));
+        return Stream.of(ACCEPTED_CONTENT_TYPE).anyMatch(x -> x.equalsIgnoreCase(currentAcceptHeader));
     }
 
 }

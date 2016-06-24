@@ -1,7 +1,7 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.exception;
 
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.ErrorMessage;
-import uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstants;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.util.ResponseAssert;
 
 import java.util.HashSet;
@@ -38,12 +38,12 @@ public class ValidationExceptionMapperTest {
     public void asserOneExceptionReturnErrorMessage() {
         ErrorMessage expectedError = new ErrorMessage();
         expectedError.setRequestedURL(ResponseAssert.REQUEST_URL);
-        expectedError.addErrorMessage(SwaggerConstant.DIRECTION_VALID_VALUES);
+        expectedError.addErrorMessage(TaxonomyConstants.DIRECTION_VALID_VALUES);
 
         when(request.getRequestURL()).thenReturn(new StringBuffer(ResponseAssert.REQUEST_URL));
 
         Set<ConstraintViolation<String>> errors = new HashSet<>();
-        errors.add(ConstraintViolationImpl.forBeanValidation("",SwaggerConstant.DIRECTION_VALID_VALUES,String.class,"",null, null,null,
+        errors.add(ConstraintViolationImpl.forBeanValidation("", TaxonomyConstants.DIRECTION_VALID_VALUES,String.class,"",null, null,null,
                 null,null));
 
         Response response = mockedValidationExceptionMapper.toResponse(new ConstraintViolationException("Validation " +
@@ -56,15 +56,15 @@ public class ValidationExceptionMapperTest {
     public void asserTwoExceptionReturnErrorMessage() {
         ErrorMessage expectedError = new ErrorMessage();
         expectedError.setRequestedURL(ResponseAssert.REQUEST_URL);
-        expectedError.addErrorMessage(SwaggerConstant.DIRECTION_VALID_VALUES);
-        expectedError.addErrorMessage(SwaggerConstant.ID_PARAMETER_IS_REQUIRED);
+        expectedError.addErrorMessage(TaxonomyConstants.DIRECTION_VALID_VALUES);
+        expectedError.addErrorMessage(TaxonomyConstants.ID_PARAMETER_IS_REQUIRED);
 
         when(request.getRequestURL()).thenReturn(new StringBuffer(ResponseAssert.REQUEST_URL));
 
         Set<ConstraintViolation<String>> errors = new HashSet<>();
-        errors.add(ConstraintViolationImpl.forBeanValidation("",SwaggerConstant.DIRECTION_VALID_VALUES,String.class,"",null, null,null,
+        errors.add(ConstraintViolationImpl.forBeanValidation("", TaxonomyConstants.DIRECTION_VALID_VALUES,String.class,"",null, null,null,
                 null,null));
-        errors.add(ConstraintViolationImpl.forBeanValidation("",SwaggerConstant.ID_PARAMETER_IS_REQUIRED,String.class,"",null, null,null,
+        errors.add(ConstraintViolationImpl.forBeanValidation("", TaxonomyConstants.ID_PARAMETER_IS_REQUIRED,String.class,"",null, null,null,
                 null,null));
 
         Response response = mockedValidationExceptionMapper.toResponse(new ConstraintViolationException("Validation " +

@@ -12,7 +12,7 @@ import org.glassfish.jersey.server.ParamException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.REQUEST_PARAMETER_INVALID_VALUE;
+import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstants.REQUEST_PARAMETER_INVALID_VALUE;
 
 /**
  * This class is responsible to map and return any request parameter value error that happen in Rest services and build

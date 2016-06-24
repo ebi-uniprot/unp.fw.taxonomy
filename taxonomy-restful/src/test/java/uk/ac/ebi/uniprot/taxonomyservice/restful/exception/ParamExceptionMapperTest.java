@@ -1,7 +1,7 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.exception;
 
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.ErrorMessage;
-import uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstants;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.util.ResponseAssert;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,7 +34,7 @@ public class ParamExceptionMapperTest {
     public void assertParamExceptionReturnErrorMessage() {
         ErrorMessage expectedError = new ErrorMessage();
         expectedError.setRequestedURL(ResponseAssert.REQUEST_URL);
-        expectedError.addErrorMessage(SwaggerConstant.REQUEST_PARAMETER_INVALID_VALUE.replace("{parameterName}","id"));
+        expectedError.addErrorMessage(TaxonomyConstants.REQUEST_PARAMETER_INVALID_VALUE.replace("{parameterName}","id"));
 
         when(request.getRequestURL()).thenReturn(new StringBuffer(ResponseAssert.REQUEST_URL));
 

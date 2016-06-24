@@ -24,7 +24,7 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.*;
+import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstants.*;
 
 /**
  * This class is responsible to provide services about taxonomy tree and return Taxonomy details
@@ -37,10 +37,6 @@ import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.
 @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
 public class TaxonomyRest {
     private static final Logger logger = LoggerFactory.getLogger(TaxonomyRest.class);
-
-    public TaxonomyRest() {
-        //logger.debug("created instance of TaxonomyRest");
-    }
 
     @Inject
     private TaxonomyDataAccess dataAccess;
@@ -64,7 +60,6 @@ public class TaxonomyRest {
             @PathParam("id")
             @Pattern(regexp = "[0-9]+", message = ID_PARAMETER_VALID_NUMBER)
             String id) {
-        //logger.debug(">>TaxonomyRest.getTaxonomyDetailsById");
 
         long taxonomyId = Long.valueOf(id);
         Optional<TaxonomyNode> response = dataAccess.getTaxonomyDetailsById(taxonomyId,URLUtil.getTaxonomyIdBasePath(request));

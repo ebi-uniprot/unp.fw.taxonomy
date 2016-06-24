@@ -14,9 +14,9 @@ import javax.ws.rs.ext.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.API_RESPONSE_400;
-import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.API_RESPONSE_404_GENERAL;
-import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.API_RESPONSE_500;
+import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstants.API_RESPONSE_400;
+import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstants.API_RESPONSE_404_GENERAL;
+import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstants.API_RESPONSE_500;
 
 /**
  * This class is responsible to map and return any 500 error that happen in Rest services and build it response.

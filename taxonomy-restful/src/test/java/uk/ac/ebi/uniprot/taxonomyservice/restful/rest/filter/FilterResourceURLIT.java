@@ -2,7 +2,7 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.filter;
 
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.RestContainer;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.ErrorMessage;
-import uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstants;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.util.ResponseAssert;
 
 import com.jayway.restassured.RestAssured;
@@ -153,7 +153,7 @@ public class FilterResourceURLIT {
 
         ErrorMessage expectedErrorMessage = new ErrorMessage();
         expectedErrorMessage.setRequestedURL(restContainer.baseURL+requestedURL);
-        expectedErrorMessage.addErrorMessage(SwaggerConstant.REQUEST_PARAMETER_INVALID_VALUE.replace
+        expectedErrorMessage.addErrorMessage(TaxonomyConstants.REQUEST_PARAMETER_INVALID_VALUE.replace
                 ("{parameterName}","format"));
 
         ResponseAssert.assertResponseErrorMessage(expectedErrorMessage,response);

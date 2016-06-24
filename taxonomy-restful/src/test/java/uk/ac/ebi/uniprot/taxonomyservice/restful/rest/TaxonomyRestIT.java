@@ -4,7 +4,7 @@ import uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.ErrorMessage;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.PageInformation;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
-import uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstants;
 
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.ExtractableResponse;
@@ -57,7 +57,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_404_GENERAL);
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_404_GENERAL);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -73,7 +73,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_404_ENTRY);
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_404_ENTRY);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
@@ -88,7 +88,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.ID_PARAMETER_VALID_NUMBER);
+        errorMessages.add(TaxonomyConstants.ID_PARAMETER_VALID_NUMBER);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
@@ -103,7 +103,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.ID_PARAMETER_VALID_NUMBER);
+        errorMessages.add(TaxonomyConstants.ID_PARAMETER_VALID_NUMBER);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
@@ -118,7 +118,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.ID_PARAMETER_VALID_NUMBER);
+        errorMessages.add(TaxonomyConstants.ID_PARAMETER_VALID_NUMBER);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.XML,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -166,7 +166,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_303.replace("{newId}","10"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -184,7 +184,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_303.replace("{newId}","10"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.XML,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -202,7 +202,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_303.replace("{newId}","10"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -224,7 +224,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_404_GENERAL);
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_404_GENERAL);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
@@ -239,7 +239,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_404_ENTRY);
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_404_ENTRY);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
@@ -255,7 +255,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_303.replace("{newId}","10"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -294,7 +294,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_303.replace("{newId}","10"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -322,7 +322,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_303.replace("{newId}","10"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.XML,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -350,7 +350,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_303.replace("{newId}","10"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -378,7 +378,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_303.replace("{newId}","10"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -406,7 +406,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_303.replace("{newId}","10"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.XML,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -433,7 +433,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_303.replace("{newId}","10"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -460,7 +460,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_303.replace("{newId}","10"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -487,7 +487,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_303.replace("{newId}","10"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.XML,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -509,7 +509,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_404_GENERAL);
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_404_GENERAL);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
@@ -524,7 +524,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.NAME_PARAMETER_MIN_SIZE_FOR_PARTIAL_SEARCHES);
+        errorMessages.add(TaxonomyConstants.NAME_PARAMETER_MIN_SIZE_FOR_PARTIAL_SEARCHES);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
@@ -539,7 +539,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.NAME_PARAMETER_MIN_SIZE_FOR_PARTIAL_SEARCHES);
+        errorMessages.add(TaxonomyConstants.NAME_PARAMETER_MIN_SIZE_FOR_PARTIAL_SEARCHES);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
@@ -568,7 +568,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_404_NAME);
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_404_NAME);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
@@ -626,7 +626,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.SEARCH_TYPE_VALID_VALUES);
+        errorMessages.add(TaxonomyConstants.SEARCH_TYPE_VALID_VALUES);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
@@ -641,7 +641,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.FIELD_NAME_VALID_VALUES);
+        errorMessages.add(TaxonomyConstants.FIELD_NAME_VALID_VALUES);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
@@ -656,7 +656,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.PAGE_NUMBER_PARAMETER_MIN_VALUE);
+        errorMessages.add(TaxonomyConstants.PAGE_NUMBER_PARAMETER_MIN_VALUE);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
@@ -671,7 +671,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.PAGE_SIZE_PARAMETER_MAX_VALUE);
+        errorMessages.add(TaxonomyConstants.PAGE_SIZE_PARAMETER_MAX_VALUE);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
@@ -686,8 +686,8 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.PAGE_NUMBER_PARAMETER_VALID_NUMBER);
-        errorMessages.add(SwaggerConstant.PAGE_SIZE_PARAMETER_VALID_NUMBER);
+        errorMessages.add(TaxonomyConstants.PAGE_NUMBER_PARAMETER_VALID_NUMBER);
+        errorMessages.add(TaxonomyConstants.PAGE_SIZE_PARAMETER_VALID_NUMBER);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
@@ -733,7 +733,7 @@ public class TaxonomyRestIT {
                 .statusCode(NOT_FOUND.getStatusCode())
                 .extract();
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_404_NAME);
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_404_NAME);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON, errorMessages,
                 restContainer.baseURL + requestedURL);
     }
@@ -771,9 +771,9 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.ID_PARAMETER_IS_REQUIRED);
-        errorMessages.add(SwaggerConstant.DIRECTION_PARAMETER_IS_REQUIRED);
-        errorMessages.add(SwaggerConstant.DEPTH_PARAMETER_IS_REQUIRED);
+        errorMessages.add(TaxonomyConstants.ID_PARAMETER_IS_REQUIRED);
+        errorMessages.add(TaxonomyConstants.DIRECTION_PARAMETER_IS_REQUIRED);
+        errorMessages.add(TaxonomyConstants.DEPTH_PARAMETER_IS_REQUIRED);
 
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
@@ -789,7 +789,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.ID_PARAMETER_IS_REQUIRED);
+        errorMessages.add(TaxonomyConstants.ID_PARAMETER_IS_REQUIRED);
 
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
@@ -805,7 +805,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.DIRECTION_PARAMETER_IS_REQUIRED);
+        errorMessages.add(TaxonomyConstants.DIRECTION_PARAMETER_IS_REQUIRED);
 
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
@@ -821,7 +821,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.DEPTH_PARAMETER_IS_REQUIRED);
+        errorMessages.add(TaxonomyConstants.DEPTH_PARAMETER_IS_REQUIRED);
 
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
@@ -837,7 +837,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.DEPTH_PARAM_MIN_MAX);
+        errorMessages.add(TaxonomyConstants.DEPTH_PARAM_MIN_MAX);
 
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
@@ -853,7 +853,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.DEPTH_PARAM_MIN_MAX);
+        errorMessages.add(TaxonomyConstants.DEPTH_PARAM_MIN_MAX);
 
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
@@ -891,7 +891,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_303.replace("{newId}","10"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -915,8 +915,8 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","100"));
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_303.replace("{newId}","10"));
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_303.replace("{newId}","100"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -934,7 +934,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_303.replace("{newId}","10"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -952,7 +952,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","10"));
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_303.replace("{newId}","10"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
                 restContainer.baseURL+requestedURL);
     }
@@ -968,7 +968,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_404_RELATIONSHIP);
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_404_RELATIONSHIP);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
@@ -983,8 +983,8 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.FROM_PARAMETER_VALID_NUMBER);
-        errorMessages.add(SwaggerConstant.TO_PARAMETER_VALID_NUMBER);
+        errorMessages.add(TaxonomyConstants.FROM_PARAMETER_VALID_NUMBER);
+        errorMessages.add(TaxonomyConstants.TO_PARAMETER_VALID_NUMBER);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
@@ -999,8 +999,8 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.FROM_PARAMETER_IS_REQUIRED);
-        errorMessages.add(SwaggerConstant.TO_PARAMETER_IS_REQUIRED);
+        errorMessages.add(TaxonomyConstants.FROM_PARAMETER_IS_REQUIRED);
+        errorMessages.add(TaxonomyConstants.TO_PARAMETER_IS_REQUIRED);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
@@ -1034,7 +1034,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_404_LINEAGE);
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_404_LINEAGE);
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
@@ -1050,7 +1050,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(SwaggerConstant.API_RESPONSE_303.replace("{newId}","1000"));
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_303.replace("{newId}","1000"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
                 restContainer.baseURL+requestedURL);
     }

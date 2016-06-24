@@ -19,7 +19,7 @@ import org.neo4j.graphdb.factory.GraphDatabaseSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode.TAXONOMY_NODE_FIELDS.*;
+import static uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode.*;
 
 /**
  * Neo4J taxonomy data access class is responsible to query information from Neo4J Taxonomy database and build the
@@ -355,13 +355,13 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
     }
 
     private void addTaxonomyLineageNode(ArrayList<TaxonomyNode> result,Node node) {
-        if(node.hasProperty(taxonomyId.toString())) {
-            String id = "" + node.getProperty(taxonomyId.toString());
+        if(node.hasProperty(TAXONOMY_ID)) {
+            String id = "" + node.getProperty(TAXONOMY_ID);
             if (!id.isEmpty()) {
                 TaxonomyNode taxonomyNode = new TaxonomyNode();
                 taxonomyNode.setTaxonomyId(Long.parseLong(id));
-                if(node.hasProperty(scientificName.toString())) {
-                    taxonomyNode.setScientificName(""+node.getProperty(scientificName.toString()));
+                if(node.hasProperty(SCIENTIFIC_NAME)) {
+                    taxonomyNode.setScientificName(""+node.getProperty(SCIENTIFIC_NAME));
                 }
                 result.add(taxonomyNode);
             }
@@ -398,26 +398,26 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
     private TaxonomyNode getTaxonomyBaseNodeFromQueryResult(Node node) {
         TaxonomyNode result = null;
 
-        if(node.hasProperty(taxonomyId.toString())) {
-            String taxId = ""+node.getProperty(taxonomyId.toString());
+        if(node.hasProperty(TAXONOMY_ID)) {
+            String taxId = ""+node.getProperty(TAXONOMY_ID);
             if(!taxId.isEmpty()) {
                 result = new TaxonomyNode();
                 result.setTaxonomyId(Long.parseLong(taxId));
 
-                if(node.hasProperty(commonName.toString())) {
-                    result.setCommonName("" + node.getProperty(commonName.toString()));
+                if(node.hasProperty(COMMON_NAME)) {
+                    result.setCommonName("" + node.getProperty(COMMON_NAME));
                 }
-                if(node.hasProperty(mnemonic.toString())) {
-                    result.setMnemonic("" + node.getProperty(mnemonic.toString()));
+                if(node.hasProperty(MNEMONIC)) {
+                    result.setMnemonic("" + node.getProperty(MNEMONIC));
                 }
-                if(node.hasProperty(rank.toString())) {
-                    result.setRank("" + node.getProperty(rank.toString()));
+                if(node.hasProperty(RANK)) {
+                    result.setRank("" + node.getProperty(RANK));
                 }
-                if(node.hasProperty(scientificName.toString())) {
-                    result.setScientificName("" + node.getProperty(scientificName.toString()));
+                if(node.hasProperty(SCIENTIFIC_NAME)) {
+                    result.setScientificName("" + node.getProperty(SCIENTIFIC_NAME));
                 }
-                if(node.hasProperty(synonym.toString())) {
-                    result.setSynonym("" + node.getProperty(synonym.toString()));
+                if(node.hasProperty(SYNONYM)) {
+                    result.setSynonym("" + node.getProperty(SYNONYM));
                 }
             }
         }

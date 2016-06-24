@@ -12,7 +12,7 @@ import javax.validation.constraints.Pattern;
 import javax.ws.rs.QueryParam;
 import org.glassfish.jersey.process.internal.RequestScoped;
 
-import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.SwaggerConstant.*;
+import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstants.*;
 
 /**
  * This class contains request parameters for /taxonomy/path requests

@@ -10,8 +10,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class is responsible to map and return any Contraint Validation (annotation validation, for example @NotNull)
@@ -23,8 +21,6 @@ import org.slf4j.LoggerFactory;
  */
 @Provider
 public class ValidationExceptionMapper implements ExceptionMapper<ConstraintViolationException> {
-
-    private static final Logger logger = LoggerFactory.getLogger(ValidationExceptionMapper.class);
 
     @Context protected HttpServletRequest request;
 
