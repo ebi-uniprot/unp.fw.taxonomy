@@ -12,11 +12,14 @@ public class TaxonomyConstants {
             "it parent, siblings and children. There are also services that return the relationship between 2 " +
             "taxonomy elements, and the path between them. Services can return JSON or XML format";
 
-    //TAXONOMY BY ID
+    //TAXONOMY DETAIL BY ID
     public static final String API_OPERATION_TAXONOMY_DETAIL_BY_ID = "This service return details about a taxonomy " +
             "element, and also links for it parent, siblings and children ";
 
     public static final String NOTE_TAXONOMY_ID = "with taxonomy identification as parameter";
+
+    //TAXONOMY BASE NODE BY ID
+    public static final String API_OPERATION_TAXONOMY_NODE_BY_ID = "This service return a taxonomy node information";
 
     //TAXONOMY PARENT
     public static final String API_OPERATION_TAXONOMY_PARENT_BY_ID = "This service return details about a taxonomy " +
@@ -36,6 +39,10 @@ public class TaxonomyConstants {
 
     public static final String NOTE_TAXONOMY_DETAIL_BY_NAME = "with taxonomy name as parameter";
 
+    //TAXONOMY BY NAME BASE NODE
+    public static final String API_OPERATION_TAXONOMY_NODES_BY_NAME = "This service return a list of " +
+            "taxonomies with a specific name. it element contains only taxonomy base node";
+
     //TAXONOMY RELATIONSHIP
     public static final String API_OPERATION_TAXONOMY_RELATIONSHIP = "This service return the path between to " +
             "taxonomies showing their relation";
@@ -48,9 +55,22 @@ public class TaxonomyConstants {
 
     public static final String NOTE_TAXONOMY_PATH = "";
 
+    //TAXONOMY LINEAGE
+    public static final String API_OPERATION_TAXONOMY_LINEAGE = "This service return all taxonomies elements " +
+            "that has relationship with taxonomyId in a specific direction (TOP or DOWN) and depth levels";
+
+
+    //TAXONOMY ANCESTOR
+    public static final String API_OPERATION_TAXONOMY_ANCESTOR = "This service return all taxonomies elements " +
+            "that has relationship with taxonomyId in a specific direction (TOP or DOWN) and depth levels";
+
+    public static final String NOTE_TAXONOMY_ANCESTOR_IDS = "";
+
+
 
     //TAXONOMY REQUEST PARAMETERS
     public static final String TAXONOMY_ID_PARAM = " Taxonomy element unique identification";
+    public static final String TAXONOMY_IDS_PARAM = " A coma separated list of Taxonomy element unique identification";
     public static final String TAXONOMY_NAME_PARAM = "Taxonomy name that will be searched in scientificName, " +
             "commonName and mnemonic";
     public static final String TAXONOMY_SEARCH_TYPE_PARAM = "Type of the search, valid values are EQUALSTO," +
@@ -76,6 +96,8 @@ public class TaxonomyConstants {
             "identification.";
     public static final String API_RESPONSE_404_LINEAGE = "Taxonomy lineage was not found for this taxonomy " +
             "identification.";
+    public static final String API_RESPONSE_404_ANCESTOR = "Taxonomy ancestor was not found for these taxonomy " +
+            "identification list. Please make sure all taxonomy identification are valids";
     public static final String API_RESPONSE_404_NAME = "Taxonomy entries were not found for search name criteria.";
     public static final String API_RESPONSE_404_RELATIONSHIP = "Taxonomy entries were not found for searched " +
             "relationship.";
@@ -85,19 +107,21 @@ public class TaxonomyConstants {
     public static final String API_RESPONSE_400 = "Invalid request parameters.";
 
     public static final String ID_PARAMETER_IS_REQUIRED = "id parameter is required";
+    public static final String IDS_PARAMETER_IS_REQUIRED = "a coma separated list of id parameter is required";
     public static final String NAME_PARAMETER_IS_REQUIRED = "name parameter is required";
-    public static final String NAME_PARAMETER_MIN_SIZE_FOR_PARTIAL_SEARCHES = "name parameter minimun size is 4 " +
+    public static final String NAME_PARAMETER_MIN_SIZE_FOR_PARTIAL_SEARCHES = "name parameter minimun size is {min} " +
             "characters for startWith, endsWith or contains searchType value";
     public static final String SEARCH_TYPE_VALID_VALUES = "searchType parameter value must be equalsto, startsWith, " +
             "endsWith or contains";
     public static final String FIELD_NAME_VALID_VALUES = "fieldName parameter value must be scientificName, commonName, " +
             "or mnemonic";
     public static final String PAGE_NUMBER_PARAMETER_VALID_NUMBER = "The paramenter pageNumber must be a valid number";
-    public static final String PAGE_NUMBER_PARAMETER_MIN_VALUE = "The paramenter pageNumber must be more than 1";
+    public static final String PAGE_NUMBER_PARAMETER_MIN_VALUE = "The paramenter pageNumber must be more than {min}";
     public static final String PAGE_SIZE_PARAMETER_VALID_NUMBER = "The paramenter pageSize must be a valid number";
-    public static final String PAGE_SIZE_PARAMETER_MAX_VALUE = "The paramenter pageSize must be less than 200";
+    public static final String PAGE_SIZE_PARAMETER_MAX_VALUE = "The paramenter pageSize must be less than {max}";
     public static final String DEPTH_PARAMETER_IS_REQUIRED = "depth parameter is required";
-    public static final String DEPTH_PARAM_MIN_MAX = "depth param value must be between 1 and 5";
+    public static final String DEPTH_PARAM_MIN = "depth param value must be more than {value}";
+    public static final String DEPTH_PARAM_MAX = "depth param value must be less than {max} for BOTTOM direction";
     public static final String DIRECTION_VALID_VALUES = "direction parameter value must be top or bottom";
     public static final String DIRECTION_PARAMETER_IS_REQUIRED = "direction parameter is required";
     public static final String TO_PARAMETER_IS_REQUIRED = "to parameter is required";
@@ -105,6 +129,10 @@ public class TaxonomyConstants {
     public static final String TO_PARAMETER_VALID_NUMBER = "The paramenter to must be a valid number";
     public static final String FROM_PARAMETER_VALID_NUMBER = "The paramenter from must be a valid number";
     public static final String ID_PARAMETER_VALID_NUMBER = "The paramenter id must be a valid number";
+    public static final String IDS_PARAMETER_VALID_NUMBER = "The paramenter ids must be a list of comma " +
+            "separated valid taxonomy identification";
+    public static final String IDS_PARAMETER_MIN_MAX_SIZE = "The paramenter ids must have between {minSize} and " +
+            "{maxSize} comma separated valid taxonomy identification";
 
     public static final String API_RESPONSE_500 =
             "Unexpected error happened, could you please try again later";

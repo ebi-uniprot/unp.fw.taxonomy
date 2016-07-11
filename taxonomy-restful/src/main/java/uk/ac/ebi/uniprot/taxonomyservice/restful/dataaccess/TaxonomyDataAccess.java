@@ -5,6 +5,7 @@ import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.NameRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.PathRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -21,6 +22,14 @@ public interface TaxonomyDataAccess {
      * @return details about searched taxonomy
      */
     Optional<TaxonomyNode> getTaxonomyDetailsById(long taxonomyId,String basePath);
+
+    /**
+     * This method return node base about searched {@param taxonomyId}
+     *
+     * @param taxonomyId identification of taxonomy
+     * @return details about searched taxonomy
+     */
+    public Optional<TaxonomyNode> getTaxonomyBaseNodeById(long taxonomyId);
 
     /**
      * This method return list of siblings of a searched {@param taxonomyId}.
@@ -47,14 +56,25 @@ public interface TaxonomyDataAccess {
     Optional<Taxonomies> getTaxonomyChildrenById(long taxonomyId);
 
     /**
-     * This method return the details of all taxonomies names that contains {@param nameRequestParams.taxonomyName}
-     * based on {@param nameRequestParams.searchType}
+     * This method return the details( including links for parent, siblings and children of all taxonomies names that
+     * contains {@param nameRequestParams.taxonomyName} based on {@param nameRequestParams.searchType}
      *
      * @param nameRequestParams contains taxonomyName and searchType that will be executed the filter
      * @param basePath base path to build taxonomy parent, children and sibling links
      * @return List of taxonomies
      */
     Optional<Taxonomies> getTaxonomyDetailsByName(NameRequestParams nameRequestParams, String basePath);
+
+
+    /**
+     * This method return node base of all taxonomies names that contains {@param nameRequestParams.taxonomyName}
+     * based on {@param nameRequestParams.searchType}
+     *
+     * @param nameRequestParams contains taxonomyName and searchType that will be executed the filter
+     * @param basePath base path to build taxonomy parent, children and sibling links
+     * @return List of taxonomies
+     */
+    Optional<Taxonomies> getTaxonomyNodesByName(NameRequestParams nameRequestParams, String basePath);
 
     /**
      * This method return all nodes that are between  {@param from} and {@param to}
@@ -91,4 +111,14 @@ public interface TaxonomyDataAccess {
      * @return List of taxonomies
      */
     Optional<Taxonomies> getTaxonomyLineageById(long taxonomyId);
+
+    /**
+     * This method return taxonomy ancestor for the list of {@param ids}. Ancestor is the common parent for {@param ids}
+     * until taxonomy root
+     *
+     * @param ids list of identification of taxonomy
+     * @return Taxonomy node
+     */
+    Optional<TaxonomyNode> getTaxonomyAncestorFromTaxonomyIds(List<Long> ids);
+
 }

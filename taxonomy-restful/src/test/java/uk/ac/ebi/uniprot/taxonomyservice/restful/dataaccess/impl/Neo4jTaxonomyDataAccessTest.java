@@ -5,6 +5,8 @@ import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.NameRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.PathRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 import org.junit.AfterClass;
@@ -72,6 +74,19 @@ public class Neo4jTaxonomyDataAccessTest {
     public void getTaxonomyDetailsByIdWithAnInvalidIdNodeReturnOptionalEmpty() {
         Optional<TaxonomyNode> node = neo4jDataAccess.getTaxonomyDetailsById(5,baseURL);
         assertThat(node.isPresent(),is(false));
+    }
+
+    @Test
+    public void getTaxonomyBaseNodeByIdWithAnInvalidIdNodeReturnOptionalEmpty() {
+        Optional<TaxonomyNode> node = neo4jDataAccess.getTaxonomyBaseNodeById(5);
+        assertThat(node.isPresent(),is(false));
+    }
+
+    @Test
+    public void getTaxonomyBaseNodeByIdWithValidIdNodeReturnValidBaseNode() {
+        Optional<TaxonomyNode> node = neo4jDataAccess.getTaxonomyBaseNodeById(10L);
+        assertThat(node.isPresent(),is(true));
+        assertBaseNode(10L,node.get());
     }
 
     @Test
@@ -337,25 +352,13 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
-    public void getTaxonomyPathWithTopDirectionThreeDepth()  {
+    public void getTaxonomyPathWithTopDirection()  {
         PathRequestParams params = new PathRequestParams();
-        params.setDepth(3);
         params.setDirection("top");
         params.setId("10000000");
         Optional<TaxonomyNode> node = neo4jDataAccess.getTaxonomyPath(params);
         assertThat(node.isPresent(),is(true));
-        assertNodePath(10000000L,node.get(),0,3);
-    }
-
-    @Test
-    public void getTaxonomyPathWithTopDirectionFiveDepth() {
-        PathRequestParams params = new PathRequestParams();
-        params.setDepth(5);
-        params.setDirection("top");
-        params.setId("10000000");
-        Optional<TaxonomyNode> node = neo4jDataAccess.getTaxonomyPath(params);
-        assertThat(node.isPresent(),is(true));
-        assertNodePath(10000000L,node.get(),0,5);
+        assertNodePath(10000000L,node.get(),0,7);
     }
 
     @Test
@@ -392,6 +395,35 @@ public class Neo4jTaxonomyDataAccessTest {
         Optional<Taxonomies> taxonomies = neo4jDataAccess.getTaxonomyLineageById(10000000L);
         assertThat(taxonomies.isPresent(), is(true));
 
+    }
+
+    @Test
+    public void getTaxonomyAncestorWithValidIdsThatReturnCorrectAncestor() {
+        Long[] ids = {1000L,1001L,1002L,1010L,1011L};
+        ArrayList<Long> idsArray = new ArrayList<>(Arrays.asList(ids));
+        Optional<TaxonomyNode> taxonomy = neo4jDataAccess.getTaxonomyAncestorFromTaxonomyIds(idsArray);
+
+        assertThat(taxonomy.isPresent(), is(true));
+        assertBaseNode(10L,taxonomy.get());
+    }
+
+    @Test
+    public void getTaxonomyAncestorWithValidIdsAndIsPartOfIdsThatReturnCorrectAncestor() {
+        Long[] ids = {10L,1000L,1001L,1002L,1010L,1011L};
+        ArrayList<Long> idsArray = new ArrayList<>(Arrays.asList(ids));
+        Optional<TaxonomyNode> taxonomy = neo4jDataAccess.getTaxonomyAncestorFromTaxonomyIds(idsArray);
+
+        assertThat(taxonomy.isPresent(), is(true));
+        assertBaseNode(10L,taxonomy.get());
+    }
+
+    @Test
+    public void getTaxonomyAncestorWithInvalidIdsReturnEmptyResult() {
+        Long[] ids = {10L,8L};
+        ArrayList<Long> idsArray = new ArrayList<>(Arrays.asList(ids));
+        Optional<TaxonomyNode> taxonomy = neo4jDataAccess.getTaxonomyAncestorFromTaxonomyIds(idsArray);
+
+        assertThat(taxonomy.isPresent(), is(false));
     }
 
     private void assertTaxonomiesResult(Optional<Taxonomies> nodeOptional,int size,int totalRecords, NameRequestParams

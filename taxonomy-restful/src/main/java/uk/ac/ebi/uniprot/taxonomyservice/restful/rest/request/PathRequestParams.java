@@ -2,10 +2,10 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request;
 
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.param.values.PathDirections;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint.IsEnumValue;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint.MaxDepthForDownPath;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiParam;
-import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -20,6 +20,7 @@ import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstant
  * Created by lgonzales on 10/03/16.
  */
 @RequestScoped
+@MaxDepthForDownPath(max = 5, message = DEPTH_PARAM_MAX)
 public class PathRequestParams {
 
     @NotNull(message = ID_PARAMETER_IS_REQUIRED)
@@ -29,8 +30,7 @@ public class PathRequestParams {
     private String id;
 
     @NotNull(message = DEPTH_PARAMETER_IS_REQUIRED)
-    @Min(value = 1, message = DEPTH_PARAM_MIN_MAX)
-    @Max(value = 5, message = DEPTH_PARAM_MIN_MAX)
+    @Min(value = 1, message = DEPTH_PARAM_MIN)
     @QueryParam(value = "depth")
     @ApiParam(value = TAXONOMY_DEPTH_PARAM, required = true)
     private Integer depth;
