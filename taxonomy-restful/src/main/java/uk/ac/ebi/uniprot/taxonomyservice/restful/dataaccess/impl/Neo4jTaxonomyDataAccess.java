@@ -147,12 +147,19 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
 
     @Override
     public Optional<TaxonomyNode> getTaxonomyBaseNodeById(long taxonomyId){
-        Optional<TaxonomyNode> result = Optional.empty();
         long startTime = System.currentTimeMillis();
+        Optional<TaxonomyNode> result = getTaxonomyBaseNodeById(taxonomyId,GET_TAXONOMY_BASE_NODE_BY_ID_CYPHER_QUERY);
+        long elapsed = System.currentTimeMillis() - startTime;
+        logger.debug("NeoQuery Time for getTaxonomyBaseNodeById: "+elapsed+ FOR_LOGGER+taxonomyId);
+        return result;
+    }
+
+    private Optional<TaxonomyNode> getTaxonomyBaseNodeById(long taxonomyId,String cypherQuery){
+        Optional<TaxonomyNode> result = Optional.empty();
         Map<String, Object> params = new HashMap<>();
         params.put("id", "" + taxonomyId);
         try ( Transaction tx = neo4jDb.beginTx();
-                Result queryResult = neo4jDb.execute(GET_TAXONOMY_BASE_NODE_BY_ID_CYPHER_QUERY,params) )
+                Result queryResult = neo4jDb.execute(cypherQuery,params) )
         {
             if ( queryResult.hasNext() )
             {
@@ -166,8 +173,6 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
             tx.success();
             tx.close();
         }
-        long elapsed = System.currentTimeMillis() - startTime;
-        logger.debug("NeoQuery Time for getTaxonomyBaseNodeById: "+elapsed+ FOR_LOGGER+taxonomyId);
         return result;
     }
 
@@ -186,26 +191,8 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
 
     @Override
     public Optional<TaxonomyNode> getTaxonomyParentById(long taxonomyId) {
-        Optional<TaxonomyNode> result = Optional.empty();
         long startTime = System.currentTimeMillis();
-        Map<String, Object> params = new HashMap<>();
-        params.put( "id", ""+taxonomyId );
-
-        try ( Transaction tx = neo4jDb.beginTx();
-                Result queryResult = neo4jDb.execute(GET_TAXONOMY_PARENT_BY_ID_CYPHER_QUERY,params ) )
-        {
-            if ( queryResult.hasNext() )
-            {
-                Map<String,Object> row = queryResult.next();
-                if(row.containsKey("node")) {
-                    Node node = (Node) row.get("node");
-                    result = Optional.ofNullable(getTaxonomyBaseNodeFromQueryResult(node));
-                }
-            }
-            queryResult.close();
-            tx.success();
-            tx.close();
-        }
+        Optional<TaxonomyNode> result = getTaxonomyBaseNodeById(taxonomyId,GET_TAXONOMY_PARENT_BY_ID_CYPHER_QUERY);
         long elapsed = System.currentTimeMillis() - startTime;
         logger.debug("NeoQuery Time for getTaxonomyParentById: "+elapsed+ FOR_LOGGER+taxonomyId);
         return result;
@@ -398,15 +385,14 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
 
     public Optional<TaxonomyNode> getTaxonomyAncestorFromTaxonomyIds(List<Long> ids){
         Optional<TaxonomyNode> result = Optional.empty();
-        Long id = null;
         long startTime = System.currentTimeMillis();
         Map<String, Object> params = new HashMap<>();
         for(int i=0;i<ids.size();i++) {
             params.put("id"+i, "" + ids.get(i));
         }
-        String ANCESTOR_CYPHER_QUERY = buildAncestorCypherQuery(ids);
+        String ancestorCypherQuery = buildAncestorCypherQuery(ids);
         try ( Transaction tx = neo4jDb.beginTx();
-                Result queryResult = neo4jDb.execute(ANCESTOR_CYPHER_QUERY,params ) )
+                Result queryResult = neo4jDb.execute(ancestorCypherQuery,params ) )
         {
             if (queryResult.hasNext()) {
                 Optional<Long> ancestor = getAncestorIdFromResult(queryResult);
@@ -454,15 +440,15 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
     }
 
     private String buildAncestorCypherQuery(List<Long> ids){
-        String CYPHER_MATCH_QUERY = "MATCH (n0:Node) ";
-        String CYPHER_WHERE_QUERY = " WHERE n0.taxonomyId = {id0} ";
-        String CYPHER_RETURN_QUERY = " RETURN extract(item in nodes(last((n0:Node)-[:CHILD_OF*]->(:Node))) | item.taxonomyId)";
+        String cypherMatchQuery = "MATCH (n0:Node) ";
+        String cypherWhereQuery = " WHERE n0.taxonomyId = {id0} ";
+        String cypherReturnQuery = " RETURN extract(item in nodes(last((n0:Node)-[:CHILD_OF*]->(:Node))) | item.taxonomyId)";
         for(int i=1;i<ids.size();i++) {
-            CYPHER_MATCH_QUERY += ",(n"+i+":Node)";
-            CYPHER_WHERE_QUERY += " AND n"+i+".taxonomyId = {id"+i+"} ";
-            CYPHER_RETURN_QUERY += ", extract(item in nodes(last((n"+i+":Node)-[:CHILD_OF*]->(:Node))) | item.taxonomyId)";
+            cypherMatchQuery += ",(n"+i+":Node)";
+            cypherWhereQuery += " AND n"+i+".taxonomyId = {id"+i+"} ";
+            cypherReturnQuery += ", extract(item in nodes(last((n"+i+":Node)-[:CHILD_OF*]->(:Node))) | item.taxonomyId)";
         }
-        return CYPHER_MATCH_QUERY+CYPHER_WHERE_QUERY+CYPHER_RETURN_QUERY;
+        return cypherMatchQuery+cypherWhereQuery+cypherReturnQuery;
     }
 
     private void addTaxonomyLineageNode(ArrayList<TaxonomyNode> result,Node node) {

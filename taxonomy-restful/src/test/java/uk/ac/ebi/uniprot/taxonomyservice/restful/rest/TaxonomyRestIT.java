@@ -757,6 +757,45 @@ public class TaxonomyRestIT {
                 ContentType.XML,true,expectedPageInfo);
     }
 
+    @Test
+    public void lookupTaxonomyNodeNameWithSmallNameEqualsToReturnsCorrectTaxonomies() {
+        String requestedURL = TAXONOMY_BASE_PATH + "/name/sn/node?searchType=equalsto";
+
+        ExtractableResponse<Response> jsonResponse = when()
+                .get(requestedURL)
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract();
+
+        assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(jsonResponse, ContentType.JSON,
+                false);
+    }
+
+    @Test
+    public void lookupTaxonomyNodeNameThatDoesNotExistReturnsNotFoundStatusWithErrorMessage() {
+        String requestedURL = TAXONOMY_BASE_PATH + "/name/INVALID/node";
+
+        ExtractableResponse<Response> jsonResponse = when()
+                .get(requestedURL)
+                .then()
+                .statusCode(NOT_FOUND.getStatusCode())
+                .extract();
+
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_404_NAME);
+        assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
+    }
+
+    @Test
+    public void lookupTaxonomyNodeNameValidReturnsOkWithDefaultContentTypeAndCorrectTaxonomies() {
+        ExtractableResponse<Response> response = when()
+                .get(TAXONOMY_BASE_PATH + "/name/Equals to Only/node")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract();
+        assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.JSON,
+                false);
+    }
     /*
         END: Test with /taxonomy/name
 
