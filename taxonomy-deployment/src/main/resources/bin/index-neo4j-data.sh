@@ -1,7 +1,8 @@
 #! /bin/bash
 
 ##=========================================================================================
-# This script will execute neo4j data import and will save generated data inside target folder
+# This script will execute neo4j data import and will save generated data inside neo4j release folder
+# received as parameter
 ##=========================================================================================
 
 set -euo pipefail
@@ -19,30 +20,32 @@ if ! echo "$PERMITTED_USER" | grep "$USER" > /dev/null 2>&1; then
     exit 1;
 fi;
 
-# ======= FOLDER VARIABLES =======================================
-SERVICE_BIN_PATH="$(pwd -P)"
-SERVICE_TARGET_PATH="$(readlink -f $SERVICE_BIN_PATH/../$TARGET_DIR)"
-NEO4J_DATABASE_PATH="$SERVICE_TARGET_PATH/$TAXONOMY_DATABASE_DIR"
-
-export JAVA_HOME=$JAVA_PATH
-# ======= create neo4j database directory ==========================================
-if [ ! -d "$NEO4J_DATABASE_PATH" ]; then
-    mkdir -p $NEO4J_DATABASE_PATH
-fi
-
-# ======= execute neo4j import Job ==========================================
-IMPORT_JAR_PATH="$SERVICE_TARGET_PATH/lib/$TAXONOMY_IMPORT_ARTIFACT_ID-$TAXONOMY_VERSION.jar"
-JAVA_OPTS="$TAXONOMY_IMPORT_JVM_MEM_MAX $TAXONOMY_IMPORT_JVM_MEM_MIN -Dneo4j.database.path=$NEO4J_DATABASE_PATH"
-echo "running java command $JAVA_OPTS -jar $IMPORT_JAR_PATH"
-$JAVA_HOME/bin/java $JAVA_OPTS -jar $IMPORT_JAR_PATH
-
-if [ "ls -A $NEO4J_DATABASE_PATH" ]
-then
-  echo "SUCCESS: Import apparently was executed with success"
+if [ $# == 0 ]; then
+   echo "You must pass as parameter taxonomy data release name, for example 2016_01";
 else
-  echo "ERROR: There is nothing in $NEO4J_DATABASE_PATH folder"
+
+    # ======= FOLDER VARIABLES =======================================
+    SERVICE_BIN_PATH="$(pwd -P)"
+    SERVICE_LIB_PATH="$(readlink -f $SERVICE_BIN_PATH/../$LIB_DIR)"
+    NEO4J_DATABASE_PATH="$(readlink -f $SERVICE_BIN_PATH/../$TAXONOMY_DATABASE_DIR/$1)"
+
+    export JAVA_HOME=$JAVA_PATH
+    # ======= create neo4j database directory ==========================================
+    if [ ! -d "$NEO4J_DATABASE_PATH" ]; then
+        mkdir -p $NEO4J_DATABASE_PATH
+    fi
+
+    # ======= execute neo4j import Job ==========================================
+    IMPORT_JAR_PATH="$SERVICE_LIB_PATH/$TAXONOMY_IMPORT_ARTIFACT_ID-$TAXONOMY_VERSION.jar"
+    JAVA_OPTS="$TAXONOMY_IMPORT_JVM_MEM_MAX $TAXONOMY_IMPORT_JVM_MEM_MIN -Dneo4j.database.path=$NEO4J_DATABASE_PATH"
+    echo "running java command $JAVA_OPTS -jar $IMPORT_JAR_PATH"
+    $JAVA_HOME/bin/java $JAVA_OPTS -jar $IMPORT_JAR_PATH
+
+    if [ "ls -A $NEO4J_DATABASE_PATH" ]
+    then
+      echo "SUCCESS: Import apparently was executed with success"
+    else
+      echo "ERROR: There is nothing in $NEO4J_DATABASE_PATH folder"
+    fi
+    echo "done!!"
 fi
-echo "done!!"
-
-
-

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # This script will update/refresh current git repository based on
-# $GIT_BRANCH that is at environment.properties
+# parameter that is received by user
 # please Refer to http://redsymbol.net/articles/unofficial-bash-strict-mode/ for details.
 set -euo pipefail
 IFS=$'\n\t'
@@ -17,21 +17,26 @@ if ! echo "$PERMITTED_USER" | grep "$USER" > /dev/null 2>&1; then
     echo "This service can only be run as user(s), '$PERMITTED_USER'";
     exit 1;
 fi;
+if [ $# == 0 ]; then
+   echo "You must pass as parameter git branch name, for example, master";
+   exit 1;
+}
+
 SERVICE_BIN_PATH="$(pwd -P)"
 TAXONOMY_REPO_DIR="$SERVICE_BIN_PATH/../git-repository/unp.fw.taxonomy"
 cd $TAXONOMY_REPO_DIR
 $GIT fetch
-if [ "$GIT_BRANCH" == "master" ]
+if [ "$1" == "master" ]
 then
    echo "checkout from master"
-   $GIT checkout $GIT_BRANCH || {
+   $GIT checkout $1 || {
         echo "master is already being used"
    }
 else
-   echo "checkout from branch $GIT_BRANCH"
-   $GIT checkout -b $GIT_BRANCH || {
-        echo "$GIT_BRANCH is already being used"
+   echo "checkout from branch $1"
+   $GIT checkout -b $1 || {
+        echo "$1 is already being used"
    }
 fi
-$GIT pull origin $GIT_BRANCH
+$GIT pull origin $1
 cd $SERVICE_BIN_PATH

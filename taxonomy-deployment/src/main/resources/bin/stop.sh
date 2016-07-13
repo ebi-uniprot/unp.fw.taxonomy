@@ -22,7 +22,16 @@ LOGFILE="$SERVICE_BIN_PATH/log/log.txt"
 
 if [ ! -r $PIDFILE ]
 then
-    echo "pid file doesn't exist. Taxonomy service is not running"
+    echo "pid file doesn't exist in ${PIDFILE}, trying now by process name ${TAXONOMY_RESTFUL_ARTIFACT_ID}"
+    if [[ $(ps -ef | grep ${TAXONOMY_RESTFUL_ARTIFACT_ID} | grep -v grep) ]]; then
+        PROCESSID=$(ps -ef | grep ${TAXONOMY_RESTFUL_ARTIFACT_ID} | grep -v grep | awk '{print $2}')
+        kill ${PROCESSID} || {
+            echo "processing killing failed, please check the process ID manually: ${PROCESSID}"
+        }
+        echo "killed process with id ${PROCESSID}  and process name ${TAXONOMY_RESTFUL_ARTIFACT_ID}"
+    else
+       echo "pid doesn't exist for process name ${TAXONOMY_RESTFUL_ARTIFACT_ID}"
+    fi
 else
     #read PIDFILE to check the hostname.
     PIDSTR=`cat $PIDFILE`
