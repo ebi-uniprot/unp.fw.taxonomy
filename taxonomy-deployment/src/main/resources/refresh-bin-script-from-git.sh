@@ -19,13 +19,13 @@ fi;
 if [ $# == 0 ]; then
    echo "You must pass as parameter git branch name, for example, master";
    exit 1;
-}
+fi
 CURRENT_PATH="$(pwd -P)"
 TAXONOMY_REPO_DIR=$CURRENT_PATH/git-repository/unp.fw.taxonomy
 
 echo "Pulling information from git at $1"
 cd $CURRENT_PATH/bin
-$SERVICE_BIN_PATH/bin/refresh-git-repository.sh $1
+./refresh-git-repository.sh $1
 cd $CURRENT_PATH
 
 echo "Moving deploying scripts from $TAXONOMY_REPO_DIR/taxonomy-deployment/src/main/resources/bin to $CURRENT_PATH/bin"
