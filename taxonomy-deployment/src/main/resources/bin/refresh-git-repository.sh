@@ -20,7 +20,7 @@ fi;
 if [ $# == 0 ]; then
    echo "You must pass as parameter git branch name, for example, master";
    exit 1;
-}
+fi
 
 SERVICE_BIN_PATH="$(pwd -P)"
 TAXONOMY_REPO_DIR="$SERVICE_BIN_PATH/../git-repository/unp.fw.taxonomy"
