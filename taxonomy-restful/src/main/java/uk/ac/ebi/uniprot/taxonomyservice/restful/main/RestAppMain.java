@@ -129,7 +129,7 @@ public class RestAppMain {
      */
     private static void enableAccessLog(HttpServer httpServer) {
         final AccessLogBuilder builder = new AccessLogBuilder(TaxonomyProperties.getProperty(
-                APP_PROPERTY_NAME.TAXONOMY_LOGS_PATH));
+                APP_PROPERTY_NAME.TAXONOMY_ACCESS_LOG_PATH));
         builder.synchronous(true);
         builder.rotatedHourly();
         builder.instrument(httpServer.getServerConfiguration());

@@ -239,7 +239,6 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
             params.put("skip", nameParams.getSkip());
             params.put("limit", nameParams.getPageSizeInt());
 
-            logger.debug(query + FOR_LOGGER + nameParams.getTaxonomyName().toLowerCase());
             try (Transaction tx = neo4jDb.beginTx();
                     Result queryResult = neo4jDb.execute(query, params)) {
                 result = getTaxonomyFromQueryResult(basePath, queryResult);
@@ -425,7 +424,6 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
         if(commonIds != null && !commonIds.isEmpty()) {
             result = Optional.of(commonIds.get(0));
         }
-        logger.debug("TaxonomyAncestorsId: "+commonIds);
         return result;
     }
 

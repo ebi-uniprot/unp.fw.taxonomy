@@ -21,13 +21,12 @@ SERVICE_BIN_PATH="$(pwd -P)"
 PIDFILE="$SERVICE_BIN_PATH/run.pid"
 CONFIG_FILE="$SERVICE_BIN_PATH/config.properties"
 LOG_DIR="$(readlink -f $SERVICE_BIN_PATH/../logs)"
-LOGFILE="$LOG_DIR/console.txt"
+CONSOLE_LOG_FILE="$LOG_DIR/$CONSOLE_LOG_FILE_NAME"
 
 
 JAR_NAME="$TAXONOMY_RESTFUL_ARTIFACT_ID-$TAXONOMY_VERSION.jar"
 echo "Using the service jar: $JAR_NAME"
 TAXONOMY_JAR_PATH="$(readlink -f $SERVICE_BIN_PATH/../lib/$JAR_NAME)"
-ACCESS_LOG_PATH="$LOG_DIR/access_log.txt"
 
 
 if [ -e $PIDFILE ]
@@ -58,11 +57,12 @@ nohup $JAVA_HOME/bin/java -server -XX:+UseG1GC $TAXONOMY_RESTFUL_JVM_MEM_MAX $TA
 -Dcom.sun.management.jmxremote.authenticate=false \
 -Dcom.sun.management.jmxremote.ssl=false  \
 -Dcom.sun.management.jmxremote.port=$JXM_REMOTE_PORT \
--jar $TAXONOMY_JAR_PATH > $LOGFILE 2>&1 &
+-Dbacklog.base.path=$LOG_DIR
+-jar $TAXONOMY_JAR_PATH > $CONSOLE_LOG_FILE 2>&1 &
 
 sleep 5
 
-grep "ready to service requests" $LOGFILE || {
+grep "ready to service requests" $CONSOLE_LOG_FILE || {
     echo "Taxonomy Service cannot be started. please check"
     exit 1
 }

@@ -1,6 +1,8 @@
 <configuration>
 
-    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <property name="backlog.base.path" value="logs" />
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <!-- encoders are assigned the type
              ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
         <encoder>
@@ -8,13 +10,33 @@
         </encoder>
     </appender>
 
+    <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${backlog.base.path}/taxonomy.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${backlog.base.path}/taxonomy-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <maxFileSize>5MB</maxFileSize>
+            <maxHistory>50</maxHistory>
+            <totalSizeCap>1GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %level %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+
     <!-- interested in warnings/errors from org.apache.* packages -->
-    <logger name="org.apache" level="DEBUG"/>
-
+    <logger name="org.apache" level="DEBUG" additivity="false">
+        <appender-ref ref="ROLLING"/>
+    </logger>
     <!-- interested in debug+ info from anything written by ebi -->
-    <logger name="uk.ac.ebi" level="DEBUG"/>
+    <logger name="uk.ac.ebi" level="DEBUG" additivity="false">
+        <appender-ref ref="ROLLING"/>
+    </logger>
 
-    <root level="INFO">
-        <appender-ref ref="STDOUT"/>
+    <logger level="INFO" name="ROLLING_LOGGER" additivity="false">
+        <appender-ref ref="ROLLING"/>
+    </logger>
+
+    <root level="WARN">
+        <appender-ref ref="CONSOLE"/>
     </root>
 </configuration>

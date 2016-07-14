@@ -30,7 +30,7 @@ public class TaxonomyProperties {
         SWAGGER_RESOURCE_PACKAGE("uk.ac.ebi.uniprot.taxonomyservice.restful.rest"),
         TAXONOMY_SERVICE_CONTEXT_PATH("/uniprot/api/taxonomy"),
         TAXONOMY_DOCS_CONTEXT_PATH("/uniprot/api/taxonomy/docs"),
-        TAXONOMY_LOGS_PATH("logs/log.txt"),
+        TAXONOMY_ACCESS_LOG_PATH("logs/access_log.txt"),
         TAXONOMY_GRIZZLY_CORE_THREAD_POOL_SIZE("10"),
         TAXONOMY_GRIZZLY_MAX_THREAD_POOL_SIZE("16");
 
