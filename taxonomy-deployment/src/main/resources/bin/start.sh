@@ -57,7 +57,7 @@ nohup $JAVA_HOME/bin/java -server -XX:+UseG1GC $TAXONOMY_RESTFUL_JVM_MEM_MAX $TA
 -Dcom.sun.management.jmxremote.authenticate=false \
 -Dcom.sun.management.jmxremote.ssl=false  \
 -Dcom.sun.management.jmxremote.port=$JXM_REMOTE_PORT \
--Dbacklog.base.path=$LOG_DIR
+-Dbacklog.base.path=$LOG_DIR \
 -jar $TAXONOMY_JAR_PATH > $CONSOLE_LOG_FILE 2>&1 &
 
 sleep 5

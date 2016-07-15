@@ -1,6 +1,6 @@
 <configuration>
 
-    <property name="backlog.base.path" value="logs" />
+    <property scope="system" name="backlog.base.path" value="logs" />
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <!-- encoders are assigned the type
