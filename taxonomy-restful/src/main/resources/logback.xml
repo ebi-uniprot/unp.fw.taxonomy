@@ -1,6 +1,6 @@
 <configuration>
 
-    <property scope="system" name="BACKLOG_BASE_PATH" value="logs" />
+    <statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener" />
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <!-- encoders are assigned the type
@@ -11,9 +11,9 @@
     </appender>
 
     <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${BACKLOG_BASE_PATH}/taxonomy.log</file>
+        <file>${backlog.base.path:-logs}/taxonomy.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-            <fileNamePattern>${BACKLOG_BASE_PATH}/taxonomy-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <fileNamePattern>${backlog.base.path:-logs}/taxonomy-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <maxFileSize>5MB</maxFileSize>
             <maxHistory>50</maxHistory>
             <totalSizeCap>1GB</totalSizeCap>
