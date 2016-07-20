@@ -44,6 +44,10 @@ public class RestAppMain {
      * @throws IOException
      */
     public static void main(String[] args) throws IOException {
+        LogManager.getLogManager().reset();
+        java.util.logging.Logger globalLogger = java.util.logging.Logger.getLogger(java.util.logging.Logger.GLOBAL_LOGGER_NAME);
+        globalLogger.setLevel(java.util.logging.Level.OFF);
+        SLF4JBridgeHandler.install();
 
         final Map<String, String> initParams = new HashMap<>();
 
@@ -141,11 +145,6 @@ public class RestAppMain {
         builder.synchronous(true);
         builder.rotatedHourly();
         builder.instrument(httpServer.getServerConfiguration());
-
-        LogManager.getLogManager().reset();
-        java.util.logging.Logger globalLogger = java.util.logging.Logger.getLogger(java.util.logging.Logger.GLOBAL_LOGGER_NAME);
-        globalLogger.setLevel(java.util.logging.Level.OFF);
-        SLF4JBridgeHandler.install();
     }
 
 }
