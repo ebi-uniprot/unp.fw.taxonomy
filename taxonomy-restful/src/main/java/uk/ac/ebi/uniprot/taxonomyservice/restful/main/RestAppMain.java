@@ -2,10 +2,12 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.main;
 
 import uk.ac.ebi.uniprot.taxonomyservice.restful.main.TaxonomyProperties.APP_PROPERTY_NAME;
 
+import ch.qos.logback.classic.ViewStatusMessagesServlet;
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.LogManager;
 import javax.servlet.Servlet;
 import jersey.repackaged.com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.glassfish.grizzly.http.server.HttpHandlerRegistration;
@@ -21,6 +23,7 @@ import org.glassfish.jersey.process.JerseyProcessingUncaughtExceptionHandler;
 import org.glassfish.jersey.servlet.ServletContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 /**
  * This class is the Main project class and is responsible to initialize the application Grizzly Server,setup
@@ -48,9 +51,11 @@ public class RestAppMain {
 
         HttpServer httpServer = create(URI.create(baseUri), ServletContainer.class, null, initParams, null);
 
-        enableAccessLog(httpServer);
+        setupLogs(httpServer);
 
         httpServer.start();
+
+        System.out.println("SYSOUT TEST LEO LEO");
     }
 
     /**
@@ -101,6 +106,13 @@ public class RestAppMain {
 
         registration.addMapping("/*");
 
+        if (initParams != null) {
+            registration.setInitParameters(initParams);
+        }
+
+        registration = context.addServlet("ViewStatusMessagesServlet", ViewStatusMessagesServlet.class);
+        registration.addMapping("/logBackStatus");
+
         //adding mapping for docs.
         HttpHandlerRegistration docHandler = new HttpHandlerRegistration.Builder().contextPath
                 (TaxonomyProperties.getProperty(APP_PROPERTY_NAME.TAXONOMY_DOCS_CONTEXT_PATH))
@@ -113,10 +125,6 @@ public class RestAppMain {
                 context.setInitParameter(e.getKey(), e.getValue());
             }
         }
-
-        if (initParams != null) {
-            registration.setInitParameters(initParams);
-        }
         context.deploy(server);
 
         return server;
@@ -127,12 +135,20 @@ public class RestAppMain {
      *
      * @param httpServer GrizzlyHttpServer
      */
-    private static void enableAccessLog(HttpServer httpServer) {
+    private static void setupLogs(HttpServer httpServer) {
         final AccessLogBuilder builder = new AccessLogBuilder(TaxonomyProperties.getProperty(
                 APP_PROPERTY_NAME.TAXONOMY_ACCESS_LOG_PATH));
         builder.synchronous(true);
         builder.rotatedHourly();
         builder.instrument(httpServer.getServerConfiguration());
+
+        LogManager.getLogManager().reset();
+        /*
+        Logger globalLogger = Logger.getLogger(java.util.logging.Logger.GLOBAL_LOGGER_NAME);
+        globalLogger.setLevel(java.util.logging.Level.OFF);
+         */
+
+        SLF4JBridgeHandler.install();
     }
 
 }
