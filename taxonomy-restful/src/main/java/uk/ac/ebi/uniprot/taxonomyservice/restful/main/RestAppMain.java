@@ -44,10 +44,7 @@ public class RestAppMain {
      * @throws IOException
      */
     public static void main(String[] args) throws IOException {
-        LogManager.getLogManager().reset();
-        java.util.logging.Logger globalLogger = java.util.logging.Logger.getLogger(java.util.logging.Logger.GLOBAL_LOGGER_NAME);
-        globalLogger.setLevel(java.util.logging.Level.OFF);
-        SLF4JBridgeHandler.install();
+        initLogs();
 
         final Map<String, String> initParams = new HashMap<>();
 
@@ -55,11 +52,9 @@ public class RestAppMain {
 
         HttpServer httpServer = create(URI.create(baseUri), ServletContainer.class, null, initParams, null);
 
-        setupLogs(httpServer);
+        setupAccessLog(httpServer);
 
         httpServer.start();
-
-        System.out.println("SYSOUT TEST LEO LEO");
     }
 
     /**
@@ -135,11 +130,22 @@ public class RestAppMain {
 
     }
 
+    /**
+     * This method reset common logging and setup SLF4J redirection to LogBack
+     *
+     */
+    private static void initLogs() {
+        LogManager.getLogManager().reset();
+        java.util.logging.Logger globalLogger = java.util.logging.Logger.getLogger(java.util.logging.Logger.GLOBAL_LOGGER_NAME);
+        globalLogger.setLevel(java.util.logging.Level.OFF);
+        SLF4JBridgeHandler.install();
+    }
+
     /** This method configure Grizzly HttpServer accessLog
      *
      * @param httpServer GrizzlyHttpServer
      */
-    private static void setupLogs(HttpServer httpServer) {
+    private static void setupAccessLog(HttpServer httpServer) {
         final AccessLogBuilder builder = new AccessLogBuilder(TaxonomyProperties.getProperty(
                 APP_PROPERTY_NAME.TAXONOMY_ACCESS_LOG_PATH));
         builder.synchronous(true);
