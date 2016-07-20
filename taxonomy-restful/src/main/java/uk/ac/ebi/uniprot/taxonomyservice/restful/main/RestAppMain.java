@@ -143,11 +143,8 @@ public class RestAppMain {
         builder.instrument(httpServer.getServerConfiguration());
 
         LogManager.getLogManager().reset();
-        /*
-        Logger globalLogger = Logger.getLogger(java.util.logging.Logger.GLOBAL_LOGGER_NAME);
+        java.util.logging.Logger globalLogger = java.util.logging.Logger.getLogger(java.util.logging.Logger.GLOBAL_LOGGER_NAME);
         globalLogger.setLevel(java.util.logging.Level.OFF);
-         */
-
         SLF4JBridgeHandler.install();
     }
 
