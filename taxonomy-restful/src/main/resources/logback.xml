@@ -3,13 +3,12 @@
     <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator"/>
     <statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener" />
 
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <!-- encoders are assigned the type
-             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+    <!-- UNCOMENT IT LOCALLY TO VIEW LOGS IN CONSOLE... ALSO ADD TO ROOT-->
+<!--    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %level %logger - %msg%n</pattern>
         </encoder>
-    </appender>
+    </appender>-->
 
     <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${backlog.base.path:-logs}/application.log</file>
@@ -24,20 +23,13 @@
         </encoder>
     </appender>
 
-    <!-- APPLICATION TAXONOMY LOG additivity="false"-->
-    <logger name="org.apache" level="DEBUG" >
-        <appender-ref ref="ROLLING"/>
-    </logger>
-    <logger name="uk.ac.ebi" level="DEBUG" >
+    <!-- APPLICATION TAXONOMY LOG-->
+    <logger name="uk.ac.ebi" level="DEBUG">
         <appender-ref ref="ROLLING"/>
     </logger>
 
-    <logger level="INFO" name="ROLLING_LOGGER" >
+    <root level="INFO">
         <appender-ref ref="ROLLING"/>
-    </logger>
-
-    <!-- CONSOLE LOGS EVERY SYSOUT/SYSERR AND LOGS GRIZZLY  -->
-    <root level="DEBUG">
-        <appender-ref ref="CONSOLE"/>
+        <!--<appender-ref ref="CONSOLE"/>-->
     </root>
 </configuration>
