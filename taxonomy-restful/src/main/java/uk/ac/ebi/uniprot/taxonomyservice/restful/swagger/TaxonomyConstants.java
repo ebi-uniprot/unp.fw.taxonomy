@@ -120,8 +120,8 @@ public class TaxonomyConstants {
     public static final String PAGE_SIZE_PARAMETER_VALID_NUMBER = "The paramenter pageSize must be a valid number";
     public static final String PAGE_SIZE_PARAMETER_MAX_VALUE = "The paramenter pageSize must be less than {max}";
     public static final String DEPTH_PARAMETER_IS_REQUIRED = "depth parameter is required";
-    public static final String DEPTH_PARAM_MIN = "depth param value must be more than {value}";
-    public static final String DEPTH_PARAM_MAX = "depth param value must be less than {max} for BOTTOM direction";
+    public static final String DEPTH_PARAM_MIN_MAX = "depth param value must be between {min} and {max} for bottom " +
+            "direction";
     public static final String DIRECTION_VALID_VALUES = "direction parameter value must be top or bottom";
     public static final String DIRECTION_PARAMETER_IS_REQUIRED = "direction parameter is required";
     public static final String TO_PARAMETER_IS_REQUIRED = "to parameter is required";

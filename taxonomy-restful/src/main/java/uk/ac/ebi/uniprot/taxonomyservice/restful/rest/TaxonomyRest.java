@@ -250,7 +250,7 @@ public class TaxonomyRest {
             response = TaxonomyNode.class)
     @ApiResponses(value = {@ApiResponse(code = 400, message = ID_PARAMETER_IS_REQUIRED,response = ErrorMessage.class),
             @ApiResponse(code = 400, message = DEPTH_PARAMETER_IS_REQUIRED , response = ErrorMessage.class),
-            @ApiResponse(code = 400, message = DEPTH_PARAM_MIN , response = ErrorMessage.class),
+            @ApiResponse(code = 400, message = DEPTH_PARAM_MIN_MAX , response = ErrorMessage.class),
             @ApiResponse(code = 400, message = DIRECTION_VALID_VALUES , response = ErrorMessage.class),
             @ApiResponse(code = 400, message = DIRECTION_PARAMETER_IS_REQUIRED , response = ErrorMessage.class),
             @ApiResponse(code = 400, message = REQUEST_PARAMETER_INVALID_VALUE, response = ErrorMessage.class),

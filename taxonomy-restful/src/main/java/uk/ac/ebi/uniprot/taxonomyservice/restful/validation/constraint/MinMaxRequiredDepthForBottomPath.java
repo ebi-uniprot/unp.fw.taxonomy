@@ -15,14 +15,18 @@ import javax.validation.Payload;
  * Created by lgonzales on 08/07/16.
  */
 @Documented
-@Constraint(validatedBy = {MaxDepthForDownPath.MaxDepthForDownPathValidator.class})
+@Constraint(validatedBy = {MinMaxRequiredDepthForBottomPath.MinMaxDepthForBottomPathValidator.class})
 @Target({ ElementType.TYPE, ElementType.ANNOTATION_TYPE })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface MaxDepthForDownPath {
+public @interface MinMaxRequiredDepthForBottomPath {
 
     public abstract String message() default "Invalid value. This is not permitted.";
 
     public abstract int max() default 5;
+
+    public abstract int min() default 1;
+
+    public abstract String requiredMessage();
 
     public abstract Class<?>[] groups() default {};
 
@@ -30,12 +34,12 @@ public @interface MaxDepthForDownPath {
 
 
 
-    public class MaxDepthForDownPathValidator implements ConstraintValidator<MaxDepthForDownPath, PathRequestParams>
+    public class MinMaxDepthForBottomPathValidator implements ConstraintValidator<MinMaxRequiredDepthForBottomPath, PathRequestParams>
     {
-        private MaxDepthForDownPath annotation;
+        private MinMaxRequiredDepthForBottomPath annotation;
 
         @Override
-        public void initialize(MaxDepthForDownPath annotation)
+        public void initialize(MinMaxRequiredDepthForBottomPath annotation)
         {
             this.annotation = annotation;
         }
@@ -43,11 +47,18 @@ public @interface MaxDepthForDownPath {
         @Override
         public boolean isValid(PathRequestParams pathParam, ConstraintValidatorContext constraintValidatorContext) {
             boolean result = true;
-            if (pathParam.getDirection() != null && PathDirections.BOTTOM.equals(pathParam.getPathDirection()) &&
-                    pathParam.getDepth() > this.annotation.max()) {
-                result = false;
+            if (pathParam.getDirection() != null && PathDirections.BOTTOM.equals(pathParam.getPathDirection())) {
+                if(pathParam.getDepth() != null){
+                    if(pathParam.getDepth() > this.annotation.max() || pathParam.getDepth() < this.annotation.min()){
+                        result = false;
+                    }
+                }else{
+                    result = false;
+                    constraintValidatorContext.disableDefaultConstraintViolation();
+                    constraintValidatorContext.buildConstraintViolationWithTemplate(this.annotation.requiredMessage()
+                    ).addBeanNode().addConstraintViolation();
+                }
             }
-
             return result;
         }
     }

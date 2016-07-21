@@ -815,7 +815,6 @@ public class TaxonomyRestIT {
         List<String> errorMessages = new ArrayList<>();
         errorMessages.add(TaxonomyConstants.ID_PARAMETER_IS_REQUIRED);
         errorMessages.add(TaxonomyConstants.DIRECTION_PARAMETER_IS_REQUIRED);
-        errorMessages.add(TaxonomyConstants.DEPTH_PARAMETER_IS_REQUIRED);
 
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
@@ -854,7 +853,7 @@ public class TaxonomyRestIT {
 
     @Test
     public void lookupTaxonomyPathWithoutDepthParametersReturnsBadRequest() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/path?id=100000&direction=TOP";
+        String requestedURL = TAXONOMY_BASE_PATH + "/path?id=100000&direction=BOTTOM";
 
         ExtractableResponse<Response> response = when()
                 .get(requestedURL)
@@ -879,14 +878,14 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(TaxonomyConstants.DEPTH_PARAM_MAX.replace("{max}","5"));
+        errorMessages.add(TaxonomyConstants.DEPTH_PARAM_MIN_MAX.replace("{max}","5").replace("{min}","1"));
 
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
     @Test
     public void lookupTaxonomyPathMinDepthParametersReturnsBadRequest() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/path?id=10&direction=TOP&depth=0";
+        String requestedURL = TAXONOMY_BASE_PATH + "/path?id=10&direction=BOTTOM&depth=0";
 
         ExtractableResponse<Response> response = when()
                 .get(requestedURL)
@@ -895,7 +894,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(TaxonomyConstants.DEPTH_PARAM_MIN.replace("{value}", "1"));
+        errorMessages.add(TaxonomyConstants.DEPTH_PARAM_MIN_MAX.replace("{max}","5").replace("{min}","1"));
 
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
@@ -903,7 +902,7 @@ public class TaxonomyRestIT {
     @Test
     public void lookupTaxonomyPathValidReturnsOkWithJsonContentTypeAndCorrectTaxonomyNode() {
         ExtractableResponse<Response> response = when()
-                .get(TAXONOMY_BASE_PATH + "/path?id=100000&direction=TOP&depth=3")
+                .get(TAXONOMY_BASE_PATH + "/path?id=100000&direction=TOP")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
@@ -922,14 +921,14 @@ public class TaxonomyRestIT {
 
     @Test
     public void lookupTaxonomyPathWithHistoricalChangesReturnsSeeOtherWithJsonContentType() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/path?id=9&direction=TOP&depth=3";
+        String requestedURL = TAXONOMY_BASE_PATH + "/path?id=9&direction=TOP";
 
         ExtractableResponse<Response> response = given().redirects().follow(false)
                 .when().get(requestedURL)
                 .then()
                 .statusCode(SEE_OTHER.getStatusCode())
                 .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH +
-                        "/path?id=10&direction=TOP&depth=3")
+                        "/path?id=10&direction=TOP")
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();

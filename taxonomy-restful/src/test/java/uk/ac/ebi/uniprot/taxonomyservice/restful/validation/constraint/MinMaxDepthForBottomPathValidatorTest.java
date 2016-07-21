@@ -11,13 +11,15 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 /**
+ * This class is used to unit test MinMaxDepthForBottomPathValidator methods
+ *
  * Created by lgonzales on 08/07/16.
  */
-public class MaxDepthForDownPathValidatorTest {
+public class MinMaxDepthForBottomPathValidatorTest {
 
     @Test
     public void isValidWithBottomValidSizeReturnTrue() throws Exception {
-        MockedMaxDepthForDownPathValidator validator = new MockedMaxDepthForDownPathValidator(4);
+        MockedMinMaxDepthForBottomPathValidator validator = new MockedMinMaxDepthForBottomPathValidator(1,4);
         PathRequestParams param = getPathRequestParams(4,PathDirections.BOTTOM);
         boolean result = validator.isValid(param,null);
         assertThat(result, is(true));
@@ -25,16 +27,23 @@ public class MaxDepthForDownPathValidatorTest {
 
     @Test
     public void isValidWithBottomInvalidSizeReturnFalse() throws Exception {
-        MockedMaxDepthForDownPathValidator validator = new MockedMaxDepthForDownPathValidator(4);
+        MockedMinMaxDepthForBottomPathValidator validator = new MockedMinMaxDepthForBottomPathValidator(1,4);
         PathRequestParams param = getPathRequestParams(5,PathDirections.BOTTOM);
         boolean result = validator.isValid(param,null);
         assertThat(result, is(false));
     }
 
+    @Test
+    public void isValidWithBottomInMinValidSizeReturnFalse() throws Exception {
+        MockedMinMaxDepthForBottomPathValidator validator = new MockedMinMaxDepthForBottomPathValidator(0,4);
+        PathRequestParams param = getPathRequestParams(6,PathDirections.BOTTOM);
+        boolean result = validator.isValid(param,null);
+        assertThat(result, is(false));
+    }
 
     @Test
     public void isValidWithTopValidSizeReturnTrue() throws Exception {
-        MockedMaxDepthForDownPathValidator validator = new MockedMaxDepthForDownPathValidator(4);
+        MockedMinMaxDepthForBottomPathValidator validator = new MockedMinMaxDepthForBottomPathValidator(1,4);
         PathRequestParams param = getPathRequestParams(6,PathDirections.TOP);
         boolean result = validator.isValid(param,null);
         assertThat(result, is(true));
@@ -43,7 +52,7 @@ public class MaxDepthForDownPathValidatorTest {
 
     @Test
     public void isValidWithNullDirectionValidSizeReturnTrue() throws Exception {
-        MockedMaxDepthForDownPathValidator validator = new MockedMaxDepthForDownPathValidator(4);
+        MockedMinMaxDepthForBottomPathValidator validator = new MockedMinMaxDepthForBottomPathValidator(1,4);
         PathRequestParams param = getPathRequestParams(6,null);
         boolean result = validator.isValid(param,null);
         assertThat(result, is(true));
@@ -60,15 +69,11 @@ public class MaxDepthForDownPathValidatorTest {
     }
 
 
-    private class MockedMaxDepthForDownPathValidator extends MaxDepthForDownPath.MaxDepthForDownPathValidator{
+    private class MockedMinMaxDepthForBottomPathValidator extends
+                                                     MinMaxRequiredDepthForBottomPath.MinMaxDepthForBottomPathValidator {
 
-        public MockedMaxDepthForDownPathValidator(int max){
-            MaxDepthForDownPath maxDepthForDownPath = new MaxDepthForDownPath() {
-
-                @Override public int max() {
-                    return max;
-                }
-
+        public MockedMinMaxDepthForBottomPathValidator(int min, int max){
+            MinMaxRequiredDepthForBottomPath maxDepthForDownPath = new MinMaxRequiredDepthForBottomPath() {
                 @Override public Class<? extends Annotation> annotationType() {
                     return null;
                 }
@@ -77,8 +82,20 @@ public class MaxDepthForDownPathValidatorTest {
                     return null;
                 }
 
+                @Override public int max() {
+                    return max;
+                }
+
+                @Override public int min() {
+                    return min;
+                }
+
+                @Override public String requiredMessage() {
+                    return "requiredMessage";
+                }
+
                 @Override public Class<?>[] groups() {
-                    return null;
+                    return new Class<?>[0];
                 }
 
                 @Override public Class<? extends Payload>[] payload() {
