@@ -132,6 +132,11 @@
             <artifactId>neo4j-io</artifactId>
             <version>${neo4j.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.neo4j</groupId>
+            <artifactId>neo4j-management</artifactId>
+            <version>${neo4j.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

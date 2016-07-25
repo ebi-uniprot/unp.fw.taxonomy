@@ -103,5 +103,6 @@
     <orderEntry type="library" name="Maven: net.sf.opencsv:opencsv:2.3" level="project" />
     <orderEntry type="library" name="Maven: org.neo4j:neo4j-jmx:3.0.1" level="project" />
     <orderEntry type="library" name="Maven: org.neo4j:neo4j-consistency-check:3.0.1" level="project" />
+    <orderEntry type="library" name="Maven: org.neo4j:neo4j-management:3.0.1" level="project" />
   </component>
 </module>
