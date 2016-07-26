@@ -4,11 +4,11 @@
     <statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener" />
 
      <!--UNCOMENT IT LOCALLY TO VIEW LOGS IN CONSOLE... ALSO ADD TO ROOT -->
-<!--    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %level %logger - %msg%n</pattern>
         </encoder>
-    </appender>-->
+    </appender>
 
     <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${backlog.base.path:-logs}/application.log</file>
@@ -30,6 +30,6 @@
 
     <root level="DEBUG">
         <appender-ref ref="ROLLING"/>
-<!--        <appender-ref ref="CONSOLE"/>-->
+        <appender-ref ref="CONSOLE"/>
     </root>
 </configuration>
