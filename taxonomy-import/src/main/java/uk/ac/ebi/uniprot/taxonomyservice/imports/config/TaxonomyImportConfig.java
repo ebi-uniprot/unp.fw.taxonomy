@@ -25,8 +25,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.annotation.AfterJob;
-import org.springframework.batch.core.annotation.BeforeJob;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
@@ -38,7 +36,9 @@ import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -59,7 +59,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration
 @EnableBatchProcessing
 @PropertySource(value = "classpath:/application.properties")
-public class TaxonomyImportConfig {
+public class TaxonomyImportConfig implements DisposableBean{
 
     private static final Logger logger = LoggerFactory.getLogger(TaxonomyImportConfig.class);
 
@@ -69,7 +69,8 @@ public class TaxonomyImportConfig {
     private static final String TAXONOMY_LOAD_MERGED_STEP_NAME = "TAXONOMY_LOAD_MERGED";
     private static final String TAXONOMY_LOAD_DELETED_STEP_NAME = "TAXONOMY_LOAD_DELETED";
 
-    private static final int CHUNK_SIZE = 100000;
+    @Value("${taxonomy.batch.chunck.size}")
+    private Integer chunckSize;
 
     @Autowired
     private JobBuilderFactory jobBuilders;
@@ -84,15 +85,9 @@ public class TaxonomyImportConfig {
 
     private DataSource readDatasource;
 
-    @BeforeJob
-    public void initializeJobExternalResources() throws IOException, SQLException {
-
-    }
-
-    @AfterJob
-    public void shutdownInserter(){
+    @Override public void destroy() throws Exception {
         batchInserter.shutdown();
-        logger.info("shutdown Neo4J batchInserter");
+        logger.info("destroy --> shutdown Neo4J batchInserter");
     }
 
     @Bean
@@ -120,7 +115,7 @@ public class TaxonomyImportConfig {
     @Bean
     public Step importTaxonomyNodeStep() throws SQLException,IOException {
         return stepBuilders.get(TAXONOMY_LOAD_NODE_STEP_NAME)
-                .<TaxonomyImportNode,TaxonomyImportNode>chunk(CHUNK_SIZE)
+                .<TaxonomyImportNode,TaxonomyImportNode>chunk(chunckSize)
                 .<TaxonomyImportNode>reader(itemNodeReader())
                 .<TaxonomyImportNode>writer(itemWriter())
                 .listener(logStepListener())
@@ -130,7 +125,7 @@ public class TaxonomyImportConfig {
     @Bean
     public Step importTaxonomyRelationShipStep() throws SQLException,IOException {
         return stepBuilders.get(TAXONOMY_LOAD_RELATIONSHIP_STEP_NAME)
-                .<TaxonomyImportNode,TaxonomyImportNode>chunk(CHUNK_SIZE)
+                .<TaxonomyImportNode,TaxonomyImportNode>chunk(chunckSize)
                 .<TaxonomyImportNode>reader(itemNodeReader())
                 .<TaxonomyImportNode>writer(itemRelationshipWriter())
                 .listener(logStepListener())
@@ -140,7 +135,7 @@ public class TaxonomyImportConfig {
     @Bean
     public Step importTaxonomyMergedStep() throws SQLException,IOException {
         return stepBuilders.get(TAXONOMY_LOAD_MERGED_STEP_NAME)
-                .<TaxonomyImportMerge,TaxonomyImportMerge>chunk(CHUNK_SIZE)
+                .<TaxonomyImportMerge,TaxonomyImportMerge>chunk(chunckSize)
                 .<TaxonomyImportMerge>reader(itemMergedReader())
                 .<TaxonomyImportMerge>writer(itemMergedWriter())
                 .listener(logStepListener())
@@ -150,7 +145,7 @@ public class TaxonomyImportConfig {
     @Bean
     public Step importTaxonomyDeletedStep() throws SQLException,IOException {
         return stepBuilders.get(TAXONOMY_LOAD_DELETED_STEP_NAME)
-                .<TaxonomyImportDelete,TaxonomyImportDelete>chunk(CHUNK_SIZE)
+                .<TaxonomyImportDelete,TaxonomyImportDelete>chunk(chunckSize)
                 .<TaxonomyImportDelete>reader(itemDeletedReader())
                 .<TaxonomyImportDelete>writer(itemDeletedWriter())
                 .listener(logStepListener())
@@ -253,25 +248,7 @@ public class TaxonomyImportConfig {
             batchInserter.createDeferredSchemaIndex( nodeLabel ).on( "mnemonicLowerCase" ).create();
 
             logger.info("Created Neo4J index for taxonomyId, scientificName, commonName and mnemonic");
-            registerStop(batchInserter);
         }
         return batchInserter;
-    }
-
-    /**
-     * TODO: Currently I am registering the stop manually
-     *       There is an automatic way, like uniprot restfull service does
-     **/
-    public void registerStop(final BatchInserter batchInserter) {
-        logger.info("Neo4J batchInserter Hook addShutdownHook");
-        Runtime.getRuntime().addShutdownHook( new Thread()
-        {
-            @Override
-            public void run()
-            {
-                logger.debug("Neo4J batchInserter Hook shutdown");
-                batchInserter.shutdown();
-            }
-        } );
     }
 }
