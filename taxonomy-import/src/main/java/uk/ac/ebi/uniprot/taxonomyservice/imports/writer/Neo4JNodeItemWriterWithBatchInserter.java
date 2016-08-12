@@ -1,62 +1,64 @@
 package uk.ac.ebi.uniprot.taxonomyservice.imports.writer;
 
 import uk.ac.ebi.uniprot.taxonomyservice.imports.model.TaxonomyImportNode;
+import uk.ac.ebi.uniprot.taxonomyservice.imports.model.constants.TaxonomyLabels;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.Label;
 import org.neo4j.unsafe.batchinsert.BatchInserter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.annotation.AfterStep;
 import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.item.ItemWriter;
 
+import static uk.ac.ebi.uniprot.taxonomyservice.imports.model.constants.TaxonomyFields.*;
+
 /**
- * Class responsible to save/write loaded @link{TaxonomyImportNode} into Neo4J using @{BatchInserter} tool
+ * Class responsible to save/write loaded {@link TaxonomyImportNode} into Neo4J using {@link BatchInserter} tool
  *
  * Created by lgonzales on 29/04/16.
  */
 public class Neo4JNodeItemWriterWithBatchInserter implements ItemWriter<TaxonomyImportNode> {
-    protected static final Log logger = LogFactory.getLog(Neo4JNodeItemWriterWithBatchInserter.class);
+    private static final Logger logger = LoggerFactory.getLogger(Neo4JNodeItemWriterWithBatchInserter.class);
 
-    private BatchInserter batchInserter;
+    private final BatchInserter batchInserter;
 
     private int pageCount = 0;
 
-    protected Label nodeLabel;
+    private final Label nodeLabel;
 
 
     public Neo4JNodeItemWriterWithBatchInserter(BatchInserter batchInserter) {
         this.batchInserter = batchInserter;
-        nodeLabel = DynamicLabel.label("Node");
+        nodeLabel = Label.label(TaxonomyLabels.Node.name());
     }
 
     @Override
     public void write(List<? extends TaxonomyImportNode> list) {
         for (TaxonomyImportNode nodeModel : list) {
             Map<String, Object> properties = new HashMap<>();
-            properties.put("taxonomyId", "" + nodeModel.getTaxonomyId());
+            properties.put(taxonomyId.name(), String.valueOf(nodeModel.getTaxonomyId()));
             if (nodeModel.getMnemonic() != null) {
-                properties.put("mnemonic", nodeModel.getMnemonic());
-                properties.put("mnemonicLowerCase", nodeModel.getMnemonic().toLowerCase());
+                properties.put(mnemonic.name(), nodeModel.getMnemonic());
+                properties.put(mnemonicLowerCase.name(), nodeModel.getMnemonic().toLowerCase());
             }
             if (nodeModel.getScientificName() != null) {
-                properties.put("scientificName", nodeModel.getScientificName());
-                properties.put("scientificNameLowerCase", nodeModel.getScientificName().toLowerCase());
+                properties.put(scientificName.name(), nodeModel.getScientificName());
+                properties.put(scientificNameLowerCase.name(), nodeModel.getScientificName().toLowerCase());
             }
             if (nodeModel.getCommonName() != null) {
-                properties.put("commonName", nodeModel.getCommonName());
-                properties.put("commonNameLowerCase", nodeModel.getScientificName().toLowerCase());
+                properties.put(commonName.name(), nodeModel.getCommonName());
+                properties.put(commonNameLowerCase.name(), nodeModel.getCommonName().toLowerCase());
             }
             if (nodeModel.getSynonym() != null) {
-                properties.put("synonym", nodeModel.getSynonym());
+                properties.put(synonym.name(), nodeModel.getSynonym());
             }
             if (nodeModel.getRank() != null) {
-                properties.put("rank", nodeModel.getRank());
+                properties.put(rank.name(), nodeModel.getRank());
             }
             batchInserter.createNode(nodeModel.getTaxonomyId(),properties,nodeLabel);
         }
@@ -66,12 +68,12 @@ public class Neo4JNodeItemWriterWithBatchInserter implements ItemWriter<Taxonomy
     }
 
     @AfterStep
-    public void shutdownInserter(){
+    public void afterStep(){
         logger.info("completed Neo4JNodeItemWriterWithBatchInserter");
     }
 
     @BeforeStep
-    public void createInserter() throws IOException{
+    public void beforeStep() throws IOException{
         logger.info("starting  Neo4JNodeItemWriterWithBatchInserter");
     }
 

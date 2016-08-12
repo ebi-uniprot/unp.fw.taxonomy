@@ -1,36 +1,36 @@
 package uk.ac.ebi.uniprot.taxonomyservice.imports.writer;
 
 import uk.ac.ebi.uniprot.taxonomyservice.imports.model.TaxonomyImportDelete;
+import uk.ac.ebi.uniprot.taxonomyservice.imports.model.constants.TaxonomyLabels;
 
 import java.io.IOException;
 import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.neo4j.graphdb.DynamicLabel;
 import org.neo4j.graphdb.Label;
 import org.neo4j.unsafe.batchinsert.BatchInserter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.annotation.AfterStep;
 import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.item.ItemWriter;
 
 /**
- * Class responsible to save/write loaded @link{TaxonomyImportDelete} into Neo4J using @{BatchInserter} tool
+ * Class responsible to save/write loaded {@link TaxonomyImportDelete} into Neo4J using {@link BatchInserter} tool
  *
  * Created by lgonzales on 29/04/16.
  */
 public class Neo4JDeletedItemWriterWithBatchInserter implements ItemWriter<TaxonomyImportDelete> {
-    protected static final Log logger = LogFactory.getLog(Neo4JDeletedItemWriterWithBatchInserter.class);
+    private static final Logger logger = LoggerFactory.getLogger(Neo4JDeletedItemWriterWithBatchInserter.class);
 
-    private BatchInserter batchInserter;
+    private final BatchInserter batchInserter;
 
     private int pageCount = 0;
 
-    protected Label deleteLabel;
+    private final Label deleteLabel;
 
 
     public Neo4JDeletedItemWriterWithBatchInserter(BatchInserter batchInserter) {
         this.batchInserter = batchInserter;
-        deleteLabel = DynamicLabel.label("Deleted");
+        deleteLabel = Label.label(TaxonomyLabels.Deleted.name());
     }
 
     @Override
@@ -44,12 +44,12 @@ public class Neo4JDeletedItemWriterWithBatchInserter implements ItemWriter<Taxon
     }
 
     @AfterStep
-    public void shutdownInserter(){
+    public void afterStep(){
         logger.info("completed Neo4JDeletedItemWriterWithBatchInserter");
     }
 
     @BeforeStep
-    public void createInserter() throws IOException {
+    public void beforeStep() throws IOException {
         logger.info("starting  Neo4JDeletedItemWriterWithBatchInserter");
     }
 }

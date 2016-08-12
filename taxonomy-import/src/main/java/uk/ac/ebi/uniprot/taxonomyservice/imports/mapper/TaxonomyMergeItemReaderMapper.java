@@ -1,5 +1,6 @@
 package uk.ac.ebi.uniprot.taxonomyservice.imports.mapper;
 
+import uk.ac.ebi.uniprot.taxonomyservice.imports.config.TaxonomyImportConfig;
 import uk.ac.ebi.uniprot.taxonomyservice.imports.model.TaxonomyImportMerge;
 
 import java.sql.ResultSet;
@@ -7,8 +8,9 @@ import java.sql.SQLException;
 import org.springframework.jdbc.core.RowMapper;
 
 /**
- * This class is mapping @link{java.sql.ResultSet} returned by SQL executed in @link{TaxonomyImportConfig
- * .itemMergedReader} to @link{TaxonomyImportMerge} object that will be used to save Merged Taxonomy Nodes
+ * This class is mapping {@link java.sql.ResultSet} returned by SQL executed in
+ * {@link TaxonomyImportConfig#itemMergedReader()} to {@link TaxonomyImportMerge} object that will be used to save
+ * Merged Taxonomy Nodes
  *
  * Created by lgonzales on 29/04/16.
  */

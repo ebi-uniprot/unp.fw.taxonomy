@@ -38,7 +38,6 @@ import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -46,6 +45,10 @@ import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.transaction.PlatformTransactionManager;
 
+import static uk.ac.ebi.uniprot.taxonomyservice.imports.model.constants.TaxonomyFields.commonNameLowerCase;
+import static uk.ac.ebi.uniprot.taxonomyservice.imports.model.constants.TaxonomyFields.mnemonicLowerCase;
+import static uk.ac.ebi.uniprot.taxonomyservice.imports.model.constants.TaxonomyFields.scientificNameLowerCase;
+import static uk.ac.ebi.uniprot.taxonomyservice.imports.model.constants.TaxonomyFields.taxonomyId;
 /**
  * This class is responsible to set up taxonomy initial full load.
  * Basically it loads taxonomy in 4 steps
@@ -63,14 +66,11 @@ public class TaxonomyImportConfig implements DisposableBean{
 
     private static final Logger logger = LoggerFactory.getLogger(TaxonomyImportConfig.class);
 
-    private static final String TAXONOMY_LOAD_JOB_NAME = "TAXONOMY_LOAD_JOB_NAME";
-    private static final String TAXONOMY_LOAD_NODE_STEP_NAME = "TAXONOMY_LOAD_NODE";
-    private static final String TAXONOMY_LOAD_RELATIONSHIP_STEP_NAME = "TAXONOMY_LOAD_RELATIONSHIP";
-    private static final String TAXONOMY_LOAD_MERGED_STEP_NAME = "TAXONOMY_LOAD_MERGED";
-    private static final String TAXONOMY_LOAD_DELETED_STEP_NAME = "TAXONOMY_LOAD_DELETED";
-
-    @Value("${taxonomy.batch.chunck.size}")
-    private Integer chunckSize;
+    protected static final String TAXONOMY_LOAD_JOB_NAME = "TAXONOMY_LOAD_JOB_NAME";
+    protected static final String TAXONOMY_LOAD_NODE_STEP_NAME = "TAXONOMY_LOAD_NODE";
+    protected static final String TAXONOMY_LOAD_RELATIONSHIP_STEP_NAME = "TAXONOMY_LOAD_RELATIONSHIP";
+    protected static final String TAXONOMY_LOAD_MERGED_STEP_NAME = "TAXONOMY_LOAD_MERGED";
+    protected static final String TAXONOMY_LOAD_DELETED_STEP_NAME = "TAXONOMY_LOAD_DELETED";
 
     @Autowired
     private JobBuilderFactory jobBuilders;
@@ -81,7 +81,7 @@ public class TaxonomyImportConfig implements DisposableBean{
     @Autowired
     private Environment env;
 
-    private BatchInserter batchInserter;
+    protected BatchInserter batchInserter;
 
     private DataSource readDatasource;
 
@@ -115,9 +115,9 @@ public class TaxonomyImportConfig implements DisposableBean{
     @Bean
     public Step importTaxonomyNodeStep() throws SQLException,IOException {
         return stepBuilders.get(TAXONOMY_LOAD_NODE_STEP_NAME)
-                .<TaxonomyImportNode,TaxonomyImportNode>chunk(chunckSize)
+                .<TaxonomyImportNode,TaxonomyImportNode>chunk(getChunckSize())
                 .<TaxonomyImportNode>reader(itemNodeReader())
-                .<TaxonomyImportNode>writer(itemWriter())
+                .<TaxonomyImportNode>writer(itemNodeWriter())
                 .listener(logStepListener())
                 .build();
     }
@@ -125,7 +125,7 @@ public class TaxonomyImportConfig implements DisposableBean{
     @Bean
     public Step importTaxonomyRelationShipStep() throws SQLException,IOException {
         return stepBuilders.get(TAXONOMY_LOAD_RELATIONSHIP_STEP_NAME)
-                .<TaxonomyImportNode,TaxonomyImportNode>chunk(chunckSize)
+                .<TaxonomyImportNode,TaxonomyImportNode>chunk(getChunckSize())
                 .<TaxonomyImportNode>reader(itemNodeReader())
                 .<TaxonomyImportNode>writer(itemRelationshipWriter())
                 .listener(logStepListener())
@@ -135,7 +135,7 @@ public class TaxonomyImportConfig implements DisposableBean{
     @Bean
     public Step importTaxonomyMergedStep() throws SQLException,IOException {
         return stepBuilders.get(TAXONOMY_LOAD_MERGED_STEP_NAME)
-                .<TaxonomyImportMerge,TaxonomyImportMerge>chunk(chunckSize)
+                .<TaxonomyImportMerge,TaxonomyImportMerge>chunk(getChunckSize())
                 .<TaxonomyImportMerge>reader(itemMergedReader())
                 .<TaxonomyImportMerge>writer(itemMergedWriter())
                 .listener(logStepListener())
@@ -145,7 +145,7 @@ public class TaxonomyImportConfig implements DisposableBean{
     @Bean
     public Step importTaxonomyDeletedStep() throws SQLException,IOException {
         return stepBuilders.get(TAXONOMY_LOAD_DELETED_STEP_NAME)
-                .<TaxonomyImportDelete,TaxonomyImportDelete>chunk(chunckSize)
+                .<TaxonomyImportDelete,TaxonomyImportDelete>chunk(getChunckSize())
                 .<TaxonomyImportDelete>reader(itemDeletedReader())
                 .<TaxonomyImportDelete>writer(itemDeletedWriter())
                 .listener(logStepListener())
@@ -184,7 +184,7 @@ public class TaxonomyImportConfig implements DisposableBean{
     }
 
     @Bean
-    public ItemWriter<TaxonomyImportNode> itemWriter()throws IOException {
+    public ItemWriter<TaxonomyImportNode> itemNodeWriter()throws IOException {
         return new Neo4JNodeItemWriterWithBatchInserter(getBatchInserter());
     }
 
@@ -221,7 +221,7 @@ public class TaxonomyImportConfig implements DisposableBean{
         return jobLauncher;
     }
 
-    public DataSource getReadDatasource() throws SQLException {
+    protected DataSource getReadDatasource() throws SQLException {
         if(this.readDatasource == null){
             String databaseURL= env.getProperty("taxonomy.database.url");
             String databaseUserName= env.getProperty("taxonomy.database.user.name");
@@ -238,17 +238,27 @@ public class TaxonomyImportConfig implements DisposableBean{
     public BatchInserter getBatchInserter() throws IOException {
         if((batchInserter == null)){
             File neo4jDatabasePath = new File(env.getProperty("neo4j.database.path"));
-            batchInserter = BatchInserters.inserter(neo4jDatabasePath);
-            logger.info("Neo4J batchInserter initialized");
-
-            Label nodeLabel = Label.label( "Node" );
-            batchInserter.createDeferredSchemaIndex( nodeLabel ).on( "taxonomyId" ).create();
-            batchInserter.createDeferredSchemaIndex( nodeLabel ).on( "scientificNameLowerCase" ).create();
-            batchInserter.createDeferredSchemaIndex( nodeLabel ).on( "commonNameLowerCase" ).create();
-            batchInserter.createDeferredSchemaIndex( nodeLabel ).on( "mnemonicLowerCase" ).create();
-
-            logger.info("Created Neo4J index for taxonomyId, scientificName, commonName and mnemonic");
+            this.batchInserter = createBatchInserter(neo4jDatabasePath);
         }
+        return this.batchInserter;
+    }
+
+    protected BatchInserter createBatchInserter(File neo4jDatabasePath) throws IOException {
+        BatchInserter batchInserter = BatchInserters.inserter(neo4jDatabasePath);
+        logger.info("Neo4J batchInserter initialized");
+
+        Label nodeLabel = Label.label( "Node" );
+        batchInserter.createDeferredSchemaIndex( nodeLabel ).on(taxonomyId.name()).create();
+        batchInserter.createDeferredSchemaIndex( nodeLabel ).on(scientificNameLowerCase.name()).create();
+        batchInserter.createDeferredSchemaIndex( nodeLabel ).on(commonNameLowerCase.name()).create();
+        batchInserter.createDeferredSchemaIndex( nodeLabel ).on(mnemonicLowerCase.name()).create();
+
+        logger.info("Created Neo4J index for taxonomyId, scientificName, commonName and mnemonic");
         return batchInserter;
+    }
+
+    public int getChunckSize() {
+        String value = env.getProperty("taxonomy.batch.chunck.size");
+        return Integer.parseInt(value);
     }
 }

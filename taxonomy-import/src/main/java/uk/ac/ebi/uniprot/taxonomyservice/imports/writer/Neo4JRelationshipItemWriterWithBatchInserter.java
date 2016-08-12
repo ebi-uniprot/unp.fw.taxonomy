@@ -1,36 +1,36 @@
 package uk.ac.ebi.uniprot.taxonomyservice.imports.writer;
 
 import uk.ac.ebi.uniprot.taxonomyservice.imports.model.TaxonomyImportNode;
+import uk.ac.ebi.uniprot.taxonomyservice.imports.model.constants.TaxonomyRelationships;
 
 import java.io.IOException;
 import java.util.List;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.neo4j.graphdb.DynamicRelationshipType;
 import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.unsafe.batchinsert.BatchInserter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.annotation.AfterStep;
 import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.item.ItemWriter;
 
 /**
- * Class responsible to save/write loaded @link{TaxonomyImportNode} "CHILD_OF" relationship from node to it parent
- * into Neo4J using @{BatchInserter} tool
+ * Class responsible to save/write loaded {@link TaxonomyImportNode} "CHILD_OF" relationship from node to it parent
+ * into Neo4J using {@link BatchInserter} tool
  *
  * Created by lgonzales on 29/04/16.
  */
 public class Neo4JRelationshipItemWriterWithBatchInserter implements ItemWriter<TaxonomyImportNode> {
-    protected static final Log logger = LogFactory.getLog(Neo4JRelationshipItemWriterWithBatchInserter.class);
+    private static final Logger logger = LoggerFactory.getLogger(Neo4JRelationshipItemWriterWithBatchInserter.class);
 
-    private BatchInserter batchInserter;
+    private final BatchInserter batchInserter;
 
     private int pageCount = 0;
 
-    protected RelationshipType childOfRelationship;
+    private final RelationshipType childOfRelationship;
 
     public Neo4JRelationshipItemWriterWithBatchInserter(BatchInserter batchInserter) {
         this.batchInserter = batchInserter;
-        this.childOfRelationship = DynamicRelationshipType.withName("CHILD_OF");
+        this.childOfRelationship = RelationshipType.withName(TaxonomyRelationships.CHILD_OF.name());
     }
 
     @Override
@@ -47,12 +47,12 @@ public class Neo4JRelationshipItemWriterWithBatchInserter implements ItemWriter<
     }
 
     @AfterStep
-    public void shutdownInserter(){
+    public void afterStep(){
         logger.info("completed Neo4JRelationshipItemWriterWithBatchInserter");
     }
 
     @BeforeStep
-    public void createInserter() throws IOException{
+    public void beforeStep() throws IOException{
         logger.info("starting  Neo4JRelationshipItemWriterWithBatchInserter");
     }
 
