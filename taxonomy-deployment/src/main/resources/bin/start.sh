@@ -70,7 +70,7 @@ grep "ready to service requests" $CONSOLE_LOG_FILE || {
 popd  .
 
 echo "testing Taxonomy service"
-curl http://127.0.0.1:9090/uniprot/api/taxonomy/id/269 > /dev/null || {
+curl http://127.0.0.1:9090/proteins/api/taxonomy/id/329 > /dev/null || {
     echo "Taxonomy service is still not available, please check."
     exit 1;
 }

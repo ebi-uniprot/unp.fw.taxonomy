@@ -27,7 +27,7 @@
             - Create backup and update Neo4J and taxonomy libs
             - Start taxonomy service
 - Check the log to make sure that taxonomy service started or open your browser and try it. http://ves-ebi-ca.ebi.ac
-.uk:9090/uniprot/api/taxonomy/id/329
+.uk:9090/proteins/api/taxonomy/id/329
 
 
 ###################  Important  ##########################################################################
