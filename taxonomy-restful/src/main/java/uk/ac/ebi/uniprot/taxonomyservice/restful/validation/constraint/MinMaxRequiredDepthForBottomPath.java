@@ -20,21 +20,21 @@ import javax.validation.Payload;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MinMaxRequiredDepthForBottomPath {
 
-    public abstract String message() default "Invalid value. This is not permitted.";
+    String message() default "Invalid value. This is not permitted.";
 
-    public abstract int max() default 5;
+    int max() default 5;
 
-    public abstract int min() default 1;
+    int min() default 1;
 
-    public abstract String requiredMessage();
+    String requiredMessage();
 
-    public abstract Class<?>[] groups() default {};
+    Class<?>[] groups() default {};
 
-    public abstract Class<? extends Payload>[] payload() default {};
+    Class<? extends Payload>[] payload() default {};
 
 
 
-    public class MinMaxDepthForBottomPathValidator implements ConstraintValidator<MinMaxRequiredDepthForBottomPath, PathRequestParams>
+    class MinMaxDepthForBottomPathValidator implements ConstraintValidator<MinMaxRequiredDepthForBottomPath, PathRequestParams>
     {
         private MinMaxRequiredDepthForBottomPath annotation;
 

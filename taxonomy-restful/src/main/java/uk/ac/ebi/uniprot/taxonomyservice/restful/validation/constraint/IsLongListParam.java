@@ -18,14 +18,14 @@ import javax.validation.Payload;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface IsLongListParam {
 
-    public abstract String message() default "Invalid value. This is not permitted.";
+    String message() default "Invalid value. This is not permitted.";
 
-    public abstract Class<?>[] groups() default {};
+    Class<?>[] groups() default {};
 
-    public abstract Class<? extends Payload>[] payload() default {};
+    Class<? extends Payload>[] payload() default {};
 
 
-    public class IsLongListParamValidator implements ConstraintValidator<IsLongListParam, String> {
+    class IsLongListParamValidator implements ConstraintValidator<IsLongListParam, String> {
         private IsLongListParam annotation;
 
         @Override

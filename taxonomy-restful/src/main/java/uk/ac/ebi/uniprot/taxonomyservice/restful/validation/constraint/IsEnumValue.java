@@ -18,19 +18,19 @@ import javax.validation.Payload;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface IsEnumValue {
 
-    public abstract String message() default "Invalid value. This is not permitted.";
+    String message() default "Invalid value. This is not permitted.";
 
-    public abstract Class<?>[] groups() default {};
+    Class<?>[] groups() default {};
 
-    public abstract Class<? extends Payload>[] payload() default {};
+    Class<? extends Payload>[] payload() default {};
 
-    public abstract Class<? extends java.lang.Enum<?>> enumClass();
+    Class<? extends java.lang.Enum<?>> enumClass();
 
-    public abstract boolean ignoreCase() default false;
+    boolean ignoreCase() default false;
 
 
 
-    public class EnumValueValidator implements ConstraintValidator<IsEnumValue, String>
+    class EnumValueValidator implements ConstraintValidator<IsEnumValue, String>
     {
         private IsEnumValue annotation;
 

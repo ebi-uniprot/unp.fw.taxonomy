@@ -13,7 +13,7 @@ public enum SearchType {
 
     private String searchQueryKeyWord;
 
-    private SearchType(String keyWord){
+    SearchType(String keyWord){
         this.searchQueryKeyWord = keyWord;
     }
 

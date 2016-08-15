@@ -36,11 +36,11 @@ public class TaxonomyProperties {
 
         private String defaultValue;
 
-        private APP_PROPERTY_NAME(String defaultValue) {
+        APP_PROPERTY_NAME(String defaultValue) {
             this.defaultValue = defaultValue;
         }
 
-        private APP_PROPERTY_NAME() {
+        APP_PROPERTY_NAME() {
         }
 
         public String getDefaultValue() {

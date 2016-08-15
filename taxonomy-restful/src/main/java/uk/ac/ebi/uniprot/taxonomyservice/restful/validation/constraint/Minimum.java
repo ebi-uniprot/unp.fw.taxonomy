@@ -19,15 +19,15 @@ import org.slf4j.LoggerFactory;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Minimum {
 
-    public abstract String message() default "Invalid value. This is not permitted.";
+    String message() default "Invalid value. This is not permitted.";
 
-    public abstract Class<?>[] groups() default {};
+    Class<?>[] groups() default {};
 
-    public abstract Class<? extends Payload>[] payload() default {};
+    Class<? extends Payload>[] payload() default {};
 
-    public abstract long min();
+    long min();
 
-    public class MinimumValueValidator implements ConstraintValidator<Minimum, String>
+    class MinimumValueValidator implements ConstraintValidator<Minimum, String>
     {
         private static final Logger logger = LoggerFactory.getLogger(MinimumValueValidator.class);
         private Minimum annotation;

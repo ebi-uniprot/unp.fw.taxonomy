@@ -29,7 +29,7 @@ public interface TaxonomyDataAccess {
      * @param taxonomyId identification of taxonomy
      * @return details about searched taxonomy
      */
-    public Optional<TaxonomyNode> getTaxonomyBaseNodeById(long taxonomyId);
+    Optional<TaxonomyNode> getTaxonomyBaseNodeById(long taxonomyId);
 
     /**
      * This method return list of siblings of a searched {@param taxonomyId}.

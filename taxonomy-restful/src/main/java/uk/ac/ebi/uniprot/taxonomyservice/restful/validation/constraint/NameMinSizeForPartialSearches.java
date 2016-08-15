@@ -21,17 +21,17 @@ import javax.validation.Payload;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface NameMinSizeForPartialSearches {
 
-    public abstract String message() default "Invalid value. This is not permitted.";
+    String message() default "Invalid value. This is not permitted.";
 
-    public abstract int min() default 4;
+    int min() default 4;
 
-    public abstract Class<?>[] groups() default {};
+    Class<?>[] groups() default {};
 
-    public abstract Class<? extends Payload>[] payload() default {};
+    Class<? extends Payload>[] payload() default {};
 
 
 
-    public class NameMinSizeValidator implements ConstraintValidator<NameMinSizeForPartialSearches, NameRequestParams>
+    class NameMinSizeValidator implements ConstraintValidator<NameMinSizeForPartialSearches, NameRequestParams>
     {
         private NameMinSizeForPartialSearches annotation;
 

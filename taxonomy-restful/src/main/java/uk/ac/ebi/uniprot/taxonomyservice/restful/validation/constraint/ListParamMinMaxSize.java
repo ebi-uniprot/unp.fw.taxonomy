@@ -17,18 +17,18 @@ import javax.validation.Payload;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ListParamMinMaxSize {
 
-    public abstract String message() default "Invalid value. This is not permitted.";
+    String message() default "Invalid value. This is not permitted.";
 
-    public abstract Class<?>[] groups() default {};
+    Class<?>[] groups() default {};
 
-    public abstract Class<? extends Payload>[] payload() default {};
+    Class<? extends Payload>[] payload() default {};
 
-    public abstract int minSize();
+    int minSize();
 
-    public abstract int maxSize();
+    int maxSize();
 
 
-    public class MinMaxSizeValidator implements ConstraintValidator<ListParamMinMaxSize, String> {
+    class MinMaxSizeValidator implements ConstraintValidator<ListParamMinMaxSize, String> {
 
         private ListParamMinMaxSize annotation;
 

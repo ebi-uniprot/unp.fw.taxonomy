@@ -12,7 +12,7 @@ public enum FieldNames {
 
     private String seachFieldName;
 
-    private FieldNames(String fieldName) {
+    FieldNames(String fieldName) {
         this.seachFieldName = fieldName;
     }
 
