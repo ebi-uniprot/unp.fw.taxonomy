@@ -86,8 +86,8 @@ public class TaxonomyImportConfig implements DisposableBean{
     private DataSource readDatasource;
 
     @Override public void destroy() throws Exception {
-        batchInserter.shutdown();
-        logger.info("destroy --> shutdown Neo4J batchInserter");
+        //batchInserter.shutdown();
+        //logger.info("destroy --> shutdown Neo4J batchInserter");
     }
 
     @Bean
@@ -239,6 +239,7 @@ public class TaxonomyImportConfig implements DisposableBean{
         if((batchInserter == null)){
             File neo4jDatabasePath = new File(env.getProperty("neo4j.database.path"));
             this.batchInserter = createBatchInserter(neo4jDatabasePath);
+            registerStop(this.batchInserter);
         }
         return this.batchInserter;
     }
@@ -256,6 +257,25 @@ public class TaxonomyImportConfig implements DisposableBean{
         logger.info("Created Neo4J index for taxonomyId, scientificName, commonName and mnemonic");
         return batchInserter;
     }
+
+
+    /**
+     * TODO: Currently I am registering the stop manually
+     *       There is an automatic way, like uniprot restfull service does
+     **/
+    public void registerStop(final BatchInserter batchInserter) {
+        logger.info("Neo4J batchInserter Hook addShutdownHook");
+        Runtime.getRuntime().addShutdownHook( new Thread()
+        {
+            @Override
+            public void run()
+            {
+                logger.debug("Neo4J batchInserter Hook shutdown");
+                batchInserter.shutdown();
+            }
+        } );
+    }
+
 
     public int getChunckSize() {
         String value = env.getProperty("taxonomy.batch.chunck.size");
