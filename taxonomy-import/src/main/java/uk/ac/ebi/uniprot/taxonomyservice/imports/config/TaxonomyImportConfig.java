@@ -270,6 +270,7 @@ public class TaxonomyImportConfig implements DisposableBean{
             @Override
             public void run()
             {
+                System.out.println("Neo4J batchInserter Hook shutdown system out");
                 logger.debug("Neo4J batchInserter Hook shutdown");
                 batchInserter.shutdown();
             }
