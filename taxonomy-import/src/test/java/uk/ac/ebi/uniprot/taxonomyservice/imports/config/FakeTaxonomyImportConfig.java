@@ -72,7 +72,7 @@ public class FakeTaxonomyImportConfig extends TaxonomyImportConfig{
 
     @Override
     public void destroy() throws Exception {
-        batchInserter.shutdown();
+        super.destroy();
         TaxonomyImportTestUtils.cleanNeo4JTemporaryData(getNeo4jDatabasePath());
     }
 }
