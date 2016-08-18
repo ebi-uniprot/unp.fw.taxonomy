@@ -45,8 +45,9 @@ This way we keep all scripts updated in GIT.
 6- inside just created git-repository folder, execute the command "git clone https://user:password@scm.ebi.ac.uk/git/unp
 .fw.taxonomy.git". (You should use Jenkins "uni_scm" user if it is a new VM Machine)
     6.1 (Optional) For test pourpose you can use a branch, and in this case you should use the following commands
-        - git checkout -b branch-name
-        - git pull origin branch-name
+        - cd unp.fw.taxonomy
+        - git checkout -b "branch-name"
+        - git pull origin "branch-name"
 7- inside taxonomy folder copy deployment bin folder to it "cp -rf git-repository/unp.fw
 .taxonomy/taxonomy-deployment/src/main/resources/* ."
 8- execute command "chmod 755 *.sh", "cd bin", "chmod 755 *.*"
