@@ -47,7 +47,7 @@ RELEASE_LOG_DIR="$BUILD_RELEASE_DIR/$LOG_DIR"
 if [ -d "$BUILD_RELEASE_DIR" ]; then
 
     echo "=================== 1 Executing rsync command ==================="
-    rsync -avh --copy-links --chmod=Du=rwx,Dg=rwx,Do=rx,Fu=rwx,Fg=rwx,Fo=rw $BUILD_RELEASE_DIR uni_adm@$ENVIRONMENT_SERVER:$TAXONOMY_PRODUCTION_PATH/$RELEASE_DIR/$RELEASE_NAME | tee -a "$RELEASE_LOG_DIR/taxonomy-rsync-$ENVIRONMENT.log"
+    rsync -avh --copy-links --chmod=Du=rwx,Dg=rwx,Do=rx,Fu=rwx,Fg=rwx,Fo=rw $BUILD_RELEASE_DIR uni_adm@$ENVIRONMENT_SERVER:$TAXONOMY_PRODUCTION_PATH/$RELEASE_DIR | tee -a "$RELEASE_LOG_DIR/taxonomy-rsync-$ENVIRONMENT.log"
 
     echo "rsync completed, now ssh to $ENVIRONMENT_SERVER"
 
