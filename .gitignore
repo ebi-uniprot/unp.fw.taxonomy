@@ -4,4 +4,3 @@
 /.idea
 # Created by .ignore support plugin (hsz.mobi)
 /taxonomy-restful/src/main/resources/logback.xml
-/.reviewboardrc
