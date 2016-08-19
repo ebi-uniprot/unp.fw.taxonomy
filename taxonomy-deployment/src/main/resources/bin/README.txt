@@ -55,5 +55,9 @@ This way we keep all scripts updated in GIT.
 
 #################### Create Release Files ##################
 
-1- inside bin folder execute the command "./deploy-taxonomy.sh"
+1- inside bin folder execute the command "./create-taxonomy-release-files.sh"
+2- inside taxonomy folder create the currentrelease link: ln -s releases/"releasename" currentrelease
+3- inside bin folder again execute the command ./index-neo4j-data.sh
 2- done
+
+#################### Deploy Release Files to production##################

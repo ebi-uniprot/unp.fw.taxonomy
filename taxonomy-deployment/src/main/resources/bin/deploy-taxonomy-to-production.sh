@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # This script will execute steps below to deploy taxonomy service to production
-# 1- Move Public link to current private in stage
-# 2- Copy files to production server (in bin just copy, start, stop, environment.properties, config.properties)
+# 1- Executing rsync command to send release files to production
+# 2- SSH to environment server
 # 3- Stop production taxonomy service
-# 4- Start production taxonomy service
-# 5- Move private link to new private release
+# 4- Change curent release symbolic link to new release
+# 5- Start production taxonomy service
 # please Refer to http://redsymbol.net/articles/unofficial-bash-strict-mode/ for details.
 set -euo pipefail
 IFS=$'\n\t'
@@ -44,29 +44,32 @@ SERVICE_BIN_PATH="$(pwd -P)"
 BUILD_RELEASE_DIR="$(readlink -m $SERVICE_BIN_PATH/../$RELEASE_DIR/$RELEASE_NAME)"
 RELEASE_LOG_DIR="$BUILD_RELEASE_DIR/$LOG_DIR"
 
-if [ ! -d "$BUILD_RELEASE_DIR" ]; then
+if [ -d "$BUILD_RELEASE_DIR" ]; then
 
-    echo "=================== Executing rsync command ==================="
+    echo "=================== 1 Executing rsync command ==================="
     rsync -avh --copy-links --chmod=Du=rwx,Dg=rwx,Do=rx,Fu=rwx,Fg=rwx,Fo=rw $BUILD_RELEASE_DIR uni_adm@$ENVIRONMENT_SERVER:$TAXONOMY_PRODUCTION_PATH/$RELEASE_DIR/$RELEASE_NAME | tee -a "$RELEASE_LOG_DIR/taxonomy-rsync-$ENVIRONMENT.log"
 
     echo "rsync completed, now ssh to $ENVIRONMENT_SERVER"
 
-    echo "=================== SSH to $ENVIRONMENT_SERVER ==================="
-    ssh $ENVIRONMENT_SERVER
+    echo "=================== 2 SSH to $ENVIRONMENT_SERVER ==================="
+    ssh $ENVIRONMENT_SERVER bash -c "'
 
-    echo "=================== Stopping Taxonomy Service ==================="
-    $SERVICE_BIN_PATH/stop.sh
+        echo "=================== 3 Stopping Taxonomy Service ==================="
+        cd $TAXONOMY_PRODUCTION_PATH/bin
 
-    cd $TAXONOMY_PRODUCTION_PATH
+        $TAXONOMY_PRODUCTION_PATH/bin/stop.sh
 
-    echo "=================== Changing $CURRENT_RELEASE_LINK_NAME to $RELEASE_NAME ==================="
-    unlink $CURRENT_RELEASE_LINK_NAME
-    ln -s $BUILD_RELEASE_DIR $CURRENT_RELEASE_LINK_NAME
+        cd $TAXONOMY_PRODUCTION_PATH
 
-    echo "=================== Starting Taxonomy Service  ==================="
+        echo "=================== 4 Changing $CURRENT_RELEASE_LINK_NAME to $RELEASE_NAME ==================="
+        unlink $CURRENT_RELEASE_LINK_NAME
+        ln -s $TAXONOMY_PRODUCTION_PATH/$RELEASE_DIR/$RELEASE_NAME $CURRENT_RELEASE_LINK_NAME
 
-    $SERVICE_BIN_PATH/start.sh
+        echo "=================== 5 Starting Taxonomy Service  ==================="
 
+        cd $TAXONOMY_PRODUCTION_PATH/bin
+        $TAXONOMY_PRODUCTION_PATH/bin/start.sh
+    '"
 else
     echo "ERROR: UNABLE TO FIND RELEASE DIRECTORY $BUILD_RELEASE_DIR"
 fi
