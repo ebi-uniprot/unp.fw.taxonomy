@@ -1,0 +1,3 @@
+REVIEWBOARD_URL = 'http://ves-ebi-c7.ebi.ac.uk/'
+REPOSITORY = 'fw.taxonomy'
+TRACKING_BRANCH = "origin/master"
