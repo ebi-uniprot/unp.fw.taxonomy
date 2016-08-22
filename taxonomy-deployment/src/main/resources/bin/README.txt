@@ -26,14 +26,14 @@ This way we keep all scripts updated in GIT.
 2- become uni_adm
 3- ssh to stage server
 4- inside taxonomy bin folder execute the command "./create-taxonomy-release-files.sh" passing release name and
-environment as parameter for example: ./create-taxonomy-release-files.sh 2016_01 stage
+environment as parameter for example: ./create-taxonomy-release-files.sh 2016_01_PROD stage
 5- Make sure that inside taxonomy folder there is currentrelease link. If there is not, execute the command:
-        ln -s releases/"releasename" currentrelease
+        ln -s releases/2016_01_PROD currentrelease
 6- Make sure that inside taxonomy bin folder there is config.properties link. If there is not, execute the command:
         ln -s ../currentrelease/conf/config.properties config.properties
 7- IMPORTANT: This step will be always called by Production team (indexed neo4j data must be sync with uniprot
 taxonomy):
-        inside taxonomy bin folder execute the command ./index-neo4j-data.sh releasename
+        inside taxonomy bin folder execute the command ./index-neo4j-data.sh 2016_01_PROD
 8- done
 
 #################### Deploy Release Files to production##################
@@ -41,7 +41,7 @@ Production environment pre requirement:
     1- make sure that production has the following structure
     taxonomy
        bin
-         config.properties -> ../currentrelease/2016_07/conf/config.properties (example)
+         config.properties -> ../currentrelease/2016_01_PROD/conf/config.properties (example)
          environment.properties
          start.sh
          stop.sh
@@ -52,8 +52,8 @@ Production environment pre requirement:
 3- ssh to stage server
 4- Make sure that Release Files were created properly and it has (conf/config.properties, lib/, logs/, and
 neo4j-taxonomy-database/) directories with proper files inside.
-5- inside taxonomy bin folder execute the command ./deploy-taxonomy-to-production.sh releasename fallback
+5- inside taxonomy bin folder execute the command ./deploy-taxonomy-to-production.sh 2016_01_PROD fallback
 6- Make sure that fallback server is running properly
-7- inside taxonomy bin folder execute the command ./deploy-taxonomy-to-production.sh releasename prod
+7- inside taxonomy bin folder execute the command ./deploy-taxonomy-to-production.sh 2016_01_PROD prod
 8- Make sure that prod server is running properly
 9. Done

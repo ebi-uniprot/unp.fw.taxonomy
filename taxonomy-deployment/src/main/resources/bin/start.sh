@@ -62,7 +62,7 @@ nohup $JAVA_HOME/bin/java -server -XX:+UseG1GC $TAXONOMY_RESTFUL_JVM_MEM_MAX $TA
 
 sleep 5
 
-grep "ready to service requests" $CONSOLE_LOG_FILE || {
+grep "ready to service requests" "$LOG_DIR/application.log" || {
     echo "Taxonomy Service cannot be started. please check"
     exit 1
 }
