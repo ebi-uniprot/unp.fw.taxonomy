@@ -1,6 +1,8 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.swagger;
 
 /**
+ * This class contains Swagger constants for taxonomy service
+ *
  * Created by lgonzales on 04/03/16.
  */
 public class TaxonomyConstants {
@@ -13,56 +15,58 @@ public class TaxonomyConstants {
             "taxonomy elements, and the path between them. Services can return JSON or XML format";
 
     //TAXONOMY DETAIL BY ID
-    public static final String API_OPERATION_TAXONOMY_DETAIL_BY_ID = "This service return details about a taxonomy " +
-            "element, and also links for it parent, siblings and children ";
+    public static final String API_OPERATION_TAXONOMY_DETAIL_BY_ID = " This service returns details about a taxonomy " +
+            "node, and also links to its parent, sibling and children nodes";
 
     public static final String NOTE_TAXONOMY_ID = "with taxonomy identification as parameter";
 
     //TAXONOMY BASE NODE BY ID
-    public static final String API_OPERATION_TAXONOMY_NODE_BY_ID = "This service return a taxonomy node information";
+    public static final String API_OPERATION_TAXONOMY_NODE_BY_ID = "This service returns details about a taxonomy " +
+            "node such as the rank, mnemonic, scientific name and common name";
 
     //TAXONOMY PARENT
-    public static final String API_OPERATION_TAXONOMY_PARENT_BY_ID = "This service return details about a taxonomy " +
-            "parent element";
+    public static final String API_OPERATION_TAXONOMY_PARENT_BY_ID = "This service returns details about the parent " +
+            "node for a given taxonomy node";
 
     //TAXONOMY SIBLINGS
-    public static final String API_OPERATION_TAXONOMY_SIBLINGS_BY_ID = "This service return a list of siblings that " +
-            "belongs to a taxonomy element";
+    public static final String API_OPERATION_TAXONOMY_SIBLINGS_BY_ID = "This service returns a list of sibling nodes " +
+            "that belongs for a given taxonomy node";
 
     //TAXONOMY CHILDREN
-    public static final String API_OPERATION_TAXONOMY_CHILDREN_BY_ID = "This service return a list of children that " +
-            "belongs to a taxonomy element";
+    public static final String API_OPERATION_TAXONOMY_CHILDREN_BY_ID = "This service returns a list of children nodes" +
+            " that belongs to a taxonomy node";
     //TAXONOMY BY NAME
-    public static final String API_OPERATION_TAXONOMY_DETAIL_BY_NAME = "This service return a list of " +
-            "taxonomies with a specific name. it element contains taxonomy detail and also links for it parent, " +
-            "siblings and children";
+    public static final String API_OPERATION_TAXONOMY_DETAIL_BY_NAME = "This service return a list of taxonomic nodes" +
+            " with the specific queried name. For each node, the service provides it’s taxonomic details and also " +
+            "links to its parent, siblings and children nodes";
 
     public static final String NOTE_TAXONOMY_DETAIL_BY_NAME = "with taxonomy name as parameter";
 
     //TAXONOMY BY NAME BASE NODE
-    public static final String API_OPERATION_TAXONOMY_NODES_BY_NAME = "This service return a list of " +
-            "taxonomies with a specific name. it element contains only taxonomy base node";
+    public static final String API_OPERATION_TAXONOMY_NODES_BY_NAME = "This service return a list of taxonomic nodes " +
+            "with a specific name. For each node, the service provides it’s taxonomic details such as the rank, " +
+            "mnemonic, scientific name and common name";
 
     //TAXONOMY RELATIONSHIP
     public static final String API_OPERATION_TAXONOMY_RELATIONSHIP = "This service return the path between to " +
-            "taxonomies showing their relation";
+            "taxonomic nodes showing their relationship";
 
     public static final String NOTE_TAXONOMY_RELATIONSHIP = "";
 
     // TAXONOMY PATH
-    public static final String API_OPERATION_TAXONOMY_PATH = "This service return all taxonomies elements " +
-            "that has relationship with taxonomyId in a specific direction (TOP or BOTTOM) and depth levels";
+    public static final String API_OPERATION_TAXONOMY_PATH = "This service return all taxonomic nodes that have a " +
+            "relationship with the queried taxonomy ID in a specific direction (TOP or BOTTOM) and depth level";
 
     public static final String NOTE_TAXONOMY_PATH = "";
 
     //TAXONOMY LINEAGE
-    public static final String API_OPERATION_TAXONOMY_LINEAGE = "This service return the taxonomic hierarchical " +
-            "classification lineage of the source organism. It lists the nodes as they appear in the " +
-            "taxonomic tree, with the more specific listed first.";
+    public static final String API_OPERATION_TAXONOMY_LINEAGE = "This service returns the taxonomic lineage for a " +
+            "given taxonomy node. It lists the nodes as they appear in the taxonomic tree, with the more specific " +
+            "listed first";
 
 
     //TAXONOMY ANCESTOR
-    public static final String API_OPERATION_TAXONOMY_ANCESTOR = "This service return the lowest common ancestor " +
+    public static final String API_OPERATION_TAXONOMY_ANCESTOR = "This service returns the lowest common ancestor " +
             "(LCA) of two taxonomy nodes.";
 
     public static final String NOTE_TAXONOMY_ANCESTOR_IDS = "";
