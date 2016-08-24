@@ -51,18 +51,19 @@ public class TaxonomyConstants {
 
     // TAXONOMY PATH
     public static final String API_OPERATION_TAXONOMY_PATH = "This service return all taxonomies elements " +
-            "that has relationship with taxonomyId in a specific direction (TOP or DOWN) and depth levels";
+            "that has relationship with taxonomyId in a specific direction (TOP or BOTTOM) and depth levels";
 
     public static final String NOTE_TAXONOMY_PATH = "";
 
     //TAXONOMY LINEAGE
-    public static final String API_OPERATION_TAXONOMY_LINEAGE = "This service return all taxonomies elements " +
-            "that has relationship with taxonomyId in a specific direction (TOP or DOWN) and depth levels";
+    public static final String API_OPERATION_TAXONOMY_LINEAGE = "This service return the taxonomic hierarchical " +
+            "classification lineage of the source organism. It lists the nodes as they appear in the " +
+            "taxonomic tree, with the more specific listed first.";
 
 
     //TAXONOMY ANCESTOR
-    public static final String API_OPERATION_TAXONOMY_ANCESTOR = "This service return all taxonomies elements " +
-            "that has relationship with taxonomyId in a specific direction (TOP or DOWN) and depth levels";
+    public static final String API_OPERATION_TAXONOMY_ANCESTOR = "This service return the lowest common ancestor " +
+            "(LCA) of two taxonomy nodes.";
 
     public static final String NOTE_TAXONOMY_ANCESTOR_IDS = "";
 
