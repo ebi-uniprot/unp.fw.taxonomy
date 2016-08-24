@@ -44,8 +44,7 @@ public class TaxonomyConstants {
 
     //TAXONOMY BY NAME BASE NODE
     public static final String API_OPERATION_TAXONOMY_NODES_BY_NAME = "This service returns a list of taxonomic nodes" +
-            " " +
-            "with a specific name. For each node, the service provides it’s taxonomic details such as the rank, " +
+            " with a specific name. For each node, the service provides it’s taxonomic details such as the rank, " +
             "mnemonic, scientific name and common name.";
 
     //TAXONOMY RELATIONSHIP
