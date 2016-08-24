@@ -16,53 +16,54 @@ public class TaxonomyConstants {
 
     //TAXONOMY DETAIL BY ID
     public static final String API_OPERATION_TAXONOMY_DETAIL_BY_ID = " This service returns details about a taxonomy " +
-            "node, and also links to its parent, sibling and children nodes";
+            "node, and also links to its parent, sibling and children nodes.";
 
     public static final String NOTE_TAXONOMY_ID = "with taxonomy identification as parameter";
 
     //TAXONOMY BASE NODE BY ID
     public static final String API_OPERATION_TAXONOMY_NODE_BY_ID = "This service returns details about a taxonomy " +
-            "node such as the rank, mnemonic, scientific name and common name";
+            "node such as the rank, mnemonic, scientific name and common name.";
 
     //TAXONOMY PARENT
     public static final String API_OPERATION_TAXONOMY_PARENT_BY_ID = "This service returns details about the parent " +
-            "node for a given taxonomy node";
+            "node for a given taxonomy node.";
 
     //TAXONOMY SIBLINGS
     public static final String API_OPERATION_TAXONOMY_SIBLINGS_BY_ID = "This service returns a list of sibling nodes " +
-            "that belongs for a given taxonomy node";
+            "that belongs for a given taxonomy node.";
 
     //TAXONOMY CHILDREN
     public static final String API_OPERATION_TAXONOMY_CHILDREN_BY_ID = "This service returns a list of children nodes" +
-            " that belongs to a taxonomy node";
+            " that belongs to a taxonomy node.";
     //TAXONOMY BY NAME
-    public static final String API_OPERATION_TAXONOMY_DETAIL_BY_NAME = "This service return a list of taxonomic nodes" +
-            " with the specific queried name. For each node, the service provides it’s taxonomic details and also " +
-            "links to its parent, siblings and children nodes";
+    public static final String API_OPERATION_TAXONOMY_DETAIL_BY_NAME = "This service returns a list of taxonomic " +
+            "nodes with the specific queried name. For each node, the service provides it’s taxonomic details and also " +
+            "links to its parent, siblings and children nodes.";
 
     public static final String NOTE_TAXONOMY_DETAIL_BY_NAME = "with taxonomy name as parameter";
 
     //TAXONOMY BY NAME BASE NODE
-    public static final String API_OPERATION_TAXONOMY_NODES_BY_NAME = "This service return a list of taxonomic nodes " +
+    public static final String API_OPERATION_TAXONOMY_NODES_BY_NAME = "This service returns a list of taxonomic nodes" +
+            " " +
             "with a specific name. For each node, the service provides it’s taxonomic details such as the rank, " +
-            "mnemonic, scientific name and common name";
+            "mnemonic, scientific name and common name.";
 
     //TAXONOMY RELATIONSHIP
-    public static final String API_OPERATION_TAXONOMY_RELATIONSHIP = "This service return the path between to " +
-            "taxonomic nodes showing their relationship";
+    public static final String API_OPERATION_TAXONOMY_RELATIONSHIP = "This service returns the path between to " +
+            "taxonomic nodes showing their relationship.";
 
     public static final String NOTE_TAXONOMY_RELATIONSHIP = "";
 
     // TAXONOMY PATH
-    public static final String API_OPERATION_TAXONOMY_PATH = "This service return all taxonomic nodes that have a " +
-            "relationship with the queried taxonomy ID in a specific direction (TOP or BOTTOM) and depth level";
+    public static final String API_OPERATION_TAXONOMY_PATH = "This service returns all taxonomic nodes that have a " +
+            "relationship with the queried taxonomy ID in a specific direction (TOP or BOTTOM) and depth level.";
 
     public static final String NOTE_TAXONOMY_PATH = "";
 
     //TAXONOMY LINEAGE
     public static final String API_OPERATION_TAXONOMY_LINEAGE = "This service returns the taxonomic lineage for a " +
             "given taxonomy node. It lists the nodes as they appear in the taxonomic tree, with the more specific " +
-            "listed first";
+            "listed first.";
 
 
     //TAXONOMY ANCESTOR
