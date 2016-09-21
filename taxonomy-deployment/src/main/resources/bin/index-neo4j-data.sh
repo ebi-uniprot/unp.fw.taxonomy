@@ -8,13 +8,14 @@
 set -euo pipefail
 IFS=$'\n\t '
 
+SERVICE_BIN_PATH="$(dirname `which $0`)"
 # ======= read the variables used by the control scripts =======================================
-source "environment.properties" || {
+source "$SERVICE_BIN_PATH/environment.properties" || {
     echo "Please create a file called, environment.properties, containing the necessary environment variables."
     exit 1;
 }
 
-source common.sh
+source "$SERVICE_BIN_PATH/common.sh"
 
 # ======= check the right user runs this script =======================================
 if ! echo "$PERMITTED_USER" | grep "$USER" > /dev/null 2>&1; then
@@ -28,7 +29,6 @@ else
     export JAVA_HOME=$JAVA_PATH
 
     # ======= FOLDER VARIABLES =======================================
-    SERVICE_BIN_PATH="$(pwd -P)"
     BUILD_RELEASE_DIR="$(readlink -m $SERVICE_BIN_PATH/../$RELEASE_DIR/$1)"
 
     # create directory releases/releaseName
@@ -43,16 +43,17 @@ else
 
     # ======= create neo4j database directory ==========================================
     createDirectory $NEO4J_DATABASE_PATH 1
-
+    echo "$RELEASE_LIB_PATH"
     if [ ! -d "$RELEASE_LIB_PATH" ]; then
-	RELEASE_LIB_PATH="$(readlink -f $SERVICE_BIN_PATH/../$CURRENT_RELEASE_LINK_NAME/$LIB_DIR)"
+	    RELEASE_LIB_PATH="$(readlink -f $SERVICE_BIN_PATH/../$CURRENT_RELEASE_LINK_NAME/$LIB_DIR)"
     fi    
     echo "executing taxonomy-import at $RELEASE_LIB_PATH"
     # ======= execute neo4j import Job ==========================================
     IMPORT_JAR_PATH="$RELEASE_LIB_PATH/$TAXONOMY_IMPORT_ARTIFACT_ID-$TAXONOMY_VERSION.jar"
     JAVA_OPTS="$TAXONOMY_IMPORT_JVM_MEM_MAX $TAXONOMY_IMPORT_JVM_MEM_MIN -Dneo4j.database.path=$NEO4J_DATABASE_PATH"
     echo "running java command $JAVA_OPTS -jar $IMPORT_JAR_PATH"
-    $JAVA_HOME/bin/java $JAVA_OPTS -jar $IMPORT_JAR_PATH | tee -a "$RELEASE_LOG_DIR/taxonomy-import.log"
+    echo "check logs at $RELEASE_LOG_DIR/taxonomy-import.log"
+    $JAVA_HOME/bin/java $JAVA_OPTS -jar $IMPORT_JAR_PATH > "$RELEASE_LOG_DIR/taxonomy-import.log"
 
     if [ "ls -A $NEO4J_DATABASE_PATH" ]
     then
