@@ -21,10 +21,14 @@ import javax.xml.bind.annotation.XmlType;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @XmlRootElement
-@XmlType(name = "taxonomies", propOrder = {"taxonomies","pageInfo"})
+@XmlType(name = "taxonomies", propOrder = {"taxonomies","errors","redirects","pageInfo"})
 public class Taxonomies {
 
     private List<TaxonomyNode> taxonomies;
+
+    private List<TaxonomiesError> errors;
+
+    private List<TaxonomiesRedirect> redirects;
 
     private PageInformation pageInfo;
 
@@ -48,6 +52,30 @@ public class Taxonomies {
         this.taxonomies = taxonomies;
     }
 
+    @XmlElement(name = "error")
+    @XmlElementWrapper(name = "errors")
+    @JsonGetter(value = "errors")
+    public List<TaxonomiesError> getErrors() {
+        return errors;
+    }
+
+    @JsonSetter(value = "errors")
+    public void setErrors(List<TaxonomiesError> errors) {
+        this.errors = errors;
+    }
+
+    @XmlElement(name = "redirect")
+    @XmlElementWrapper(name = "redirects")
+    @JsonGetter(value = "redirects")
+    public List<TaxonomiesRedirect> getRedirects() {
+        return redirects;
+    }
+
+    @JsonSetter(value = "redirects")
+    public void setRedirects(List<TaxonomiesRedirect> redirects) {
+        this.redirects = redirects;
+    }
+
     @XmlElement
     public PageInformation getPageInfo() {
         return pageInfo;
@@ -60,6 +88,8 @@ public class Taxonomies {
     @Override public String toString() {
         return "Taxonomies{" +
                 "taxonomies=" + taxonomies +
+                ", errors=" + errors +
+                ", redirects=" + redirects +
                 ", pageInfo=" + pageInfo +
                 '}';
     }

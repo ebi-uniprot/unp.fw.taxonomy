@@ -38,7 +38,7 @@ public class URLUtil {
             return null;
         }else{
             if(paramName == null) {
-                return currentURL.replace("" + oldId, "" + newId);
+                return currentURL.replace("/" + oldId, "/" + newId);
             }else{
                 return currentURL.replace(paramName+"=" + oldId, paramName+"=" + newId);
             }

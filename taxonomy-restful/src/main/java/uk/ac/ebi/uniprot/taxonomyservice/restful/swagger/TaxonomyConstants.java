@@ -18,11 +18,19 @@ public class TaxonomyConstants {
     public static final String API_OPERATION_TAXONOMY_DETAIL_BY_ID = " This service returns details about a taxonomy " +
             "node, and also links to its parent, sibling and children nodes.";
 
+    //TAXONOMY DETAIL BY ID LIST
+    public static final String API_OPERATION_TAXONOMY_DETAIL_BY_ID_LIST = " This service returns a list of taxonomy " +
+            "node details with links to its parent, sibling and children nodes.";
+
     public static final String NOTE_TAXONOMY_ID = "with taxonomy identification as parameter";
 
     //TAXONOMY BASE NODE BY ID
     public static final String API_OPERATION_TAXONOMY_NODE_BY_ID = "This service returns details about a taxonomy " +
             "node such as the rank, mnemonic, scientific name and common name.";
+
+    //TAXONOMY BASE NODE BY ID LIST
+    public static final String API_OPERATION_TAXONOMY_NODE_BY_ID_LIST = "This service returns a list of taxonomy node" +
+            " details such as the rank, mnemonic, scientific name and common name.";
 
     //TAXONOMY PARENT
     public static final String API_OPERATION_TAXONOMY_PARENT_BY_ID = "This service returns details about the parent " +

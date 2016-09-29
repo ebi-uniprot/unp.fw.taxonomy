@@ -7,6 +7,8 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * This class represents page metadata information in a search result content
  *
+ * It contains annotations that will be used by Jackson Parser to build XML or JSON response format
+ *
  * Created by lgonzales on 21/06/16.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)

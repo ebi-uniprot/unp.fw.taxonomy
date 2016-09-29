@@ -5,10 +5,7 @@ import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.NameRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.PathRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -77,6 +74,27 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
+    public void getTaxonomyDetailsByIdListWithAnInvalidIdNodeReturnOptionalEmpty() {
+        List<String> ids = Arrays.asList("5","8");
+        Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomyDetailsByIdList(ids,baseURL);
+        assertThat(nodeOptional.isPresent(),is(false));
+    }
+
+    @Test
+    public void getTaxonomyDetailsByIdListWithPartialValidIdNodeReturnOnlyValidBaseNode() {
+        List<String> ids = Arrays.asList("1","5","11","8","12","101");
+        Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomyDetailsByIdList(ids,baseURL);
+        assertTaxonomiesResult(nodeOptional,4,4,null, 1);
+    }
+
+    @Test
+    public void getTaxonomyDetailsByIdListWithValidIdNodeReturnValidBaseNode() {
+        List<String> ids = Arrays.asList("1","11","12");
+        Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomyDetailsByIdList(ids,baseURL);
+        assertTaxonomiesResult(nodeOptional,3,3,null, 1);
+    }
+
+    @Test
     public void getTaxonomyBaseNodeByIdWithAnInvalidIdNodeReturnOptionalEmpty() {
         Optional<TaxonomyNode> node = neo4jDataAccess.getTaxonomyBaseNodeById(5);
         assertThat(node.isPresent(),is(false));
@@ -87,6 +105,27 @@ public class Neo4jTaxonomyDataAccessTest {
         Optional<TaxonomyNode> node = neo4jDataAccess.getTaxonomyBaseNodeById(10L);
         assertThat(node.isPresent(),is(true));
         assertBaseNode(10L,node.get());
+    }
+
+    @Test
+    public void getTaxonomyBaseNodeByIdListWithAnInvalidIdNodeReturnOptionalEmpty() {
+        List<String> ids = Arrays.asList("5","8");
+        Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomyBaseNodeByIdList(ids);
+        assertThat(nodeOptional.isPresent(),is(false));
+    }
+
+    @Test
+    public void getTaxonomyBaseNodeByIdListWithPartialValidIdNodeReturnOnlyValidBaseNode() {
+        List<String> ids = Arrays.asList("1","5","11","8","12","101");
+        Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomyBaseNodeByIdList(ids);
+        assertTaxonomiesResult(nodeOptional,4,4,null, 1);
+    }
+
+    @Test
+    public void getTaxonomyBaseNodeByIdListWithValidIdNodeReturnValidBaseNode() {
+        List<String> ids = Arrays.asList("1","11","12");
+        Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomyBaseNodeByIdList(ids);
+        assertTaxonomiesResult(nodeOptional,3,3,null, 1);
     }
 
     @Test
@@ -565,8 +604,7 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     private void assertTaxonomiesResult(Optional<Taxonomies> nodeOptional,int size,int totalRecords, NameRequestParams
-            nameParams, long
-     firstTaxonomyId) {
+            nameParams, long firstTaxonomyId) {
         assertThat(nodeOptional.isPresent(),is(true));
         Taxonomies nodes = nodeOptional.get();
         assertThat(nodes.getTaxonomies(),notNullValue());

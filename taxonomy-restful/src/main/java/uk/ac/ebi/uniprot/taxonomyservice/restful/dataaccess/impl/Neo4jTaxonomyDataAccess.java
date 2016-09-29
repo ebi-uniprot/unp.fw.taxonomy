@@ -43,6 +43,9 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
     private static final String GET_TAXONOMY_BASE_NODE_BY_ID_CYPHER_QUERY =
             "MATCH (n:Node) WHERE n.taxonomyId = {id} RETURN n as node";
 
+    private static final String GET_TAXONOMY_BASE_NODE_LIST_BY_IDS_CYPHER_QUERY =
+            "MATCH (n:Node) WHERE n.taxonomyId in {ids} RETURN n as node";
+
     private static final String GET_TAXONOMY_PARENT_BY_ID_CYPHER_QUERY =
             "MATCH (n:Node)-[r:CHILD_OF]->(p:Node) WHERE n.taxonomyId = {id} RETURN p as node";
 
@@ -56,8 +59,11 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
             "extract(path in (p)<-[:CHILD_OF]-(:Node) | extract( r in relationships(path) | startNode(r).taxonomyId ))"+
             " as siblings";
 
-    private static final String GET_TAXONOMY_DETAILS_BY_ID_ONE_CYPHER_QUERY =
+    private static final String GET_TAXONOMY_DETAILS_BY_ID_CYPHER_QUERY =
             "MATCH (n:Node) WHERE n.taxonomyId = {id} "+GET_TAXONOMY_DETAIL_MATCH_BASE;
+
+    private static final String GET_TAXONOMY_DETAILS_BY_ID_LIST_CYPHER_QUERY =
+            "MATCH (n:Node) WHERE n.taxonomyId in {ids} "+GET_TAXONOMY_DETAIL_MATCH_BASE;
 
     private static final String GET_TAXONOMY_DETAILS_BY_NAME_CYPHER_QUERY_BASE =
             "MATCH (n:Node) WHERE n.{fieldName} {searchType} {name} ";
@@ -132,7 +138,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
         Map<String, Object> params = new HashMap<>();
         params.put("id", "" + taxonomyId);
         try (Transaction tx = neo4jDb.beginTx();
-                Result queryResult = neo4jDb.execute(GET_TAXONOMY_DETAILS_BY_ID_ONE_CYPHER_QUERY, params)) {
+                Result queryResult = neo4jDb.execute(GET_TAXONOMY_DETAILS_BY_ID_CYPHER_QUERY, params)) {
             Optional<ArrayList<TaxonomyNode>> node = getTaxonomyFromQueryResult(basePath, queryResult);
             if(node.isPresent()){
                 result = Optional.of(node.get().get(0));
@@ -146,11 +152,66 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
     }
 
     @Override
+    public Optional<Taxonomies> getTaxonomyDetailsByIdList(List<String> taxonomyIds, String basePath) {
+        Optional<Taxonomies> result = Optional.empty();
+        long startTime = System.currentTimeMillis();
+        Map<String, Object> params = new HashMap<>();
+        params.put("ids", taxonomyIds);
+        try (Transaction tx = neo4jDb.beginTx();
+                Result queryResult = neo4jDb.execute(GET_TAXONOMY_DETAILS_BY_ID_LIST_CYPHER_QUERY, params)) {
+            Optional<ArrayList<TaxonomyNode>> node = getTaxonomyFromQueryResult(basePath, queryResult);
+            if(node.isPresent()){
+                Taxonomies taxonomies = new Taxonomies();
+                taxonomies.setTaxonomies(node.get());
+                result = Optional.of(taxonomies);
+            }
+            queryResult.close();
+            tx.success();
+        }
+        long elapsed = System.currentTimeMillis() - startTime;
+        logger.debug("NeoQuery Time for getTaxonomyDetailsByIdList: "+elapsed+ FOR_LOGGER+taxonomyId);
+        return result;
+    }
+
+    @Override
     public Optional<TaxonomyNode> getTaxonomyBaseNodeById(long taxonomyId){
         long startTime = System.currentTimeMillis();
         Optional<TaxonomyNode> result = getTaxonomyBaseNodeById(taxonomyId,GET_TAXONOMY_BASE_NODE_BY_ID_CYPHER_QUERY);
         long elapsed = System.currentTimeMillis() - startTime;
         logger.debug("NeoQuery Time for getTaxonomyBaseNodeById: "+elapsed+ FOR_LOGGER+taxonomyId);
+        return result;
+    }
+
+
+    @Override
+    public Optional<Taxonomies> getTaxonomyBaseNodeByIdList(List<String> taxonomyIds){
+        long startTime = System.currentTimeMillis();
+        Optional<Taxonomies> result =  Optional.empty();
+        Map<String, Object> params = new HashMap<>();
+        params.put("ids", taxonomyIds);
+        List<TaxonomyNode> queryResultList = new ArrayList<>();
+        try ( Transaction tx = neo4jDb.beginTx();
+                Result queryResult = neo4jDb.execute(GET_TAXONOMY_BASE_NODE_LIST_BY_IDS_CYPHER_QUERY,params) )
+        {
+            while ( queryResult.hasNext() )
+            {
+                Map<String,Object> row = queryResult.next();
+                if(row.containsKey("node")) {
+                    Node node = (Node) row.get("node");
+                    queryResultList.add(getTaxonomyBaseNodeFromQueryResult(node));
+                }
+            }
+            queryResult.close();
+            tx.success();
+            tx.close();
+        }
+        if(!queryResultList.isEmpty()){
+            Taxonomies taxonomies = new Taxonomies();
+            taxonomies.setTaxonomies(queryResultList);
+            result = Optional.of(taxonomies);
+        }
+        long elapsed = System.currentTimeMillis() - startTime;
+        logger.debug("NeoQuery Time for getTaxonomyBaseNodeByIdList: "+elapsed+ FOR_LOGGER+taxonomyIds);
         return result;
     }
 

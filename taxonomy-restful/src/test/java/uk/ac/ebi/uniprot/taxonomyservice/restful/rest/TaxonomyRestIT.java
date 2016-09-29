@@ -5,6 +5,7 @@ import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.ErrorMessage;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.PageInformation;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstants;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.util.ResponseAssert;
 
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.response.ExtractableResponse;
@@ -13,7 +14,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.ws.rs.core.HttpHeaders;
 import org.junit.ClassRule;
@@ -25,13 +25,11 @@ import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 import static javax.ws.rs.core.Response.Status.OK;
 import static javax.ws.rs.core.Response.Status.SEE_OTHER;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.emptyIterable;
 import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.isEmptyOrNullString;
 
 /**
  * Class used to test Taxonomy service use cases
@@ -497,6 +495,260 @@ public class TaxonomyRestIT {
 
     /*
         END: Test with /taxonomy/id/{subresources}
+
+        START: Test with /taxonomy/ids/{ids}
+    */
+
+    @Test
+    public void lookupTaxonomyIdsWithInvalidPathReturnsNotFoundStatus() {
+        String requestedURL = TAXONOMY_BASE_PATH + "/ids/";
+
+        ExtractableResponse<Response> response = when()
+                .get(requestedURL)
+                .then()
+                .statusCode(NOT_FOUND.getStatusCode())
+                .extract();
+
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_404_GENERAL);
+        assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
+    }
+
+    @Test
+    public void lookupTaxonomyIdsWithInvalidTaxonomyIdReturnsNotFoundStatus() throws UnsupportedEncodingException {
+        String requestedURL = TAXONOMY_BASE_PATH + "/ids/1,INVALID,2";
+
+        ExtractableResponse<Response> response = when()
+                .get(requestedURL)
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode())
+                .extract();
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(TaxonomyConstants.IDS_PARAMETER_VALID_NUMBER);
+        requestedURL = TAXONOMY_BASE_PATH + "/ids/"+URLEncoder.encode("1,INVALID,2", StandardCharsets.UTF_8.toString());
+        assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
+    }
+
+    @Test
+    public void lookupTaxonomyIdsWithBigListReturnMaxSizeErrorWithJsonContentType() throws
+                                                                                         UnsupportedEncodingException{
+        String requestedURL = TAXONOMY_BASE_PATH + "/ids/1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7," +
+                "8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1";
+
+        ExtractableResponse<Response> response = when()
+                .get(requestedURL)
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode())
+                .extract();
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(TaxonomyConstants.IDS_PARAMETER_MIN_MAX_SIZE.replace("{minSize}","2").replace("{maxSize}",
+                "50"));
+        requestedURL = TAXONOMY_BASE_PATH + "/ids/"+URLEncoder.encode("1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0," +
+                "1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1", StandardCharsets.UTF_8.toString());
+        assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
+    }
+
+    @Test
+    public void lookupTaxonomyIdsWithSmallListReturnMinSizeErrorWithJsonContentType()throws UnsupportedEncodingException{
+        String requestedURL = TAXONOMY_BASE_PATH + "/ids/1";
+
+        ExtractableResponse<Response> response = when()
+                .get(requestedURL)
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode())
+                .extract();
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(TaxonomyConstants.IDS_PARAMETER_MIN_MAX_SIZE.replace("{minSize}","2").replace("{maxSize}",
+                "50"));
+        assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
+    }
+
+    @Test
+    public void lookupTaxonomyIdsWithHistoricalChangeOnlyReturnsOkStatusJsonFormatAndTheCorrectBody() {
+        ExtractableResponse<Response> response = when()
+                .get(TAXONOMY_BASE_PATH + "/ids/9,99")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract();
+
+        ResponseAssert.assertTaxonomiesListResponse(response,ContentType.JSON,0,null,2,9L,0,null,false);
+    }
+
+
+    @Test
+    public void lookupTaxonomyIdsWithInvalidIdsOnlyReturnsOkStatusJsonFormatAndTheCorrectBody() {
+        ExtractableResponse<Response> response = when()
+                .get(TAXONOMY_BASE_PATH + "/ids/6,7,8")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract();
+
+        ResponseAssert.assertTaxonomiesListResponse(response,ContentType.JSON,0,null,0,null,3,6L,false);
+    }
+
+    @Test
+    public void lookupTaxonomyIdsWithValidIdsOnlyReturnsOkStatusJsonFormatAndTheCorrectBody() {
+        ExtractableResponse<Response> response = when()
+                .get(TAXONOMY_BASE_PATH + "/ids/11,12,101,102")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract();
+
+        ResponseAssert.assertTaxonomiesListResponse(response,ContentType.JSON,4,11L,0,null,0,null,true);
+    }
+
+    @Test
+    public void lookupTaxonomyIdsWithValidInvalidAndRedirectIdsThatReturnsOkStatusJsonFormatAndTheCorrectBody() {
+        ExtractableResponse<Response> response = when()
+                .get(TAXONOMY_BASE_PATH + "/ids/11,9,5?format=JSON")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract();
+
+        ResponseAssert.assertTaxonomiesListResponse(response,ContentType.JSON,1,11L,1,9L,1,5L,true);
+    }
+
+    @Test
+    public void lookupTaxonomyIdsWithValidInvalidAndRedirectIdsThatReturnsOkStatusXmlFormatAndTheCorrectBody() {
+        ExtractableResponse<Response> response = when()
+                .get(TAXONOMY_BASE_PATH + "/ids/11,9,5?format=XML")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract();
+
+        ResponseAssert.assertTaxonomiesListResponse(response,ContentType.XML,1,11L,1,9L,1,5L,true);
+    }
+
+    /*
+        END: Test with /taxonomy/ids/{ids}
+
+        START: Test with /taxonomy/ids/{ids}/node
+    */
+
+
+    @Test
+    public void lookupTaxonomyBaseNodeIdsWithInvalidPathReturnsNotFoundStatus() {
+        String requestedURL = TAXONOMY_BASE_PATH + "/ids/1/INVALID";
+
+        ExtractableResponse<Response> response = when()
+                .get(requestedURL)
+                .then()
+                .statusCode(NOT_FOUND.getStatusCode())
+                .extract();
+
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_404_GENERAL);
+        assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
+    }
+
+    @Test
+    public void lookupTaxonomyBaseNodeIdsWithInvalidTaxonomyIdReturnsNotFoundStatus() throws UnsupportedEncodingException {
+        String requestedURL = TAXONOMY_BASE_PATH + "/ids/1,INVALID,2/node";
+
+        ExtractableResponse<Response> response = when()
+                .get(requestedURL)
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode())
+                .extract();
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(TaxonomyConstants.IDS_PARAMETER_VALID_NUMBER);
+        requestedURL = TAXONOMY_BASE_PATH + "/ids/"+URLEncoder.encode("1,INVALID,2", StandardCharsets.UTF_8.toString())+ "/node";
+        assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
+    }
+
+    @Test
+    public void lookupTaxonomyBaseNodeIdsWithBigListReturnMaxSizeErrorWithJsonContentType() throws
+                                                                                    UnsupportedEncodingException{
+        String requestedURL = TAXONOMY_BASE_PATH + "/ids/1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7," +
+                "8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1/node";
+
+        ExtractableResponse<Response> response = when()
+                .get(requestedURL)
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode())
+                .extract();
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(TaxonomyConstants.IDS_PARAMETER_MIN_MAX_SIZE.replace("{minSize}","2").replace("{maxSize}",
+                "50"));
+        requestedURL = TAXONOMY_BASE_PATH + "/ids/"+URLEncoder.encode("1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0," +
+                "1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1", StandardCharsets.UTF_8.toString())
+                +"/node";
+        assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
+    }
+
+    @Test
+    public void lookupTaxonomyBaseNodeIdsWithSmallListReturnMinSizeErrorWithJsonContentType()throws UnsupportedEncodingException{
+        String requestedURL = TAXONOMY_BASE_PATH + "/ids/1/node";
+
+        ExtractableResponse<Response> response = when()
+                .get(requestedURL)
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode())
+                .extract();
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(TaxonomyConstants.IDS_PARAMETER_MIN_MAX_SIZE.replace("{minSize}","2").replace("{maxSize}",
+                "50"));
+        assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
+    }
+
+    @Test
+    public void lookupTaxonomyBaseNodeIdsWithHistoricalChangeOnlyReturnsOkStatusJsonFormatAndTheCorrectBody() {
+        ExtractableResponse<Response> response = when()
+                .get(TAXONOMY_BASE_PATH + "/ids/9,99/node")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract();
+
+        ResponseAssert.assertTaxonomiesListResponse(response,ContentType.JSON,0,null,2,9L,0,null,false);
+    }
+
+
+    @Test
+    public void lookupTaxonomyBaseNodeIdsWithInvalidIdsOnlyReturnsOkStatusJsonFormatAndTheCorrectBody() {
+        ExtractableResponse<Response> response = when()
+                .get(TAXONOMY_BASE_PATH + "/ids/6,7,8/node")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract();
+
+        ResponseAssert.assertTaxonomiesListResponse(response,ContentType.JSON,0,null,0,null,3,6L,false);
+    }
+
+    @Test
+    public void lookupTaxonomyBaseNodeIdsWithValidIdsOnlyReturnsOkStatusJsonFormatAndTheCorrectBody() {
+        ExtractableResponse<Response> response = when()
+                .get(TAXONOMY_BASE_PATH + "/ids/11,12,101,102/node")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract();
+
+        ResponseAssert.assertTaxonomiesListResponse(response,ContentType.JSON,4,11L,0,null,0,null,false);
+    }
+
+    @Test
+    public void lookupTaxonomyBaseNodeIdsWithValidInvalidAndRedirectIdsThatReturnsOkStatusJsonFormatAndTheCorrectBody() {
+        ExtractableResponse<Response> response = when()
+                .get(TAXONOMY_BASE_PATH + "/ids/11,9,5/node?format=JSON")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract();
+
+        ResponseAssert.assertTaxonomiesListResponse(response,ContentType.JSON,1,11L,1,9L,1,5L,false);
+    }
+
+    @Test
+    public void lookupTaxonomyBaseNodeIdsWithValidInvalidAndRedirectIdsThatReturnsOkStatusXmlFormatAndTheCorrectBody() {
+        ExtractableResponse<Response> response = when()
+                .get(TAXONOMY_BASE_PATH + "/ids/11,9,5/node?format=XML")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract();
+
+        ResponseAssert.assertTaxonomiesListResponse(response,ContentType.XML,1,11L,1,9L,1,5L,false);
+    }
+
+    /*
+        END: Test with /taxonomy/ids/{ids}/node
 
         START: Test with /taxonomy/name
     */
@@ -1218,8 +1470,7 @@ public class TaxonomyRestIT {
                 .statusCode(BAD_REQUEST.getStatusCode())
                 .extract();
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(TaxonomyConstants.IDS_PARAMETER_VALID_NUMBER.replace("{minSize}","2").replace("{maxSize}",
-                "50"));
+        errorMessages.add(TaxonomyConstants.IDS_PARAMETER_VALID_NUMBER);
         requestedURL = TAXONOMY_BASE_PATH + "/ancestor/"+URLEncoder.encode("1,INVALID,2", StandardCharsets.UTF_8
                 .toString());
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
@@ -1234,17 +1485,12 @@ public class TaxonomyRestIT {
             response, ContentType contentType, List<String> errorMessages, String requestedURL) {
         assertThat(response, notNullValue());
         assertThat(response.contentType(), equalTo(contentType.toString()));
-        ErrorMessage error = response.as(ErrorMessage.class);
-        assertThat(error.getErrorMessages(), notNullValue());
-        assertThat(error.getErrorMessages(), not(emptyIterable()));
-        assertThat(error.getErrorMessages().size(),is(errorMessages.size()));
 
-        Collections.sort(error.getErrorMessages());
-        Collections.sort(errorMessages);
-        assertThat(error.getErrorMessages(),equalTo(errorMessages));
-        assertThat(error.getRequestedURL(), notNullValue());
-        assertThat(error.getRequestedURL(), is(requestedURL));
+        ErrorMessage expectedErrorMessage = new ErrorMessage();
+        expectedErrorMessage.setErrorMessages(errorMessages);
+        expectedErrorMessage.setRequestedURL(requestedURL);
 
+        ResponseAssert.assertResponseErrorMessage(expectedErrorMessage,response);
     }
 
     private void assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent
@@ -1254,7 +1500,7 @@ public class TaxonomyRestIT {
 
         TaxonomyNode node = response.as(TaxonomyNode.class);
         assertThat(node, notNullValue());
-        assertTaxonomyNodeAttributesHasValues(node, taxonomyId, checkLinks);
+        ResponseAssert.assertTaxonomyNodeAttributesHasValues(node, taxonomyId, checkLinks);
     }
 
     private void assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidPageMetadataAndContent(
@@ -1270,7 +1516,7 @@ public class TaxonomyRestIT {
 
         TaxonomyNode node = taxonomies.getTaxonomies().get(0);
         assertThat(node, notNullValue());
-        assertTaxonomyNodeAttributesHasValues(node, node.getTaxonomyId(), checkLinks);
+        ResponseAssert.assertTaxonomyNodeAttributesHasValues(node, node.getTaxonomyId(), checkLinks);
 
         if(expectedPageInfo != null){
             assertThat(taxonomies.getPageInfo(), notNullValue());
@@ -1302,21 +1548,5 @@ public class TaxonomyRestIT {
         assertThat(node.getTaxonomyId(), equalTo(last));
     }
 
-    private void assertTaxonomyNodeAttributesHasValues(TaxonomyNode node, long taxonomyId, boolean checkLinks) {
-        assertThat(node.getTaxonomyId(), equalTo(taxonomyId));
-        assertThat(node.getCommonName(), not(isEmptyOrNullString()));
-        assertThat(node.getMnemonic(), not(isEmptyOrNullString()));
-        assertThat(node.getRank(), not(isEmptyOrNullString()));
-        assertThat(node.getScientificName(), not(isEmptyOrNullString()));
-        assertThat(node.getSynonym(), not(isEmptyOrNullString()));
-        if (checkLinks) {
-            assertThat(node.getParentLink(), not(isEmptyOrNullString()));
 
-            assertThat(node.getChildrenLinks(), notNullValue());
-            assertThat(node.getChildrenLinks(), not(emptyIterable()));
-
-            assertThat(node.getSiblingsLinks(), notNullValue());
-            assertThat(node.getSiblingsLinks(), not(emptyIterable()));
-        }
-    }
 }

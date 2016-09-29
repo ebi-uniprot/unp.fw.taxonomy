@@ -89,7 +89,45 @@ Created by lgonzales on 08/03/16.]]></xs:documentation>
           </xs:sequence>
         </xs:complexType>
       </xs:element>
+      <xs:element minOccurs="0" name="errors">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="error" type="tns:taxonomiesError"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element minOccurs="0" name="redirects">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="redirect" type="tns:taxonomiesRedirect"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
       <xs:element minOccurs="0" name="pageInfo" type="tns:pageInfo"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="taxonomiesError">
+    <xs:annotation>
+      <xs:documentation><![CDATA[This class represents error message REST response body information in a id list search
+It contains annotations that will be used by Jackson Parser to build XML or JSON response format
+Created by lgonzales on 22/09/16.]]></xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="requestedId" type="xs:long"/>
+      <xs:element name="errorMessage" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="taxonomiesRedirect">
+    <xs:annotation>
+      <xs:documentation><![CDATA[This class represents redirect REST response body information in a id list search
+It contains annotations that will be used by Jackson Parser to build XML or JSON response format
+Created by lgonzales on 22/09/16.]]></xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:element name="requestedId" type="xs:long"/>
+      <xs:element name="redirectLocation" type="xs:string"/>
     </xs:sequence>
   </xs:complexType>
 </xs:schema>

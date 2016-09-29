@@ -23,6 +23,17 @@ public interface TaxonomyDataAccess {
      */
     Optional<TaxonomyNode> getTaxonomyDetailsById(long taxonomyId,String basePath);
 
+
+    /**
+     * This method return a list of taxonomy details about searched {@param taxonomyIds}, including it siblings and
+     * children
+     *
+     * @param taxonomyIds List of taxonomy identification
+     * @param basePath base path to build taxonomy parent, children and sibling links
+     * @return details about searched taxonomy
+     */
+    Optional<Taxonomies> getTaxonomyDetailsByIdList(List<String> taxonomyIds,String basePath);
+
     /**
      * This method return node base about searched {@param taxonomyId}
      *
@@ -30,6 +41,15 @@ public interface TaxonomyDataAccess {
      * @return details about searched taxonomy
      */
     Optional<TaxonomyNode> getTaxonomyBaseNodeById(long taxonomyId);
+
+
+    /**
+     * This method return a list of node base about searched {@param taxonomyIds}
+     *
+     * @param taxonomyIds List of taxonomy identification
+     * @return node base about searched taxonomies
+     */
+    Optional<Taxonomies> getTaxonomyBaseNodeByIdList(List<String> taxonomyIds);
 
     /**
      * This method return list of siblings of a searched {@param taxonomyId}.

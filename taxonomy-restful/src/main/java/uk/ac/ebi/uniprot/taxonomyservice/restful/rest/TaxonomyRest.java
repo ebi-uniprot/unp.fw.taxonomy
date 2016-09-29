@@ -8,10 +8,14 @@ import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.PathRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.RelationshipRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.ErrorMessage;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.builder.ListResponseBuilder;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.builder.PageResponseBuilder;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.util.URLUtil;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint.IsLongListParam;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint.ListParamMinMaxSize;
 
 import io.swagger.annotations.*;
-import java.util.Optional;
+import java.util.*;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -19,7 +23,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
@@ -65,8 +68,34 @@ public class TaxonomyRest {
         long taxonomyId = Long.valueOf(id);
         Optional<TaxonomyNode> response = dataAccess.getTaxonomyDetailsById(taxonomyId,URLUtil.getTaxonomyIdBasePath(request));
 
-        return buildTaxonomyNodeResponse(response,taxonomyId,API_RESPONSE_404_ENTRY);
+        return buildResponse(taxonomyId, response,API_RESPONSE_404_ENTRY);
     }
+
+    @GET
+    @ApiOperation(value = API_OPERATION_TAXONOMY_DETAIL_BY_ID_LIST,
+            notes = NOTE_TAXONOMY_ID,
+            response = Taxonomies.class)
+    @ApiResponses(value = {@ApiResponse(code = 400, message = IDS_PARAMETER_IS_REQUIRED,response = ErrorMessage.class),
+            @ApiResponse(code = 400, message = API_RESPONSE_400 , response = ErrorMessage.class),
+            @ApiResponse(code = 400, message = REQUEST_PARAMETER_INVALID_VALUE, response = ErrorMessage.class),
+            @ApiResponse(code = 404, message = API_RESPONSE_404_ENTRY, response = ErrorMessage.class),
+            @ApiResponse(code = 500, message = API_RESPONSE_500, response = ErrorMessage.class)})
+    @Path("/ids/{ids}")
+    public Response getTaxonomyDetailsByIdList(
+            @ApiParam(value = TAXONOMY_IDS_PARAM, required = true)
+            @NotNull(message = IDS_PARAMETER_IS_REQUIRED)
+            @IsLongListParam(message = IDS_PARAMETER_VALID_NUMBER)
+            @ListParamMinMaxSize(maxSize = 50, minSize = 2, message = IDS_PARAMETER_MIN_MAX_SIZE)
+            @PathParam("ids")
+                    String ids) {
+
+        List<String> idStringList = Arrays.asList(ids.split(","));
+        Optional<Taxonomies> response = dataAccess.getTaxonomyDetailsByIdList(idStringList,URLUtil
+                .getTaxonomyIdBasePath(request));
+
+        return buildListResponse(idStringList, response,API_RESPONSE_404_ENTRY);
+    }
+
 
     @GET
     @ApiOperation(value = API_OPERATION_TAXONOMY_NODE_BY_ID,
@@ -88,7 +117,31 @@ public class TaxonomyRest {
         long taxonomyId = Long.valueOf(id);
         Optional<TaxonomyNode> response = dataAccess.getTaxonomyBaseNodeById(taxonomyId);
 
-        return buildTaxonomyNodeResponse(response,taxonomyId,API_RESPONSE_404_ENTRY);
+        return buildResponse(taxonomyId, response,API_RESPONSE_404_ENTRY);
+    }
+
+    @GET
+    @ApiOperation(value = API_OPERATION_TAXONOMY_NODE_BY_ID_LIST,
+            notes = NOTE_TAXONOMY_ID,
+            response = Taxonomies.class)
+    @ApiResponses(value = {@ApiResponse(code = 400, message = IDS_PARAMETER_IS_REQUIRED,response = ErrorMessage.class),
+            @ApiResponse(code = 400, message = API_RESPONSE_400 , response = ErrorMessage.class),
+            @ApiResponse(code = 400, message = REQUEST_PARAMETER_INVALID_VALUE, response = ErrorMessage.class),
+            @ApiResponse(code = 404, message = API_RESPONSE_404_ENTRY, response = ErrorMessage.class),
+            @ApiResponse(code = 500, message = API_RESPONSE_500, response = ErrorMessage.class)})
+    @Path("/ids/{ids}/node")
+    public Response getTaxonomyBaseNodeByIds(
+            @ApiParam(value = TAXONOMY_IDS_PARAM, required = true)
+            @NotNull(message = IDS_PARAMETER_IS_REQUIRED)
+            @IsLongListParam(message = IDS_PARAMETER_VALID_NUMBER)
+            @ListParamMinMaxSize(maxSize = 50, minSize = 2, message = IDS_PARAMETER_MIN_MAX_SIZE)
+            @PathParam("ids")
+                    String ids) {
+
+        List<String> idStringList = Arrays.asList(ids.split(","));
+        Optional<Taxonomies> response = dataAccess.getTaxonomyBaseNodeByIdList(idStringList);
+
+        return buildListResponse(idStringList, response,API_RESPONSE_404_ENTRY);
     }
 
     @GET
@@ -112,7 +165,7 @@ public class TaxonomyRest {
         long taxonomyId = Long.valueOf(id);
         Optional<Taxonomies> response = dataAccess.getTaxonomySiblingsById(taxonomyId);
 
-        return buildTaxonomiesResponse(response,taxonomyId,API_RESPONSE_404_ENTRY);
+        return buildResponse(taxonomyId, response,API_RESPONSE_404_ENTRY);
     }
 
     @GET
@@ -136,7 +189,7 @@ public class TaxonomyRest {
         long taxonomyId = Long.valueOf(id);
         Optional<Taxonomies> response = dataAccess.getTaxonomyChildrenById(taxonomyId);
 
-        return buildTaxonomiesResponse(response,taxonomyId,API_RESPONSE_404_ENTRY);
+        return buildResponse(taxonomyId, response,API_RESPONSE_404_ENTRY);
     }
 
     @GET
@@ -156,7 +209,7 @@ public class TaxonomyRest {
         long taxonomyId = Long.valueOf(id);
         Optional<TaxonomyNode> response = dataAccess.getTaxonomyParentById(taxonomyId);
 
-        return buildTaxonomyNodeResponse(response,taxonomyId,API_RESPONSE_404_ENTRY);
+        return buildResponse(taxonomyId, response,API_RESPONSE_404_ENTRY);
     }
 
     @GET
@@ -173,11 +226,7 @@ public class TaxonomyRest {
 
         Optional<Taxonomies> response = dataAccess.getTaxonomyDetailsByName(params,URLUtil.getTaxonomyIdBasePath
                 (request));
-        if (response.isPresent()) {
-            return Response.ok(response.get()).build();
-        } else {
-            return buildNotFoundResponse(API_RESPONSE_404_NAME);
-        }
+        return buildResponse(0, response,API_RESPONSE_404_NAME);
     }
 
     @GET
@@ -194,11 +243,7 @@ public class TaxonomyRest {
 
         Optional<Taxonomies> response = dataAccess.getTaxonomyNodesByName(params,URLUtil.getTaxonomyIdBasePath
                 (request));
-        if (response.isPresent()) {
-            return Response.ok(response.get()).build();
-        } else {
-            return buildNotFoundResponse(API_RESPONSE_404_NAME);
-        }
+        return buildResponse(0, response,API_RESPONSE_404_NAME);
     }
 
     @GET
@@ -218,30 +263,10 @@ public class TaxonomyRest {
         long to = Long.valueOf(params.getTo());
 
         Optional<TaxonomyNode> response = dataAccess.getTaxonomiesRelationship(from,to);
-        if (response.isPresent()) {
-            return Response.ok(response.get()).build();
-        } else {
-            String newURL = URLUtil.getCurrentURL(request);
-            Optional<Long> newFromTaxonomyId = dataAccess.getTaxonomyHistoricalChange(from);
-            if(newFromTaxonomyId.isPresent()){
-                newURL = URLUtil.getNewRedirectHeaderLocationURL(newURL,"from",from, newFromTaxonomyId.get());
-                from = newFromTaxonomyId.get();
-            }else{
-                from = -1;
-            }
-            Optional<Long> newToTaxonomyId = dataAccess.getTaxonomyHistoricalChange(to);
-            if(newToTaxonomyId.isPresent()){
-                newURL = URLUtil.getNewRedirectHeaderLocationURL(newURL,"to",to, newToTaxonomyId.get());
-                to = newToTaxonomyId.get();
-            }else{
-                to = -1;
-            }
-            if(newFromTaxonomyId.isPresent() || newToTaxonomyId.isPresent()){
-                return buildRedirectResponse(newURL,from,to);
-            }else {
-                return buildNotFoundResponse(API_RESPONSE_404_RELATIONSHIP);
-            }
-        }
+        Map<String, Long> idsForHistoricalCheck = new HashMap<>();
+        idsForHistoricalCheck.put("from", from);
+        idsForHistoricalCheck.put("to", to);
+        return buildResponse(idsForHistoricalCheck, response,API_RESPONSE_404_RELATIONSHIP);
     }
 
     @GET
@@ -262,7 +287,10 @@ public class TaxonomyRest {
 
         Optional<TaxonomyNode> response = dataAccess.getTaxonomyPath(pathRequestParam);
 
-        return buildTaxonomyNodeResponse(response,Long.valueOf(pathRequestParam.getId()),API_RESPONSE_404_PATH);
+        Map<String, Long> idsForHistoricalCheck = new HashMap<>();
+        idsForHistoricalCheck.put("id", Long.valueOf(pathRequestParam.getId()));
+
+        return buildResponse(idsForHistoricalCheck,response,API_RESPONSE_404_PATH);
     }
 
 
@@ -284,8 +312,7 @@ public class TaxonomyRest {
 
         long taxonomyId = Long.valueOf(id);
         Optional<Taxonomies> response = dataAccess.getTaxonomyLineageById(taxonomyId);
-
-        return buildTaxonomiesResponse(response,taxonomyId,API_RESPONSE_404_LINEAGE);
+        return buildResponse(taxonomyId,response,API_RESPONSE_404_LINEAGE);
     }
 
     @GET
@@ -300,56 +327,36 @@ public class TaxonomyRest {
     @Path("/ancestor/{ids}")
     public Response getTaxonomyAncestor(@Valid @BeanParam AncestorRequestParams param) {
         Optional<TaxonomyNode> response = dataAccess.getTaxonomyAncestorFromTaxonomyIds(param.getIdList());
-        if (response.isPresent()) {
-            return Response.ok(response.get()).build();
-        } else {
-            return buildNotFoundResponse(API_RESPONSE_404_ANCESTOR);
-        }
+        return buildResponse(0,response,API_RESPONSE_404_ANCESTOR);
     }
 
-    private Response buildTaxonomyNodeResponse(Optional<TaxonomyNode> response,long taxonomyId,String errorMessage) {
-        if (response.isPresent()) {
-            return Response.ok(response.get()).build();
-        } else {
-            return buildResponseWithHistoricalCheck(taxonomyId,errorMessage);
+    private Response buildResponse(long taxonomyId, Optional response,String notFoundErrorMessage) {
+        Map<String, Long> idsForHistoricalCheck = null;
+        if(taxonomyId > 0) {
+            idsForHistoricalCheck = new HashMap<>();
+            idsForHistoricalCheck.put(null, taxonomyId);
         }
+        return buildResponse(idsForHistoricalCheck,response,notFoundErrorMessage);
     }
 
-    private Response buildTaxonomiesResponse(Optional<Taxonomies> response,long taxonomyId,String errorMessage) {
-        if (response.isPresent()) {
-            return Response.ok(response.get()).build();
-        } else {
-            return buildResponseWithHistoricalCheck(taxonomyId,errorMessage);
-        }
+    private Response buildResponse(Map<String, Long> idsForHistoricalCheck, Optional response,String notFoundErrorMessage) {
+        return new PageResponseBuilder()
+                .setIdsForHistoricalCheck(idsForHistoricalCheck)
+                .setEntity(response)
+                .setRequest(request)
+                .setNotFoundErrorMessage(notFoundErrorMessage)
+                .setDataAccess(dataAccess)
+                .buildResponse();
     }
 
-    private Response buildResponseWithHistoricalCheck(long taxonomyId,String errorMessage) {
-        Optional<Long> newTaxonomyId = dataAccess.getTaxonomyHistoricalChange(taxonomyId);
-        if(newTaxonomyId.isPresent()){
-            String currentURL = URLUtil.getCurrentURL(request);
-            String newURL = URLUtil.getNewRedirectHeaderLocationURL(currentURL,null,taxonomyId,newTaxonomyId.get());
-            return buildRedirectResponse(newURL,newTaxonomyId.get());
-        }else {
-            return buildNotFoundResponse(errorMessage);
-        }
-    }
-
-    private Response buildNotFoundResponse(String errorMessage) {
-        ErrorMessage error = new ErrorMessage();
-        error.setRequestedURL(URLUtil.getCurrentURL(request));
-        error.addErrorMessage(errorMessage);
-        return Response.status(Response.Status.NOT_FOUND).entity(error).build();
-    }
-
-    private Response buildRedirectResponse(String newURL,long ... newId) {
-        ErrorMessage error = new ErrorMessage();
-        error.setRequestedURL(URLUtil.getCurrentURL(request));
-        for (long id: newId) {
-            if(id > 0){
-                error.addErrorMessage(API_RESPONSE_303.replace("{newId}",""+ id));
-            }
-        }
-        return Response.status(Response.Status.SEE_OTHER).entity(error).header(HttpHeaders.LOCATION,newURL).build();
+    private Response buildListResponse(List<String> requestedIds, Optional response,String notFoundErrorMessage) {
+        return new ListResponseBuilder()
+                .setRequestedIds(requestedIds)
+                .setEntity(response)
+                .setRequest(request)
+                .setNotFoundErrorMessage(notFoundErrorMessage)
+                .setDataAccess(dataAccess)
+                .buildResponse();
     }
 
 }

@@ -1,5 +1,7 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.domain;
 
+import uk.ac.ebi.uniprot.taxonomyservice.restful.util.BeanCreatorUtil;
+
 import java.util.Collections;
 import org.junit.Test;
 
@@ -17,10 +19,10 @@ public class TaxonomyNodeTest {
 
     @Test
     public void assertMergeChildren() throws Exception {
-        TaxonomyNode parentNode = createTaxonomyNodeForId(1);
-        TaxonomyNode childNode2 = createTaxonomyNodeForId(2);
-        TaxonomyNode childNode3 = createTaxonomyNodeForId(3);
-        TaxonomyNode childNode4 = createTaxonomyNodeForId(4);
+        TaxonomyNode parentNode = BeanCreatorUtil.getTaxonomyNode(1);
+        TaxonomyNode childNode2 = BeanCreatorUtil.getTaxonomyNode(2);
+        TaxonomyNode childNode3 = BeanCreatorUtil.getTaxonomyNode(3);
+        TaxonomyNode childNode4 = BeanCreatorUtil.getTaxonomyNode(4);
 
         parentNode.mergeChildren(childNode2);
         parentNode.mergeChildren(childNode2);
@@ -42,10 +44,10 @@ public class TaxonomyNodeTest {
 
     @Test
     public void assertMergeSiblings() throws Exception {
-        TaxonomyNode parentNode = createTaxonomyNodeForId(1);
-        TaxonomyNode siblingNode2 = createTaxonomyNodeForId(2);
-        TaxonomyNode siblingNode3 = createTaxonomyNodeForId(3);
-        TaxonomyNode siblingNode4 = createTaxonomyNodeForId(4);
+        TaxonomyNode parentNode = BeanCreatorUtil.getTaxonomyNode(1);
+        TaxonomyNode siblingNode2 = BeanCreatorUtil.getTaxonomyNode(2);
+        TaxonomyNode siblingNode3 = BeanCreatorUtil.getTaxonomyNode(3);
+        TaxonomyNode siblingNode4 = BeanCreatorUtil.getTaxonomyNode(4);
 
         parentNode.mergeSiblings(siblingNode2);
         parentNode.mergeSiblings(siblingNode2);
@@ -67,10 +69,10 @@ public class TaxonomyNodeTest {
 
     @Test
     public void assertMergeParent() throws Exception {
-        TaxonomyNode node = createTaxonomyNodeForId(1);
+        TaxonomyNode node = BeanCreatorUtil.getTaxonomyNode(1);
 
-        TaxonomyNode parent1 = createTaxonomyNodeForId(2);
-        TaxonomyNode parent2 = createTaxonomyNodeForId(3);
+        TaxonomyNode parent1 = BeanCreatorUtil.getTaxonomyNode(2);
+        TaxonomyNode parent2 = BeanCreatorUtil.getTaxonomyNode(3);
         node.mergeParent(parent1);
         assertThat(node.getParent(),notNullValue());
         assertThat(node.getParent(),equalTo(parent1));
@@ -79,14 +81,4 @@ public class TaxonomyNodeTest {
         assertThat(node.getParent(),equalTo(parent1));
     }
 
-    private TaxonomyNode createTaxonomyNodeForId(long taxonomyId){
-        TaxonomyNode node = new TaxonomyNode();
-        node.setTaxonomyId(taxonomyId);
-        node.setCommonName("common Name "+taxonomyId);
-        node.setMnemonic("Mnemonic "+taxonomyId);
-        node.setRank("Rank "+taxonomyId);
-        node.setScientificName("ScientificName "+taxonomyId);
-        node.setSynonym("Synonym "+taxonomyId);
-        return node;
-    }
 }
