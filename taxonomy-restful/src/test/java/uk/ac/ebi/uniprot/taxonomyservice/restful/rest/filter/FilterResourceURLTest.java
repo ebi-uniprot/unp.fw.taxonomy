@@ -111,7 +111,7 @@ public class FilterResourceURLTest {
 
     @Test
     public void assertXmlFormatParamHasPriorityOverInvalidAtomAcceptHeaderAddXmlAcceptHeader() throws
-                                                                                                        Exception{
+                                                                                               IOException{
         ContainerRequestContext requestContext = mock(ContainerRequestContext.class);
         UriInfo mockedInfo = mock(UriInfo.class);
         MultivaluedMap<String, String> headers = new MultivaluedHashMap<>();

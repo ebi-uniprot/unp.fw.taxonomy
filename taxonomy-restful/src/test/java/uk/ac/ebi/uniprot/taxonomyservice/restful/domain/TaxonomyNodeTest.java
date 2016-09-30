@@ -18,7 +18,7 @@ import static org.junit.Assert.assertThat;
 public class TaxonomyNodeTest {
 
     @Test
-    public void assertMergeChildren() throws Exception {
+    public void assertMergeChildren() {
         TaxonomyNode parentNode = BeanCreatorUtil.getTaxonomyNode(1);
         TaxonomyNode childNode2 = BeanCreatorUtil.getTaxonomyNode(2);
         TaxonomyNode childNode3 = BeanCreatorUtil.getTaxonomyNode(3);
@@ -43,7 +43,7 @@ public class TaxonomyNodeTest {
     }
 
     @Test
-    public void assertMergeSiblings() throws Exception {
+    public void assertMergeSiblings() {
         TaxonomyNode parentNode = BeanCreatorUtil.getTaxonomyNode(1);
         TaxonomyNode siblingNode2 = BeanCreatorUtil.getTaxonomyNode(2);
         TaxonomyNode siblingNode3 = BeanCreatorUtil.getTaxonomyNode(3);
@@ -68,7 +68,7 @@ public class TaxonomyNodeTest {
     }
 
     @Test
-    public void assertMergeParent() throws Exception {
+    public void assertMergeParent() {
         TaxonomyNode node = BeanCreatorUtil.getTaxonomyNode(1);
 
         TaxonomyNode parent1 = BeanCreatorUtil.getTaxonomyNode(2);

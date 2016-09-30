@@ -41,7 +41,7 @@ public class TaxonomyRestIT {
     private static final String TAXONOMY_BASE_PATH = "";
 
     @ClassRule
-    public static RestContainer restContainer = new RestContainer();
+    public static final RestContainer restContainer = new RestContainer();
 
     /*
         START: Test with /taxonomy/id

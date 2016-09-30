@@ -32,7 +32,7 @@ public class StartupListenerTest {
     }
 
     @Test
-    public void onApplicationInitializedEventExecuteWithSuccess() throws Exception {
+    public void onApplicationInitializedEventExecuteWithSuccess() {
         StartupListener listener = new StartupListener();
         listener.setDataAccess(neo4jDataAccess);
 
@@ -43,7 +43,7 @@ public class StartupListenerTest {
     }
 
     @Test
-    public void onApplicationDestryedEventExecuteWithSuccess() throws Exception {
+    public void onApplicationDestryedEventExecuteWithSuccess() {
         StartupListener listener = new StartupListener();
 
         ApplicationEvent applicationEvent = mock(ApplicationEvent.class);
@@ -53,7 +53,7 @@ public class StartupListenerTest {
     }
 
     @Test
-    public void onRequestReturnNull() throws Exception {
+    public void onRequestReturnNull() {
         StartupListener listener = new StartupListener();
         assertThat(listener.onRequest(null),nullValue());
     }

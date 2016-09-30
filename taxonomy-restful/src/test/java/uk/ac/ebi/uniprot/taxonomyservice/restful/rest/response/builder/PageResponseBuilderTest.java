@@ -124,8 +124,7 @@ public class PageResponseBuilderTest {
         Map<String,Long> requestId = new HashMap<>();
         requestId.put(null,9L);
         HttpServletRequest request = mock(HttpServletRequest.class);
-        StringBuffer bufferedURL = new StringBuffer(BASE_URL+"9");
-        when(request.getRequestURL()).thenReturn(bufferedURL);
+        when(request.getRequestURL()).thenReturn(new StringBuffer(BASE_URL+"9"));
 
         Response response = new PageResponseBuilder()
                 .setIdsForHistoricalCheck(requestId)
@@ -149,8 +148,7 @@ public class PageResponseBuilderTest {
         requestId.put("to",99L);
         String requestedURL = "http://localhost:9090/uniprot/services/restful/taxonomy/relationship?from=9&to=99";
         HttpServletRequest request = mock(HttpServletRequest.class);
-        StringBuffer bufferedURL = new StringBuffer(requestedURL);
-        when(request.getRequestURL()).thenReturn(bufferedURL);
+        when(request.getRequestURL()).thenReturn(new StringBuffer(requestedURL));
 
         Response response = new PageResponseBuilder()
                 .setIdsForHistoricalCheck(requestId)
