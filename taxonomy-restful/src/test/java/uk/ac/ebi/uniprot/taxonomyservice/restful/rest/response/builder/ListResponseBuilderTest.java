@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
  */
 public class ListResponseBuilderTest {
 
-    private static final String baseURL = "http://localhost:9090/uniprot/services/restful/taxonomy/id/";
+    private static final String BASE_URL = "http://localhost:9090/uniprot/services/restful/taxonomy/id/";
 
     private static FakeTaxonomyDataAccess neo4jDataAccess;
 
@@ -45,8 +45,7 @@ public class ListResponseBuilderTest {
 
     @Test(expected=IllegalStateException.class)
     public void buildResponseWithoutRequiredAttributes() {
-        Response response = new ListResponseBuilder()
-                .buildResponse();
+        new ListResponseBuilder().buildResponse();
     }
 
     @Test(expected=IllegalStateException.class)
@@ -54,7 +53,7 @@ public class ListResponseBuilderTest {
         List<String> requestedIds = Arrays.asList("9","11");
         Optional<Taxonomies> responseBody = BeanCreatorUtil.getOptionalTaxonomies(11L);
 
-        Response response = new ListResponseBuilder()
+        new ListResponseBuilder()
                 .setRequestedIds(requestedIds)
                 .setEntity(responseBody)
                 .buildResponse();
@@ -86,8 +85,7 @@ public class ListResponseBuilderTest {
         Optional<Taxonomies> responseBody = BeanCreatorUtil.getOptionalTaxonomies();
 
         HttpServletRequest request = mock(HttpServletRequest.class);
-        StringBuffer bufferedURL = new StringBuffer(baseURL);
-        when(request.getRequestURL()).thenReturn(bufferedURL);
+        when(request.getRequestURL()).thenReturn(new StringBuffer(BASE_URL));
 
         Response response = new ListResponseBuilder()
                 .setRequestedIds(requestedIds)
@@ -112,8 +110,7 @@ public class ListResponseBuilderTest {
         Optional<Taxonomies> responseBody = BeanCreatorUtil.getOptionalTaxonomies();
 
         HttpServletRequest request = mock(HttpServletRequest.class);
-        StringBuffer bufferedURL = new StringBuffer(baseURL);
-        when(request.getRequestURL()).thenReturn(bufferedURL);
+        when(request.getRequestURL()).thenReturn(new StringBuffer(BASE_URL));
 
         Response response = new ListResponseBuilder()
                 .setRequestedIds(requestedIds)
@@ -138,8 +135,7 @@ public class ListResponseBuilderTest {
         Optional<Taxonomies> responseBody = BeanCreatorUtil.getOptionalTaxonomies(11);
 
         HttpServletRequest request = mock(HttpServletRequest.class);
-        StringBuffer bufferedURL = new StringBuffer(baseURL);
-        when(request.getRequestURL()).thenReturn(bufferedURL);
+        when(request.getRequestURL()).thenReturn(new StringBuffer(BASE_URL));
 
         Response response = new ListResponseBuilder()
                 .setRequestedIds(requestedIds)

@@ -7,8 +7,6 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.swagger;
  */
 public class TaxonomyConstants {
 
-    private TaxonomyConstants(){}
-
     public static final String TAXONOMY_API_VALUE = "Rest services to return information about protein taxonomy " +
             "tree. Basically there are services that returns details about a taxonomy element and also details about " +
             "it parent, siblings and children. There are also services that return the relationship between 2 " +
@@ -88,7 +86,7 @@ public class TaxonomyConstants {
             "commonName and mnemonic";
     public static final String TAXONOMY_SEARCH_TYPE_PARAM = "Type of the search, valid values are EQUALSTO," +
             "STARTSWITH,ENDSWITH or CONTAINS";
-    public static final String TAXONOMY_FIELD_NAME_PARAM = "fieldName, valid values are SCIENTIFICNAME, COMMOMNAME " +
+    public static final String TAXONOMY_FIELD_NAME_PARAM = "fieldName, valid values are SCIENTIFICNAME, COMMONNAME " +
             "or MNEMONIC";
     public static final String TAXONOMY_PAGE_NUMBER_PARAM = "pageNumber is the current page number";
     public static final String TAXONOMY_PAGE_SIZE_PARAM = "pageSize is the number of records returned in the request," +
@@ -152,4 +150,6 @@ public class TaxonomyConstants {
 
     public static final String REQUEST_PARAMETER_INVALID_VALUE =
             "Request parameter {parameterName} contains not supported value.";
+
+    private TaxonomyConstants(){}
 }

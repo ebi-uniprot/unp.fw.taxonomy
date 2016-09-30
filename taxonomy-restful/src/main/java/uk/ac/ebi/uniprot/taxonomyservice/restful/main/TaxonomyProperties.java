@@ -26,10 +26,10 @@ public class TaxonomyProperties {
         SWAGGER_VERSION,
         SWAGGER_SERVICE_TITLE("Taxonomy Services"),
         SWAGGER_SERVICE_DESCRIPTION("Taxonomy Rest Services"),
-        SWAGGER_BASE_PATH("/uniprot/api/taxonomy"),
+        SWAGGER_BASE_PATH("/proteins/api/taxonomy"),
         SWAGGER_RESOURCE_PACKAGE("uk.ac.ebi.uniprot.taxonomyservice.restful.rest"),
-        TAXONOMY_SERVICE_CONTEXT_PATH("/uniprot/api/taxonomy"),
-        TAXONOMY_DOCS_CONTEXT_PATH("/uniprot/api/taxonomy/docs"),
+        TAXONOMY_SERVICE_CONTEXT_PATH("/proteins/api/taxonomy"),
+        TAXONOMY_DOCS_CONTEXT_PATH("/proteins/api/taxonomy/docs"),
         TAXONOMY_ACCESS_LOG_PATH("logs/access_log.txt"),
         TAXONOMY_GRIZZLY_CORE_THREAD_POOL_SIZE("10"),
         TAXONOMY_GRIZZLY_MAX_THREAD_POOL_SIZE("16");

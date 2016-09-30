@@ -411,7 +411,8 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
         return Optional.ofNullable(result);
     }
 
-    @Override public Optional<Taxonomies> getTaxonomyLineageById(long taxonomyId) {
+    @Override
+    public Optional<Taxonomies> getTaxonomyLineageById(long taxonomyId) {
         ArrayList<TaxonomyNode> result = new ArrayList<>();
         long startTime = System.currentTimeMillis();
         Map<String, Object> params = new HashMap<>();
@@ -443,6 +444,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
         return taxonomies;
     }
 
+    @Override
     public Optional<TaxonomyNode> getTaxonomyAncestorFromTaxonomyIds(List<Long> ids){
         Optional<TaxonomyNode> result = Optional.empty();
         long startTime = System.currentTimeMillis();

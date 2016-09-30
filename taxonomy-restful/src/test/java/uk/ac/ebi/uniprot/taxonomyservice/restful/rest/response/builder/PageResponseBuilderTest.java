@@ -32,7 +32,7 @@ import static org.mockito.Mockito.when;
  */
 public class PageResponseBuilderTest {
 
-    private static final String baseURL = "http://localhost:9090/uniprot/services/restful/taxonomy/id/";
+    private static final String BASE_URL = "http://localhost:9090/uniprot/services/restful/taxonomy/id/";
 
     private static FakeTaxonomyDataAccess neo4jDataAccess;
 
@@ -48,7 +48,7 @@ public class PageResponseBuilderTest {
 
     @Test(expected=IllegalStateException.class)
     public void buildResponseWithoutRequiredAttributes() {
-        Response response = new PageResponseBuilder().buildResponse();
+        new PageResponseBuilder().buildResponse();
     }
 
     @Test(expected=IllegalStateException.class)
@@ -56,7 +56,7 @@ public class PageResponseBuilderTest {
         Map<String,Long> requestId = new HashMap<>();
         HttpServletRequest request = mock(HttpServletRequest.class);
 
-        Response response = new PageResponseBuilder()
+        new PageResponseBuilder()
                 .setIdsForHistoricalCheck(requestId)
                 .setEntity(Optional.empty())
                 .setRequest(request)
@@ -65,7 +65,7 @@ public class PageResponseBuilderTest {
     }
 
     @Test
-    public void buildResponseThatReturnTaxonomyNodeSuccess() throws Exception {
+    public void buildResponseThatReturnTaxonomyNodeSuccess() {
         HttpServletRequest request = mock(HttpServletRequest.class);
         Optional<TaxonomyNode> responseBody = BeanCreatorUtil.getOptionalTaxonomyNode(11);
 
@@ -81,7 +81,7 @@ public class PageResponseBuilderTest {
     }
 
     @Test
-    public void buildResponseThatReturnTaxonomiesSuccess() throws Exception {
+    public void buildResponseThatReturnTaxonomiesSuccess() {
         HttpServletRequest request = mock(HttpServletRequest.class);
         Optional<Taxonomies> responseBody = BeanCreatorUtil.getOptionalTaxonomies(11L,12L);
 
@@ -99,12 +99,11 @@ public class PageResponseBuilderTest {
     }
 
     @Test
-    public void buildResponseThatReturnError() throws Exception {
+    public void buildResponseThatReturnError() {
         Map<String,Long> requestId = new HashMap<>();
         requestId.put(null,14L);
         HttpServletRequest request = mock(HttpServletRequest.class);
-        StringBuffer bufferedURL = new StringBuffer(baseURL);
-        when(request.getRequestURL()).thenReturn(bufferedURL);
+        when(request.getRequestURL()).thenReturn(new StringBuffer(BASE_URL));
 
         Response response = new PageResponseBuilder()
                 .setIdsForHistoricalCheck(requestId)
@@ -116,16 +115,16 @@ public class PageResponseBuilderTest {
 
         assertThat(response.getEntity(),instanceOf(ErrorMessage.class));
         ErrorMessage builtBody = (ErrorMessage) response.getEntity();
-        assertThat(builtBody.getRequestedURL(),is(baseURL));
+        assertThat(builtBody.getRequestedURL(),is(BASE_URL));
         assertThat(builtBody.getErrorMessages(),is(Arrays.asList(TaxonomyConstants.API_RESPONSE_404_ENTRY)));
     }
 
     @Test
-    public void buildResponseThatReturnRedirect() throws Exception {
+    public void buildResponseThatReturnRedirect() {
         Map<String,Long> requestId = new HashMap<>();
         requestId.put(null,9L);
         HttpServletRequest request = mock(HttpServletRequest.class);
-        StringBuffer bufferedURL = new StringBuffer(baseURL+"9");
+        StringBuffer bufferedURL = new StringBuffer(BASE_URL+"9");
         when(request.getRequestURL()).thenReturn(bufferedURL);
 
         Response response = new PageResponseBuilder()
@@ -138,13 +137,13 @@ public class PageResponseBuilderTest {
 
         assertThat(response.getEntity(),instanceOf(ErrorMessage.class));
         ErrorMessage builtBody = (ErrorMessage) response.getEntity();
-        assertThat(builtBody.getRequestedURL(),is(baseURL+"9"));
+        assertThat(builtBody.getRequestedURL(),is(BASE_URL+"9"));
         assertThat(builtBody.getErrorMessages().get(0),is(TaxonomyConstants.API_RESPONSE_303.replace("{newId}","10")));
-        assertThat(response.getHeaderString(HttpHeaders.LOCATION),is(baseURL+"10"));
+        assertThat(response.getHeaderString(HttpHeaders.LOCATION),is(BASE_URL+"10"));
     }
 
     @Test
-    public void buildResponseThatReturnRedirectForRelationshipEndpoint() throws Exception {
+    public void buildResponseThatReturnRedirectForRelationshipEndpoint() {
         Map<String,Long> requestId = new HashMap<>();
         requestId.put("from",9L);
         requestId.put("to",99L);

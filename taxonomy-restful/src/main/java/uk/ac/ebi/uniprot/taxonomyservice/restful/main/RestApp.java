@@ -6,6 +6,7 @@ import uk.ac.ebi.uniprot.taxonomyservice.restful.exception.ValidationExceptionMa
 import uk.ac.ebi.uniprot.taxonomyservice.restful.main.TaxonomyProperties.APP_PROPERTY_NAME;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.filter.CORSFilter;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.filter.FilterResourceURL;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.listener.StartupListener;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.ValidationConfigurationContextResolver;
 
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
@@ -73,6 +74,7 @@ public class RestApp extends ResourceConfig {
         register(FilterResourceURL.class);
         register(CORSFilter.class);
         register(ValidationConfigurationContextResolver.class);
+        register(StartupListener.class);
 
         logger.info("Starting of RestApp Done");
 
