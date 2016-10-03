@@ -28,7 +28,7 @@ public class TaxonomyProperties {
         SWAGGER_SERVICE_DESCRIPTION("Taxonomy Rest Services"),
         SWAGGER_BASE_PATH("/proteins/api/taxonomy"),
         SWAGGER_RESOURCE_PACKAGE("uk.ac.ebi.uniprot.taxonomyservice.restful.rest"),
-        TAXONOMY_BASE_URI("http://0.0.0.0"),
+        TAXONOMY_BASE_URI(),
         TAXONOMY_SERVICE_CONTEXT_PATH("/proteins/api/taxonomy"),
         TAXONOMY_DOCS_CONTEXT_PATH("/proteins/api/taxonomy/docs"),
         TAXONOMY_ACCESS_LOG_PATH("logs/access_log.txt"),
