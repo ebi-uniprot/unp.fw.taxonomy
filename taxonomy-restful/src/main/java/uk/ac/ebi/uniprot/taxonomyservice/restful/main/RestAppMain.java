@@ -30,8 +30,8 @@ public class RestAppMain {
 
     private static final Logger logger = LoggerFactory.getLogger(RestAppMain.class);
 
-    public static final String baseUri =
-            "http://0.0.0.0:" + (System.getenv("PORT") != null ? System.getenv("PORT") : "9090");
+    public static final String baseUri = TaxonomyProperties.getProperty(APP_PROPERTY_NAME.TAXONOMY_BASE_URI) +
+            ":" + (System.getenv("PORT") != null ? System.getenv("PORT") : "9090");
 
     /**
      * Main method that start the application
