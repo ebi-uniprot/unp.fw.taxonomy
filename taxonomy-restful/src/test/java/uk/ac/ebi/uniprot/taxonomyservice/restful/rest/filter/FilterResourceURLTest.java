@@ -1,7 +1,6 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.filter;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.*;
@@ -9,7 +8,6 @@ import org.glassfish.jersey.server.ParamException;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
@@ -31,120 +29,81 @@ public class FilterResourceURLTest {
 
     @Test
     public void assertJsonFormatQueryParameterReturnJsonAcceptHeader() throws IOException{
-        ContainerRequestContext requestContext = mock(ContainerRequestContext.class);
-        UriInfo mockedInfo = mock(UriInfo.class);
-        MultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
-        MultivaluedMap<String, String> queryParameters = new MultivaluedHashMap<>();
-        queryParameters.add("format","json");
-
-        when(requestContext.getUriInfo()).thenReturn(mockedInfo);
-        when(requestContext.getUriInfo().getPath()).thenReturn("/taxonomy/id/12345?format=json");
-        when(requestContext.getUriInfo().getQueryParameters()).thenReturn(queryParameters);
-        when(requestContext.getHeaders()).thenReturn(headers);
-
+        ContainerRequestContext requestContext = getMockedContainerRequestContext("json",null);
 
         filterResourceURL.filter(requestContext);
 
-        headers.add(HttpHeaders.ACCEPT,MediaType.APPLICATION_JSON);
-        assertThat(requestContext.getHeaders().get(HttpHeaders.ACCEPT),is(equalTo(headers.get(HttpHeaders.ACCEPT))));
+        assertThat(requestContext.getHeaders().get(HttpHeaders.ACCEPT).get(0),is(MediaType.APPLICATION_JSON));
     }
-
 
     @Test
     public void assertXmlFormatQueryParameterReturnXmlAcceptHeader() throws IOException{
-        ContainerRequestContext requestContext = mock(ContainerRequestContext.class);
-        UriInfo mockedInfo = mock(UriInfo.class);
-        MultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
-        MultivaluedMap<String, String> queryParameters = new MultivaluedHashMap<>();
-        queryParameters.add("format","xml");
-
-        when(requestContext.getUriInfo()).thenReturn(mockedInfo);
-        when(requestContext.getUriInfo().getPath()).thenReturn("/taxonomy/id/12345?format=xml");
-        when(requestContext.getUriInfo().getQueryParameters()).thenReturn(queryParameters);
-        when(requestContext.getHeaders()).thenReturn(headers);
-
+        ContainerRequestContext requestContext = getMockedContainerRequestContext("xml",null);
 
         filterResourceURL.filter(requestContext);
 
-        headers.add(HttpHeaders.ACCEPT,MediaType.APPLICATION_ATOM_XML);
-        assertThat(requestContext.getHeaders().get(HttpHeaders.ACCEPT),is(equalTo(headers.get(HttpHeaders.ACCEPT))));
+        assertThat(requestContext.getHeaders().get(HttpHeaders.ACCEPT).get(0),is(MediaType.APPLICATION_XML));
     }
 
     @Test
     public void assertWithoutFormatAndAcceptHeaderParametersReturnDefaultJsonAcceptHeader()
             throws IOException, URISyntaxException {
-        ContainerRequestContext requestContext = mock(ContainerRequestContext.class);
-        UriInfo mockedInfo = mock(UriInfo.class);
-        MultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
-
-        when(requestContext.getUriInfo()).thenReturn(mockedInfo);
-        when(requestContext.getUriInfo().getPath()).thenReturn("/taxonomy/id/12345");
-        when(requestContext.getHeaders()).thenReturn(headers);
-
-        when(requestContext.getUriInfo().getRequestUri()).thenReturn(new URI("/taxonomy/id/12345"));
+        ContainerRequestContext requestContext = getMockedContainerRequestContext(null,null);
 
         filterResourceURL.filter(requestContext);
 
-        headers.add(HttpHeaders.ACCEPT,MediaType.APPLICATION_JSON);
-        assertThat(requestContext.getHeaders().get(HttpHeaders.ACCEPT),is(equalTo(headers.get(HttpHeaders.ACCEPT))));
+        assertThat(requestContext.getHeaders().get(HttpHeaders.ACCEPT).get(0),is(MediaType.APPLICATION_JSON));
     }
 
     @Test
     public void assertValidJsonAcceptHeaderHasPriorityOverXmlFormatParamReturnJsonAcceptHeader() throws IOException {
-        ContainerRequestContext requestContext = mock(ContainerRequestContext.class);
-        UriInfo mockedInfo = mock(UriInfo.class);
-        MultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
-        headers.add(HttpHeaders.ACCEPT,MediaType.APPLICATION_JSON);
-        MultivaluedMap<String, String> queryParameters = new MultivaluedHashMap<>();
-        queryParameters.add("format","xml");
-
-        when(requestContext.getUriInfo()).thenReturn(mockedInfo);
-        when(requestContext.getUriInfo().getPath()).thenReturn("/taxonomy/id/12345?format=xml");
-        when(requestContext.getUriInfo().getQueryParameters()).thenReturn(queryParameters);
-        when(requestContext.getHeaders()).thenReturn(headers);
-
+        ContainerRequestContext requestContext = getMockedContainerRequestContext("xml",MediaType.APPLICATION_JSON);
 
         filterResourceURL.filter(requestContext);
 
-        assertThat(requestContext.getHeaders().get(HttpHeaders.ACCEPT),is(equalTo(headers.get(HttpHeaders.ACCEPT))));
+        assertThat(requestContext.getHeaders().get(HttpHeaders.ACCEPT).get(0),is(MediaType.APPLICATION_JSON));
     }
 
     @Test
     public void assertXmlFormatParamHasPriorityOverInvalidAtomAcceptHeaderAddXmlAcceptHeader() throws
                                                                                                IOException{
-        ContainerRequestContext requestContext = mock(ContainerRequestContext.class);
-        UriInfo mockedInfo = mock(UriInfo.class);
-        MultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
-        headers.add(HttpHeaders.ACCEPT,MediaType.APPLICATION_ATOM_XML);
-        MultivaluedMap<String, String> queryParameters = new MultivaluedHashMap<>();
-        queryParameters.add("format","xml");
-
-        when(requestContext.getUriInfo()).thenReturn(mockedInfo);
-        when(requestContext.getUriInfo().getPath()).thenReturn("/taxonomy/id/12345?format=xml");
-        when(requestContext.getUriInfo().getQueryParameters()).thenReturn(queryParameters);
-        when(requestContext.getHeaders()).thenReturn(headers);
-
+        ContainerRequestContext requestContext = getMockedContainerRequestContext("xml",MediaType.APPLICATION_ATOM_XML);
 
         filterResourceURL.filter(requestContext);
 
-        headers.add(HttpHeaders.ACCEPT,MediaType.APPLICATION_XML);
-        assertThat(requestContext.getHeaders().get(HttpHeaders.ACCEPT),is(equalTo(headers.get(HttpHeaders.ACCEPT))));
+        assertThat(requestContext.getHeaders().get(HttpHeaders.ACCEPT).get(0),is(MediaType.APPLICATION_XML));
     }
 
     @Test(expected = ParamException.QueryParamException.class)
     public void assertInvalidFormatParamThrowsQueryParamException() throws IOException {
-        ContainerRequestContext requestContext = mock(ContainerRequestContext.class);
-        UriInfo mockedInfo = mock(UriInfo.class);
-        MultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
-        MultivaluedMap<String, String> queryParameters = new MultivaluedHashMap<>();
-        queryParameters.add("format","invalid");
-
-        when(requestContext.getUriInfo()).thenReturn(mockedInfo);
-        when(requestContext.getUriInfo().getPath()).thenReturn("/taxonomy/id/12345?format=invalid");
-        when(requestContext.getUriInfo().getQueryParameters()).thenReturn(queryParameters);
-        when(requestContext.getHeaders()).thenReturn(headers);
+        ContainerRequestContext requestContext = getMockedContainerRequestContext("invalid",null);
 
         filterResourceURL.filter(requestContext);
+    }
+
+
+    private ContainerRequestContext getMockedContainerRequestContext(String queryParameterFormat,String mediaType) {
+        ContainerRequestContext requestContext = mock(ContainerRequestContext.class);
+
+        UriInfo mockedInfo = mock(UriInfo.class);
+        when(requestContext.getUriInfo()).thenReturn(mockedInfo);
+
+        MultivaluedMap<String, String> headers = new MultivaluedHashMap<>();
+        if(mediaType != null){
+            headers.add(HttpHeaders.ACCEPT,mediaType);
+        }
+        when(requestContext.getHeaders()).thenReturn(headers);
+
+        MultivaluedMap<String, String> queryParameters = new MultivaluedHashMap<>();
+        if(queryParameterFormat != null) {
+            queryParameters.add("format", queryParameterFormat);
+            when(requestContext.getUriInfo().getPath()).thenReturn("/taxonomy/id/12345?format="+queryParameterFormat);
+        }else{
+            when(requestContext.getUriInfo().getPath()).thenReturn("/taxonomy/id/12345");
+        }
+        when(requestContext.getUriInfo().getQueryParameters()).thenReturn(queryParameters);
+
+        return requestContext;
     }
 
 
