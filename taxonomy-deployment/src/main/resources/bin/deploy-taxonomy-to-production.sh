@@ -43,12 +43,15 @@ fi
 SERVICE_BIN_PATH="$(pwd -P)"
 BUILD_RELEASE_DIR="$(readlink -m $SERVICE_BIN_PATH/../$RELEASE_DIR/$RELEASE_NAME)"
 RELEASE_LOG_DIR="$BUILD_RELEASE_DIR/$LOG_DIR"
+PRODUCTION_CONF_DIR="$TAXONOMY_PRODUCTION_PATH/$RELEASE_DIR/$RELEASE_NAME/$CONF_DIR"
 
 if [ -d "$BUILD_RELEASE_DIR" ]; then
     if [ -d "$BUILD_RELEASE_DIR/$LIB_DIR" ]; then
         if [ -d "$BUILD_RELEASE_DIR/$TAXONOMY_DATABASE_DIR" ]; then
             echo "=================== 1 Executing rsync command ==================="
             rsync -avh --copy-links --chmod=Du=rwx,Dg=rwx,Do=rx,Fu=rwx,Fg=rwx,Fo=rw $BUILD_RELEASE_DIR uni_adm@$ENVIRONMENT_SERVER:$TAXONOMY_PRODUCTION_PATH/$RELEASE_DIR | tee -a "$RELEASE_LOG_DIR/taxonomy-rsync-$ENVIRONMENT.log"
+
+            rsync -avh --copy-links --chmod=Du=rwx,Dg=rwx,Do=rx,Fu=rwx,Fg=rwx,Fo=rw $SERVICE_BIN_PATH/config-prod.properties uni_adm@$ENVIRONMENT_SERVER:$PRODUCTION_CONF_DIR/config.properties | tee -a "$RELEASE_LOG_DIR/taxonomy-rsync-$ENVIRONMENT.log"
 
             echo "rsync completed, now ssh to $ENVIRONMENT_SERVER"
 
