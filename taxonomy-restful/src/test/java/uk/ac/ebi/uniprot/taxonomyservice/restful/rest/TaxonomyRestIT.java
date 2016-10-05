@@ -779,7 +779,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(TaxonomyConstants.NAME_PARAMETER_MIN_SIZE_FOR_PARTIAL_SEARCHES.replace("{min}","4"));
+        errorMessages.add(TaxonomyConstants.NAME_PARAMETER_MIN_SIZE_FOR_PARTIAL_SEARCHES.replace("{min}","3"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
@@ -794,7 +794,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(TaxonomyConstants.NAME_PARAMETER_MIN_SIZE_FOR_PARTIAL_SEARCHES.replace("{min}","4"));
+        errorMessages.add(TaxonomyConstants.NAME_PARAMETER_MIN_SIZE_FOR_PARTIAL_SEARCHES.replace("{min}","3"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(jsonResponse, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
