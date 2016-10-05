@@ -23,7 +23,7 @@ import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstant
  * Created by lgonzales on 09/06/16.
  */
 @RequestScoped
-@NameMinSizeForPartialSearches(message = NAME_PARAMETER_MIN_SIZE_FOR_PARTIAL_SEARCHES, min = 4)
+@NameMinSizeForPartialSearches(message = NAME_PARAMETER_MIN_SIZE_FOR_PARTIAL_SEARCHES, min = 3)
 public class NameRequestParams {
 
     @ApiParam(value = TAXONOMY_NAME_PARAM, required = true)
