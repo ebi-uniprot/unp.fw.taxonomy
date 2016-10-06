@@ -40,7 +40,6 @@
         <jacoco.itReportPath>${jacoco.outputDir}/${jacoco.out.it.file}</jacoco.itReportPath>
 
         <!--this should be overrided in the jenkins release job to: -->
-        <!--/nfs/public/rw/uniprot/restful. -->
         <restful-prod-release-dir>${project.basedir}</restful-prod-release-dir>
 
         <neo4j.version>3.0.1</neo4j.version>

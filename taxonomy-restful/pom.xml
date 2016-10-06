@@ -19,7 +19,7 @@
         <org.glassfish.grizzly.version>2.3.23</org.glassfish.grizzly.version>
         <rest-assured.version>2.8.0</rest-assured.version>
         <rest.host.url>www.ebi.ac.uk</rest.host.url>
-        <rest.basePath>/uniprot/services/restful</rest.basePath>
+        <rest.basePath>/proteins/api</rest.basePath>
     </properties>
 
 
@@ -160,7 +160,7 @@
                     <outputDirectory>${project.basedir}/src/main/resources/staticContent/xsd</outputDirectory>
                     <transformSchemas>
                         <transformSchema>
-                            <uri>http://www.ebi.ac.uk/uniprot/services/docs/xsd/taxonomy</uri>
+                            <uri>http://www.ebi.ac.uk/proteins/api/taxonomy/docs/xsd/taxonomy</uri>
                             <toFile>taxonomy.xsd</toFile>
                         </transformSchema>
                     </transformSchemas>
