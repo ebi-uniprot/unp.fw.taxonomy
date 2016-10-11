@@ -71,11 +71,6 @@
             <version>${spring.boot.starter}</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>uk.ac.ebi.uniprot</groupId>
-            <artifactId>util</artifactId>
-            <version>2016.12-SNAPSHOT</version>
-        </dependency>
     </dependencies>
     <build>
         <resources>

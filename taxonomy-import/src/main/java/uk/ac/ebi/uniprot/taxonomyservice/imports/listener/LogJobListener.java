@@ -1,6 +1,6 @@
 package uk.ac.ebi.uniprot.taxonomyservice.imports.listener;
 
-import uk.ac.ebi.kraken.util.metric.PushGatwayMetricWritter;
+import uk.ac.ebi.uniprot.taxonomyservice.imports.util.PushGatwayMetricWritter;
 
 import java.io.File;
 import java.io.IOException;

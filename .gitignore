@@ -8,3 +8,8 @@
 taxonomy-restful/logs/
 taxonomy-restful/src/main/resources/staticContent/xsd/schema2.xsd
 taxonomy-service-restful.iml
+/taxonomy-deployment/taxonomy-deployment.iml
+taxonomy-deployment/taxonomy-deployment.iml
+taxonomy-import/taxonomy-import.iml
+taxonomy-restful/taxonomy-restful.iml
+taxonomy-stress-test/taxonomy-stress-test.iml
