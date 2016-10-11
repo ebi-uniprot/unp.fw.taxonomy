@@ -4,3 +4,7 @@
 /.idea
 # Created by .ignore support plugin (hsz.mobi)
 /taxonomy-restful/src/main/resources/logback.xml
+/taxonomy-import/src/main/resources/application.properties
+taxonomy-restful/logs/
+taxonomy-restful/src/main/resources/staticContent/xsd/schema2.xsd
+taxonomy-service-restful.iml

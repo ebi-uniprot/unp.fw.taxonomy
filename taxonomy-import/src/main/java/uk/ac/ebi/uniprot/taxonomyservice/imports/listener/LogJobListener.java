@@ -1,5 +1,9 @@
 package uk.ac.ebi.uniprot.taxonomyservice.imports.listener;
 
+import uk.ac.ebi.kraken.util.metric.PushGatwayMetricWritter;
+
+import java.io.File;
+import java.io.IOException;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
@@ -7,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobExecutionListener;
 import org.springframework.batch.core.StepExecution;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 
 /**
  * Log statistics of taxonomy import job.
@@ -17,6 +23,9 @@ import org.springframework.batch.core.StepExecution;
 public class LogJobListener implements JobExecutionListener {
     // logger
     private static final Logger LOGGER = LoggerFactory.getLogger(LogJobListener.class);
+
+    @Autowired
+    private Environment env;
 
     @Override public void beforeJob(JobExecution jobExecution) {
         LOGGER.info("Taxonomy import starting.");
@@ -62,6 +71,29 @@ public class LogJobListener implements JobExecutionListener {
         LOGGER.info("Write count   : {}", writeCount);
         LOGGER.info("Skip count    : {} ({} read / {} processing / {} write)", skipCount, readSkips, processingSkips,
                 writeSkips);
+
+        File metricFile = new File(env.getProperty("taxonomy.batch.metric.file.path"));
+        try {
+            PushGatwayMetricWritter metricWritter = new PushGatwayMetricWritter(metricFile);
+            if(jobExecution.getExitStatus().getExitCode().equals("COMPLETED")) {
+                metricWritter.writeMetric("taxonomy_service_import_job_status", 1);
+            }else {
+                metricWritter.writeMetric("taxonomy_service_import_job_status", 0);
+            }
+            metricWritter.writeMetric("taxonomy_service_import_job_start_time", jobExecution.getStartTime().getTime());
+            metricWritter.writeMetric("taxonomy_service_import_job_end_time", jobExecution.getEndTime().getTime());
+            metricWritter.writeMetric("taxonomy_service_import_job_duration", durationMillis);
+            metricWritter.writeMetric("taxonomy_service_import_job_read_count", readCount);
+            metricWritter.writeMetric("taxonomy_service_import_job_write_count", writeCount);
+            metricWritter.writeMetric("taxonomy_service_import_job_skip_skipst", skipCount);
+            metricWritter.writeMetric("taxonomy_service_import_job_read_skips", readSkips);
+            metricWritter.writeMetric("taxonomy_service_import_job_processing_skips", processingSkips);
+            metricWritter.writeMetric("taxonomy_service_import_job_write_skips", writeSkips);
+        }catch (IOException ioe){
+            LOGGER.error("Unable to save PushGatway metrics ",ioe);
+        }finally {
+            LOGGER.info("PushGatwayMetric saved with success in file "+env.getProperty("taxonomy.batch.metric.file.path"));
+        }
         LOGGER.info("=====================================================");
         jobExecution.getExitStatus();
     }
