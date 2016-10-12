@@ -61,7 +61,7 @@ import static uk.ac.ebi.uniprot.taxonomyservice.imports.model.constants.Taxonomy
  */
 @Configuration
 @EnableBatchProcessing
-@PropertySource(value = "classpath:/application.properties")
+@PropertySource(value = "application.properties")
 public class TaxonomyImportConfig implements DisposableBean{
 
     private static final Logger logger = LoggerFactory.getLogger(TaxonomyImportConfig.class);
