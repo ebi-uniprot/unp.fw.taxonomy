@@ -7,8 +7,9 @@
 set -euo pipefail
 IFS=$'\n\t '
 
+SERVICE_BIN_PATH="$(dirname `which $0`)"
 # ======= read the variables used by the control scripts =======================================
-source "environment.properties" || {
+source "$SERVICE_BIN_PATH/environment.properties" || {
     echo "Please create a file called, environment.properties, containing the necessary environment variables."
     exit 1;
 }
@@ -19,7 +20,6 @@ if ! echo "$PERMITTED_USER" | grep "$USER" > /dev/null 2>&1; then
     exit 1;
 fi;
 
-SERVICE_BIN_PATH="$(pwd -P)"
 SERVICE_TARGET_PATH="$(readlink -f $SERVICE_BIN_PATH/../$TARGET_DIR)"
 LIB_DIR_PATH="$SERVICE_TARGET_PATH/$LIB_DIR"
 TAXONOMY_REPO_DIR="$SERVICE_BIN_PATH/../git-repository/unp.fw.taxonomy"
@@ -51,7 +51,6 @@ if echo "$JAR_NAME" | grep 'SNAPSHOT' > /dev/null; then
     REPO_NAME="$SNAPSHOT_REPO_NAME"
 fi
 REPO_URL="http://wwwdev.ebi.ac.uk/uniprot/artifactory/$REPO_TYPE"
-
 
 # ======= get the artifact from maven =======================================
 TAXONOMY_RESTFUL_GAV="$TAXONOMY_ARTIFACT_GROUP:$TAXONOMY_RESTFUL_ARTIFACT_ID:$TAXONOMY_VERSION"

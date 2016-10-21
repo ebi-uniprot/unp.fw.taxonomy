@@ -53,16 +53,18 @@ fi
 export JAVA_HOME=$JAVA_PATH
 
 nohup $JAVA_HOME/bin/java -server -XX:+UseG1GC $TAXONOMY_RESTFUL_JVM_MEM_MAX $TAXONOMY_RESTFUL_JVM_MEM_MIN  \
--Dcom.sun.management.jmxremote  \
+-Dcom.sun.management.jmxremote \
 -Dcom.sun.management.jmxremote.authenticate=false \
--Dcom.sun.management.jmxremote.ssl=false  \
--Dcom.sun.management.jmxremote.port=$JXM_REMOTE_PORT \
+-Dcom.sun.management.jmxremote.ssl=false \
+-Dcom.sun.management.jmxremote.port=9093 \
+-javaagent:$MONITOR_TOOLS_DIR/dist/jmx_prometheus_javaagent-0.7-SNAPSHOT
+.jar=$JXM_REMOTE_PORT:$SERVICE_BIN_PATH/taxonomy-jmx-config.yaml \
 -Dbacklog.base.path=$LOG_DIR \
 -jar $TAXONOMY_JAR_PATH > $CONSOLE_LOG_FILE 2>&1 &
 
 sleep 5
 
-grep "ready to service requests" "$LOG_DIR/application.log" || {
+grep "ready to service requests" $LOG_DIR/application.log || {
     echo "Taxonomy Service cannot be started. please check"
     exit 1
 }
@@ -70,7 +72,7 @@ grep "ready to service requests" "$LOG_DIR/application.log" || {
 popd  .
 
 echo "testing Taxonomy service"
-curl http://127.0.0.1:9090/proteins/api/taxonomy/id/329 > /dev/null || {
+curl http://localhost:9090/proteins/api/taxonomy/id/329 > /dev/null || {
     echo "Taxonomy service is still not available, please check."
     exit 1;
 }

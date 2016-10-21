@@ -85,7 +85,7 @@ public class TaxonomyRest {
             @ApiParam(value = TAXONOMY_IDS_PARAM, required = true)
             @NotNull(message = IDS_PARAMETER_IS_REQUIRED)
             @IsLongListParam(message = IDS_PARAMETER_VALID_NUMBER)
-            @ListParamMinMaxSize(maxSize = 50, minSize = 2, message = IDS_PARAMETER_MIN_MAX_SIZE)
+            @ListParamMinMaxSize(maxSize = 50, minSize = 1, message = IDS_PARAMETER_MIN_MAX_SIZE)
             @PathParam("ids")
                     String ids) {
 
@@ -134,7 +134,7 @@ public class TaxonomyRest {
             @ApiParam(value = TAXONOMY_IDS_PARAM, required = true)
             @NotNull(message = IDS_PARAMETER_IS_REQUIRED)
             @IsLongListParam(message = IDS_PARAMETER_VALID_NUMBER)
-            @ListParamMinMaxSize(maxSize = 50, minSize = 2, message = IDS_PARAMETER_MIN_MAX_SIZE)
+            @ListParamMinMaxSize(maxSize = 50, minSize = 1, message = IDS_PARAMETER_MIN_MAX_SIZE)
             @PathParam("ids")
                     String ids) {
 
