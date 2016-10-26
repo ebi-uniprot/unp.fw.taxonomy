@@ -37,12 +37,12 @@ if [ $# == 0 ]; then
    echo "You must pass as parameter taxonomy data release name, for example 2016_01";
 else
     export JAVA_HOME=$JAVA_PATH
-
+    RELEASE_NAME=$1
     # ======= FOLDER VARIABLES =======================================
-    BUILD_RELEASE_DIR="$(readlink -m $SERVICE_BIN_PATH/../$RELEASE_DIR/$1)"
+    BUILD_RELEASE_DIR="$(readlink -m $SERVICE_BIN_PATH/../$RELEASE_DIR/$RELEASE_NAME)"
 
     # create directory releases/releaseName
-    createDirectory $BUILD_RELEASE_DIR 0  
+    createDirectory $BUILD_RELEASE_DIR 0
 
     # create logs dir
     RELEASE_LOG_DIR="$BUILD_RELEASE_DIR/$LOG_DIR"
@@ -64,7 +64,7 @@ else
 
     # register taxonomy-import-job in consul
     JOB_NAME="taxonomy-import"
-    declare CONSUL_SERVICE=($(register_consul_service $JOB_NAME));
+    declare CONSUL_SERVICE=($(register_consul_service $JOB_NAME $RELEASE_NAME));
     if [ "${CONSUL_SERVICE[0]}" = true ]; then
         echo "registered $JOB_NAME in consul"
     else
@@ -77,14 +77,13 @@ else
 $JAVA_HOME/bin/java -Dcom.sun.management.jmxremote \
 -Dcom.sun.management.jmxremote.authenticate=false \
 -Dcom.sun.management.jmxremote.ssl=false \
--Dcom.sun.management.jmxremote.port=9093 \
--javaagent:$MONITOR_TOOLS_DIR/dist/jmx_prometheus_javaagent-0.7-SNAPSHOT.jar=$TAXONOMY_IMPORT_JXM_REMOTE_PORT:$SERVICE_BIN_PATH/prometheus-jmx-config.yaml \
+-Dcom.sun.management.jmxremote.port=9096 \
+-javaagent:$MONITOR_TOOLS_DIR/dist/jmx_prometheus_javaagent-0.7-SNAPSHOT.jar=$TAXONOMY_IMPORT_JXM_REMOTE_PORT:$SERVICE_BIN_PATH/taxonomy-import-jmx-config.yaml \
 -jar $IMPORT_JAR_PATH --spring.config.location=file:$SERVICE_BIN_PATH/application.properties > "$RELEASE_LOG_DIR/taxonomy-import.log"
-
-    # send push-gateway metrics 
+    # send push-gateway metrics
     METRIC_FILE="$PUSH_METRIC_DIR/metrics.txt"
-    echo "pushing metrics for metric job $JOB_NAME with metrics $METRIC_FILE"
-    push-job-metrics $METRIC_FILE $JOB_NAME
+    echo "pushing metrics for metric job $JOB_NAME, release $RELEASE_NAME and metrics: $METRIC_FILE"
+    push-job-metrics $METRIC_FILE $JOB_NAME $RELEASE_NAME
     mv $METRIC_FILE $METRIC_FILE-processed-$(date +%Y_%m_%d_%H_%M)
 
     # deregister taxonomy-import-job in consul

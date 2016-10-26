@@ -55,6 +55,7 @@ public class RestApp extends ResourceConfig {
 
         property(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true);
         property(ServerProperties.BV_DISABLE_VALIDATE_ON_EXECUTABLE_OVERRIDE_CHECK, true);
+        property(ServerProperties.MONITORING_STATISTICS_MBEANS_ENABLED,true);
 
         JacksonJaxbJsonProvider jacksonJaxbJsonProvider = new JacksonJaxbJsonProvider();
         register(jacksonJaxbJsonProvider);

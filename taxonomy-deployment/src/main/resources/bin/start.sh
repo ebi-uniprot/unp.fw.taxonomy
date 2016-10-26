@@ -57,8 +57,7 @@ nohup $JAVA_HOME/bin/java -server -XX:+UseG1GC $TAXONOMY_RESTFUL_JVM_MEM_MAX $TA
 -Dcom.sun.management.jmxremote.authenticate=false \
 -Dcom.sun.management.jmxremote.ssl=false \
 -Dcom.sun.management.jmxremote.port=9093 \
--javaagent:$MONITOR_TOOLS_DIR/dist/jmx_prometheus_javaagent-0.7-SNAPSHOT
-.jar=$JXM_REMOTE_PORT:$SERVICE_BIN_PATH/taxonomy-jmx-config.yaml \
+-javaagent:$MONITOR_TOOLS_DIR/dist/jmx_prometheus_javaagent-0.7-SNAPSHOT.jar=$JXM_REMOTE_PORT:$SERVICE_BIN_PATH/taxonomy-jmx-config.yaml \
 -Dbacklog.base.path=$LOG_DIR \
 -jar $TAXONOMY_JAR_PATH > $CONSOLE_LOG_FILE 2>&1 &
 
