@@ -541,25 +541,10 @@ public class TaxonomyRestIT {
                 .statusCode(BAD_REQUEST.getStatusCode())
                 .extract();
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(TaxonomyConstants.IDS_PARAMETER_MIN_MAX_SIZE.replace("{minSize}","2").replace("{maxSize}",
+        errorMessages.add(TaxonomyConstants.IDS_PARAMETER_MIN_MAX_SIZE.replace("{minSize}","1").replace("{maxSize}",
                 "50"));
         requestedURL = TAXONOMY_BASE_PATH + "/ids/"+URLEncoder.encode("1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0," +
                 "1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1", StandardCharsets.UTF_8.toString());
-        assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
-    }
-
-    @Test
-    public void lookupTaxonomyIdsWithSmallListReturnMinSizeErrorWithJsonContentType()throws UnsupportedEncodingException{
-        String requestedURL = TAXONOMY_BASE_PATH + "/ids/1";
-
-        ExtractableResponse<Response> response = when()
-                .get(requestedURL)
-                .then()
-                .statusCode(BAD_REQUEST.getStatusCode())
-                .extract();
-        List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(TaxonomyConstants.IDS_PARAMETER_MIN_MAX_SIZE.replace("{minSize}","2").replace("{maxSize}",
-                "50"));
         assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
 
@@ -668,7 +653,7 @@ public class TaxonomyRestIT {
                 .statusCode(BAD_REQUEST.getStatusCode())
                 .extract();
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(TaxonomyConstants.IDS_PARAMETER_MIN_MAX_SIZE.replace("{minSize}","2").replace("{maxSize}",
+        errorMessages.add(TaxonomyConstants.IDS_PARAMETER_MIN_MAX_SIZE.replace("{minSize}","1").replace("{maxSize}",
                 "50"));
         requestedURL = TAXONOMY_BASE_PATH + "/ids/"+URLEncoder.encode("1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0," +
                 "1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1,2,3,4,5,6,7,8,9,0,1", StandardCharsets.UTF_8.toString())
@@ -683,12 +668,10 @@ public class TaxonomyRestIT {
         ExtractableResponse<Response> response = when()
                 .get(requestedURL)
                 .then()
-                .statusCode(BAD_REQUEST.getStatusCode())
+                .statusCode(OK.getStatusCode())
                 .extract();
-        List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(TaxonomyConstants.IDS_PARAMETER_MIN_MAX_SIZE.replace("{minSize}","2").replace("{maxSize}",
-                "50"));
-        assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
+
+        ResponseAssert.assertTaxonomiesListResponse(response,ContentType.JSON,1,1L,0,null,0,null,false);
     }
 
     @Test
