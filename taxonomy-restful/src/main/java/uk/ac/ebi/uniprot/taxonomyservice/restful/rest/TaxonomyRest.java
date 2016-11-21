@@ -80,7 +80,7 @@ public class TaxonomyRest {
             @ApiResponse(code = 400, message = REQUEST_PARAMETER_INVALID_VALUE, response = ErrorMessage.class),
             @ApiResponse(code = 404, message = API_RESPONSE_404_ENTRY, response = ErrorMessage.class),
             @ApiResponse(code = 500, message = API_RESPONSE_500, response = ErrorMessage.class)})
-    @Path("/ids/{ids}")
+    @Path("ids/{ids}")
     public Response getTaxonomyDetailsByIdList(
             @ApiParam(value = TAXONOMY_IDS_PARAM, required = true)
             @NotNull(message = IDS_PARAMETER_IS_REQUIRED)
@@ -106,7 +106,7 @@ public class TaxonomyRest {
             @ApiResponse(code = 400, message = REQUEST_PARAMETER_INVALID_VALUE, response = ErrorMessage.class),
             @ApiResponse(code = 404, message = API_RESPONSE_404_ENTRY, response = ErrorMessage.class),
             @ApiResponse(code = 500, message = API_RESPONSE_500, response = ErrorMessage.class)})
-    @Path("/id/{id}/node")
+    @Path("id/{id}/node")
     public Response getTaxonomyBaseNodeById(
             @ApiParam(value = TAXONOMY_ID_PARAM, required = true)
             @NotNull(message = ID_PARAMETER_IS_REQUIRED)
@@ -129,7 +129,7 @@ public class TaxonomyRest {
             @ApiResponse(code = 400, message = REQUEST_PARAMETER_INVALID_VALUE, response = ErrorMessage.class),
             @ApiResponse(code = 404, message = API_RESPONSE_404_ENTRY, response = ErrorMessage.class),
             @ApiResponse(code = 500, message = API_RESPONSE_500, response = ErrorMessage.class)})
-    @Path("/ids/{ids}/node")
+    @Path("ids/{ids}/node")
     public Response getTaxonomyBaseNodeByIds(
             @ApiParam(value = TAXONOMY_IDS_PARAM, required = true)
             @NotNull(message = IDS_PARAMETER_IS_REQUIRED)
@@ -153,7 +153,7 @@ public class TaxonomyRest {
             @ApiResponse(code = 400, message = REQUEST_PARAMETER_INVALID_VALUE, response = ErrorMessage.class),
             @ApiResponse(code = 404, message = API_RESPONSE_404_ENTRY, response = ErrorMessage.class),
             @ApiResponse(code = 500, message = API_RESPONSE_500, response = ErrorMessage.class)})
-    @Path("/id/{id}/siblings")
+    @Path("id/{id}/siblings")
     public Response getTaxonomyNodesSiblingsById(
             @ApiParam(value = TAXONOMY_ID_PARAM, required = true)
             @NotNull(message = ID_PARAMETER_IS_REQUIRED)
@@ -177,7 +177,7 @@ public class TaxonomyRest {
             @ApiResponse(code = 400, message = REQUEST_PARAMETER_INVALID_VALUE, response = ErrorMessage.class),
             @ApiResponse(code = 404, message = API_RESPONSE_404_ENTRY, response = ErrorMessage.class),
             @ApiResponse(code = 500, message = API_RESPONSE_500, response = ErrorMessage.class)})
-    @Path("/id/{id}/children")
+    @Path("id/{id}/children")
     public Response getTaxonomyNodesChildrenById(
             @ApiParam(value = TAXONOMY_ID_PARAM, required = true)
             @NotNull(message = ID_PARAMETER_IS_REQUIRED)
@@ -197,7 +197,7 @@ public class TaxonomyRest {
             notes = NOTE_TAXONOMY_ID,
             response = TaxonomyNode.class)
     @ApiResponses(value = {@ApiResponse(code = 400, message = ID_PARAMETER_IS_REQUIRED)})
-    @Path("/id/{id}/parent")
+    @Path("id/{id}/parent")
     public Response getTaxonomyNodeParentById(
             @ApiParam(value = TAXONOMY_ID_PARAM, required = true)
             @NotNull(message = ID_PARAMETER_IS_REQUIRED)
@@ -221,7 +221,7 @@ public class TaxonomyRest {
             @ApiResponse(code = 400, message = REQUEST_PARAMETER_INVALID_VALUE, response = ErrorMessage.class),
             @ApiResponse(code = 404, message = API_RESPONSE_404_NAME, response = ErrorMessage.class),
             @ApiResponse(code = 500, message = API_RESPONSE_500, response = ErrorMessage.class)})
-    @Path("/name/{name}")
+    @Path("name/{name}")
     public Response getTaxonomiesDetailsByName(@Valid @BeanParam NameRequestParams params) {
 
         Optional<Taxonomies> response = dataAccess.getTaxonomyDetailsByName(params,URLUtil.getTaxonomyIdBasePath
@@ -238,7 +238,7 @@ public class TaxonomyRest {
             @ApiResponse(code = 400, message = REQUEST_PARAMETER_INVALID_VALUE, response = ErrorMessage.class),
             @ApiResponse(code = 404, message = API_RESPONSE_404_NAME, response = ErrorMessage.class),
             @ApiResponse(code = 500, message = API_RESPONSE_500, response = ErrorMessage.class)})
-    @Path("/name/{name}/node")
+    @Path("name/{name}/node")
     public Response getTaxonomiesNodeBaseByName(@Valid @BeanParam NameRequestParams params) {
 
         Optional<Taxonomies> response = dataAccess.getTaxonomyNodesByName(params,URLUtil.getTaxonomyIdBasePath
@@ -256,7 +256,7 @@ public class TaxonomyRest {
             @ApiResponse(code = 400, message = REQUEST_PARAMETER_INVALID_VALUE, response = ErrorMessage.class),
             @ApiResponse(code = 404, message = API_RESPONSE_404_RELATIONSHIP, response = ErrorMessage.class),
             @ApiResponse(code = 500, message = API_RESPONSE_500, response = ErrorMessage.class)})
-    @Path("/relationship")
+    @Path("relationship")
     public Response checkRelationshipBetweenTaxonomies(@Valid @BeanParam RelationshipRequestParams params) {
 
         long from = Long.valueOf(params.getFrom());
@@ -281,7 +281,7 @@ public class TaxonomyRest {
             @ApiResponse(code = 400, message = REQUEST_PARAMETER_INVALID_VALUE, response = ErrorMessage.class),
             @ApiResponse(code = 404, message = API_RESPONSE_404_PATH, response = ErrorMessage.class),
             @ApiResponse(code = 500, message = API_RESPONSE_500, response = ErrorMessage.class)})
-    @Path("/path")
+    @Path("path")
     public Response getTaxonomyPath(
     @Valid @BeanParam PathRequestParams pathRequestParam) {
 
@@ -303,7 +303,7 @@ public class TaxonomyRest {
             @ApiResponse(code = 400, message = REQUEST_PARAMETER_INVALID_VALUE, response = ErrorMessage.class),
             @ApiResponse(code = 404, message = API_RESPONSE_404_LINEAGE, response = ErrorMessage.class),
             @ApiResponse(code = 500, message = API_RESPONSE_500, response = ErrorMessage.class)})
-    @Path("/lineage/{id}")
+    @Path("lineage/{id}")
     public Response getTaxonomyLineageById(
             @ApiParam(value = TAXONOMY_ID_PARAM, required = true)
             @NotNull(message = ID_PARAMETER_IS_REQUIRED)
@@ -324,7 +324,7 @@ public class TaxonomyRest {
             @ApiResponse(code = 400, message = REQUEST_PARAMETER_INVALID_VALUE, response = ErrorMessage.class),
             @ApiResponse(code = 404, message = API_RESPONSE_404_ANCESTOR, response = ErrorMessage.class),
             @ApiResponse(code = 500, message = API_RESPONSE_500, response = ErrorMessage.class)})
-    @Path("/ancestor/{ids}")
+    @Path("ancestor/{ids}")
     public Response getTaxonomyAncestor(@Valid @BeanParam AncestorRequestParams param) {
         Optional<TaxonomyNode> response = dataAccess.getTaxonomyAncestorFromTaxonomyIds(param.getIdList());
         return buildResponse(0,response,API_RESPONSE_404_ANCESTOR);
