@@ -2,7 +2,9 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.impl;
 
 import uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.NameRequestParams;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.PageRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.PathRequestParams;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.TaxonomyIdWithPageRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
 
 import java.util.*;
@@ -142,26 +144,82 @@ public class Neo4jTaxonomyDataAccessTest {
     }
 
     @Test
+    public void getTaxonomyParentDetailedByIdWithIdThatDoesNoteReturnParent() {
+        Optional<TaxonomyNode> node = neo4jDataAccess.getTaxonomyParentByIdWithDetail(1L,baseURL);
+        assertThat(node.isPresent(),is(false));
+    }
+
+    @Test
+    public void getTaxonomyParentDetailedByIdWithIdThatReturnValidParent() {
+        boolean hasChildrenLink = true;
+        boolean hasSiblingsLink = false;
+        boolean hasParentLink = false;
+        Optional<TaxonomyNode> node = neo4jDataAccess.getTaxonomyParentByIdWithDetail(10L,baseURL);
+        assertThat(node.isPresent(),is(true));
+        assertNodeDetail(1L,node.get(),hasChildrenLink,hasSiblingsLink,hasParentLink);
+    }
+
+    @Test
     public void getTaxonomySiblingsByIdWithIdThatReturnTwoSiblings() {
-        Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomySiblingsById(10L);
+        TaxonomyIdWithPageRequestParams idParam = new TaxonomyIdWithPageRequestParams();
+        idParam.setId("10");
+        Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomySiblingsById(idParam);
         assertTaxonomiesResult(nodeOptional,2,2,null, 11);
     }
 
     @Test
     public void getTaxonomySiblingsByIdWithIdThatDoesNoteReturnSiblings() {
-        Optional<Taxonomies> nodes = neo4jDataAccess.getTaxonomySiblingsById(1L);
+        TaxonomyIdWithPageRequestParams idParam = new TaxonomyIdWithPageRequestParams();
+        idParam.setId("1");
+        Optional<Taxonomies> nodes = neo4jDataAccess.getTaxonomySiblingsById(idParam);
+        assertThat(nodes.isPresent(),is(false));
+    }
+
+    @Test
+    public void getTaxonomySiblingsDetailedByIdWithIdThatReturnTwoSiblings() {
+        TaxonomyIdWithPageRequestParams idParam = new TaxonomyIdWithPageRequestParams();
+        idParam.setId("10");
+        Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomySiblingsByIdWithDetail(idParam,baseURL);
+        assertTaxonomiesResult(nodeOptional,2,2,null, 11);
+    }
+
+    @Test
+    public void getTaxonomySiblingsDetailedByIdWithIdThatDoesNoteReturnSiblings() {
+        TaxonomyIdWithPageRequestParams idParam = new TaxonomyIdWithPageRequestParams();
+        idParam.setId("1");
+        Optional<Taxonomies> nodes = neo4jDataAccess.getTaxonomySiblingsByIdWithDetail(idParam,baseURL);
         assertThat(nodes.isPresent(),is(false));
     }
 
     @Test
     public void getTaxonomyChildrenByIdThatReturnThreeChildren() {
-        Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomyChildrenById(1L);
+        TaxonomyIdWithPageRequestParams idParam = new TaxonomyIdWithPageRequestParams();
+        idParam.setId("1");
+        Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomyChildrenById(idParam);
         assertTaxonomiesResult(nodeOptional,3,3,null, 10);
     }
 
     @Test
     public void getTaxonomyChildrenByIdWithBottomIdThatDoesNoteReturnChildren() {
-        Optional<Taxonomies> nodes = neo4jDataAccess.getTaxonomyChildrenById(1233L);
+        TaxonomyIdWithPageRequestParams idParam = new TaxonomyIdWithPageRequestParams();
+        idParam.setId("1233");
+        Optional<Taxonomies> nodes = neo4jDataAccess.getTaxonomyChildrenById(idParam);
+        assertThat(nodes.isPresent(),is(false));
+    }
+
+    @Test
+    public void getTaxonomyChildrenDetailedByIdThatReturnThreeChildren() {
+        TaxonomyIdWithPageRequestParams idParam = new TaxonomyIdWithPageRequestParams();
+        idParam.setId("1");
+        Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomyChildrenByIdWithDetail(idParam,baseURL);
+        assertTaxonomiesResult(nodeOptional,3,3,null, 10);
+    }
+
+    @Test
+    public void getTaxonomyChildrenDetailedByIdWithBottomIdThatDoesNoteReturnChildren() {
+        TaxonomyIdWithPageRequestParams idParam = new TaxonomyIdWithPageRequestParams();
+        idParam.setId("1233");
+        Optional<Taxonomies> nodes = neo4jDataAccess.getTaxonomyChildrenByIdWithDetail(idParam,baseURL);
         assertThat(nodes.isPresent(),is(false));
     }
 
@@ -603,18 +661,18 @@ public class Neo4jTaxonomyDataAccessTest {
         assertThat(taxonomy.isPresent(), is(false));
     }
 
-    private void assertTaxonomiesResult(Optional<Taxonomies> nodeOptional,int size,int totalRecords, NameRequestParams
-            nameParams, long firstTaxonomyId) {
+    private void assertTaxonomiesResult(Optional<Taxonomies> nodeOptional,int size,int totalRecords, PageRequestParams
+            pageParams, long firstTaxonomyId) {
         assertThat(nodeOptional.isPresent(),is(true));
         Taxonomies nodes = nodeOptional.get();
         assertThat(nodes.getTaxonomies(),notNullValue());
         assertThat(nodes.getTaxonomies().size(),is(size));
         Collections.sort(nodes.getTaxonomies());
         assertBaseNode(firstTaxonomyId,nodes.getTaxonomies().get(0));
-        if(nameParams != null) {
+        if(pageParams != null) {
             assertThat(nodes.getPageInfo(), notNullValue());
-            assertThat(nodes.getPageInfo().getCurrentPage(), is(Integer.parseInt(nameParams.getPageNumber())));
-            assertThat(nodes.getPageInfo().getResultsPerPage(), is(nameParams.getPageSizeInt()));
+            assertThat(nodes.getPageInfo().getCurrentPage(), is(Integer.parseInt(pageParams.getPageNumber())));
+            assertThat(nodes.getPageInfo().getResultsPerPage(), is(pageParams.getPageSizeInt()));
             assertThat(nodes.getPageInfo().getTotalRecords(), is(totalRecords));
         }
     }

@@ -3,6 +3,7 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.NameRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.PathRequestParams;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.TaxonomyIdWithPageRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
 
 import java.util.List;
@@ -57,7 +58,17 @@ public interface TaxonomyDataAccess {
      * @param taxonomyId identification of taxonomy siblings
      * @return details about searched taxonomy
      */
-    Optional<Taxonomies> getTaxonomySiblingsById(long taxonomyId);
+    Optional<Taxonomies> getTaxonomySiblingsById(TaxonomyIdWithPageRequestParams taxonomyId);
+
+    /**
+     * This method return list of siblings with detail of a searched {@param taxonomyId}.
+     *
+     * @param taxonomyId identification of taxonomy siblings
+     * @param basePath base path to build taxonomy parent, children and sibling links
+     * @return details about searched taxonomy
+     */
+    public Optional<Taxonomies> getTaxonomySiblingsByIdWithDetail(TaxonomyIdWithPageRequestParams taxonomyId, String
+            basePath);
 
     /**
      * This method return the parent of a searched {@param taxonomyId}.
@@ -68,12 +79,31 @@ public interface TaxonomyDataAccess {
     Optional<TaxonomyNode> getTaxonomyParentById(long taxonomyId);
 
     /**
+     * This method return the parent with details of a searched {@param taxonomyId}.
+     *
+     * @param taxonomyId identification of taxonomy
+     * @param basePath base path to build taxonomy parent, children and sibling links
+     * @return details about searched taxonomy parent
+     */
+    Optional<TaxonomyNode> getTaxonomyParentByIdWithDetail(long taxonomyId, String basePath);
+
+    /**
      * This method return list of children of a searched {@param taxonomyId}.
      *
      * @param taxonomyId identification of taxonomy
      * @return details about searched taxonomy children
      */
-    Optional<Taxonomies> getTaxonomyChildrenById(long taxonomyId);
+    Optional<Taxonomies> getTaxonomyChildrenById(TaxonomyIdWithPageRequestParams taxonomyId);
+
+    /**
+     * This method return list of children with detail of a searched {@param taxonomyId}.
+     *
+     * @param taxonomyId identification of taxonomy children
+     * @param basePath base path to build taxonomy parent, children and sibling links
+     * @return details about searched taxonomy
+     */
+    public Optional<Taxonomies> getTaxonomyChildrenByIdWithDetail(TaxonomyIdWithPageRequestParams taxonomyId, String
+            basePath);
 
     /**
      * This method return the details( including links for parent, siblings and children of all taxonomies names that

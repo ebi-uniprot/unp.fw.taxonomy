@@ -2,12 +2,14 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.util;
 
 import uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.ErrorMessage;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.PageInformation;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
 
 import com.jayway.restassured.http.ContentType;
 import com.jayway.restassured.internal.mapper.ObjectMapperType;
 import com.jayway.restassured.response.ExtractableResponse;
 import java.util.Collections;
+import java.util.List;
 import javax.ws.rs.core.Response;
 import org.junit.Assert;
 
@@ -29,6 +31,74 @@ import static org.junit.Assert.assertTrue;
 public class ResponseAssert {
 
     public static final String REQUEST_URL = "http://localhost:12345/rest/test";
+
+
+    public static void assertErrorResponseReturnCorrectContentTypeAndResponseBody(ExtractableResponse<com.jayway.restassured.response.Response>
+            response, ContentType contentType, List<String> errorMessages, String requestedURL) {
+        assertThat(response, notNullValue());
+        assertThat(response.contentType(), equalTo(contentType.toString()));
+
+        ErrorMessage expectedErrorMessage = new ErrorMessage();
+        expectedErrorMessage.setErrorMessages(errorMessages);
+        expectedErrorMessage.setRequestedURL(requestedURL);
+
+        ResponseAssert.assertResponseErrorMessage(expectedErrorMessage,response);
+    }
+
+    public static void assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent
+            (ExtractableResponse<com.jayway.restassured.response.Response> response, ContentType contentType, long taxonomyId, boolean checkLinks) {
+        assertThat(response, notNullValue());
+        assertThat(response.contentType(), equalTo(contentType.toString()));
+
+        TaxonomyNode node = response.as(TaxonomyNode.class);
+        assertThat(node, notNullValue());
+        ResponseAssert.assertTaxonomyNodeAttributesHasValues(node, taxonomyId, checkLinks);
+    }
+
+    public static void assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidPageMetadataAndContent(
+            ExtractableResponse<com.jayway.restassured.response.Response> response, ContentType contentType, boolean checkLinks,PageInformation
+            expectedPageInfo
+    ){
+        assertThat(response, notNullValue());
+        assertThat(response.contentType(), equalTo(contentType.toString()));
+
+        Taxonomies taxonomies = response.as(Taxonomies.class);
+        assertThat(taxonomies.getTaxonomies(), notNullValue());
+        assertThat(taxonomies.getTaxonomies(), not(emptyIterable()));
+
+        TaxonomyNode node = taxonomies.getTaxonomies().get(0);
+        assertThat(node, notNullValue());
+        ResponseAssert.assertTaxonomyNodeAttributesHasValues(node, node.getTaxonomyId(), checkLinks);
+
+        if(expectedPageInfo != null){
+            assertThat(taxonomies.getPageInfo(), notNullValue());
+            assertThat(taxonomies.getPageInfo(), equalTo(expectedPageInfo));
+        }
+    }
+
+    public static void assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(
+            ExtractableResponse<com.jayway.restassured.response.Response> response, ContentType contentType, boolean checkLinks) {
+        assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidPageMetadataAndContent(response,
+                contentType,checkLinks,null);
+    }
+
+    public static void assertValidTaxonomiesResponseForLineageWithCorrectContentTypeNotEmptyListAndValidContent(
+            ExtractableResponse<com.jayway.restassured.response.Response> response, ContentType contentType, long first, long last) {
+        assertThat(response, notNullValue());
+        assertThat(response.contentType(), equalTo(contentType.toString()));
+
+        Taxonomies taxonomies = response.as(Taxonomies.class);
+        assertThat(taxonomies.getTaxonomies(), notNullValue());
+        assertThat(taxonomies.getTaxonomies(), not(emptyIterable()));
+
+        TaxonomyNode node = taxonomies.getTaxonomies().get(0);
+        assertThat(node, notNullValue());
+        assertThat(node.getTaxonomyId(), equalTo(first));
+
+        node = taxonomies.getTaxonomies().get(taxonomies.getTaxonomies().size()-1);
+        assertThat(node, notNullValue());
+        assertThat(node.getTaxonomyId(), equalTo(last));
+    }
 
     public static void assertResponseErrorMessage(ErrorMessage expectedError, Response response) {
         assertThat(response.getEntity(), notNullValue());

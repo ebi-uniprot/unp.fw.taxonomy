@@ -32,15 +32,28 @@ public class TaxonomyConstants {
 
     //TAXONOMY PARENT
     public static final String API_OPERATION_TAXONOMY_PARENT_BY_ID = "This service returns details about the parent " +
-            "node for a given taxonomy node.";
+            "node for a given taxonomy node with links to its parent, sibling and children nodes.";
 
     //TAXONOMY SIBLINGS
     public static final String API_OPERATION_TAXONOMY_SIBLINGS_BY_ID = "This service returns a list of sibling nodes " +
-            "that belongs for a given taxonomy node.";
+            "that belongs for a given taxonomy node with links to its parent, sibling and children nodes.";
 
     //TAXONOMY CHILDREN
     public static final String API_OPERATION_TAXONOMY_CHILDREN_BY_ID = "This service returns a list of children nodes" +
-            " that belongs to a taxonomy node.";
+            " that belongs to a taxonomy node with links to its parent, sibling and children nodes.";
+
+    //TAXONOMY PARENT NODE
+    public static final String API_OPERATION_TAXONOMY_PARENT_NODE_BY_ID = "This service returns details about the " +
+            "parent node for a given taxonomy node.";
+
+    //TAXONOMY SIBLINGS NODE
+    public static final String API_OPERATION_TAXONOMY_SIBLINGS_NODE_BY_ID = "This service returns a list of sibling " +
+            "nodes that belongs for a given taxonomy node.";
+
+    //TAXONOMY CHILDREN NODE
+    public static final String API_OPERATION_TAXONOMY_CHILDREN_NODE_BY_ID = "This service returns a list of children " +
+            "nodes that belongs to a taxonomy node.";
+
     //TAXONOMY BY NAME
     public static final String API_OPERATION_TAXONOMY_DETAIL_BY_NAME = "This service returns a list of taxonomic " +
             "nodes with the specific queried name. For each node, the service provides it’s taxonomic details and also " +
@@ -54,8 +67,8 @@ public class TaxonomyConstants {
             "mnemonic, scientific name and common name.";
 
     //TAXONOMY RELATIONSHIP
-    public static final String API_OPERATION_TAXONOMY_RELATIONSHIP = "This service returns the path between to " +
-            "taxonomic nodes showing their relationship.";
+    public static final String API_OPERATION_TAXONOMY_RELATIONSHIP = "This service returns the shortest path between " +
+            "two taxonomy nodes showing their relationship.";
 
     public static final String NOTE_TAXONOMY_RELATIONSHIP = "";
 
