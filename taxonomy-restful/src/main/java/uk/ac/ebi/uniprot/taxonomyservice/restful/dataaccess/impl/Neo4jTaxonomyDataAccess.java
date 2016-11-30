@@ -79,11 +79,11 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
             GET_TAXONOMY_DETAIL_MATCH_BASE;
 
     private static final String GET_TAXONOMY_CHILDREN_BY_ID_CYPHER_QUERY_WITH_DETAIL = "MATCH (n:Node)-[r:CHILD_OF]->" +
-            "(p:Node) where p.taxonomyId = {id} "+GET_TAXONOMY_DETAIL_MATCH_BASE;
+            "(p:Node) where p.taxonomyId = {id} "+GET_TAXONOMY_DETAIL_MATCH_BASE + " SKIP {skip} LIMIT {limit}";
 
     private static final String GET_TAXONOMY_SIBLINGS_BY_ID_CYPHER_QUERY_WITH_DETAIL = " MATCH (n1:Node)" +
             "-[r:CHILD_OF]->(p:Node) WHERE n1.taxonomyId = {id} with p MATCH (n:Node)-[r:CHILD_OF]->(p) where n" +
-            ".taxonomyId <> {id} "+GET_TAXONOMY_DETAIL_MATCH_BASE;
+            ".taxonomyId <> {id} "+GET_TAXONOMY_DETAIL_MATCH_BASE + " SKIP {skip} LIMIT {limit}";
 
     private static final String GET_TAXONOMY_DETAILS_BY_NAME_CYPHER_QUERY_BASE =
             "MATCH (n:Node) WHERE n.{fieldName} {searchType} {name} ";
