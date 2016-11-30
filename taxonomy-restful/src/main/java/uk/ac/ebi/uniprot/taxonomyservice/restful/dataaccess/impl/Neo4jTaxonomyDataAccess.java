@@ -44,8 +44,8 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
                     "LIMIT {limit}";
 
     private static final String GET_TAXONOMY_SIBLINGS_BY_ID_CYPHER_QUERY_TOTAL =
-            "MATCH (n:Node)-[r:CHILD_OF]->(p:Node) WHERE n.taxonomyId = {id} " +
-                    "with p MATCH (s:Node)-[r:CHILD_OF]->(p) where s.taxonomyId <> {id} RETURN count(s) as totalRecords";
+            "MATCH (n1:Node)-[r:CHILD_OF]->(p:Node) WHERE n1.taxonomyId = {id} " +
+                    "with p MATCH (n:Node)-[r:CHILD_OF]->(p) RETURN count(n)-1 as totalRecords";
 
     private static final String GET_TAXONOMY_BASE_NODE_BY_ID_CYPHER_QUERY =
             "MATCH (n:Node) WHERE n.taxonomyId = {id} RETURN n as node";
@@ -83,7 +83,9 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
 
     private static final String GET_TAXONOMY_SIBLINGS_BY_ID_CYPHER_QUERY_WITH_DETAIL = " MATCH (n1:Node)" +
             "-[r:CHILD_OF]->(p:Node) WHERE n1.taxonomyId = {id} with p MATCH (n:Node)-[r:CHILD_OF]->(p) where n" +
-            ".taxonomyId <> {id} "+GET_TAXONOMY_DETAIL_MATCH_BASE + " SKIP {skip} LIMIT {limit}";
+            ".taxonomyId <> {id} with n,p return n as node,p.taxonomyId as parentId, " +
+            "extract(path in (:Node)-[:CHILD_OF]->(n) | extract( r in relationships(path) | startNode(r).taxonomyId ))"+
+            "as children SKIP {skip} LIMIT {limit}";
 
     private static final String GET_TAXONOMY_DETAILS_BY_NAME_CYPHER_QUERY_BASE =
             "MATCH (n:Node) WHERE n.{fieldName} {searchType} {name} ";
