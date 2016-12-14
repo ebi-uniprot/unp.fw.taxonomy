@@ -1,5 +1,6 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.rest;
 
+import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.PageInformation;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstants;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.util.ResponseAssert;
 
@@ -93,24 +94,34 @@ public class TaxonomyRestSubResourcesIT{
 
     @Test
     public void lookupTaxonomyChildrenDetailedWithDefaultResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
+        PageInformation expectedPageInfo = new PageInformation();
+        expectedPageInfo.setTotalRecords(3);
+        expectedPageInfo.setResultsPerPage(100);
+        expectedPageInfo.setCurrentPage(1);
+
         ExtractableResponse<Response> response = when()
                 .get(TAXONOMY_BASE_PATH + "/id/10/children")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.JSON,
-                true);
+        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent(response, ContentType.JSON,
+                true,expectedPageInfo);
     }
 
     @Test
     public void lookupTaxonomyChildrenDetailedWithJsonResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
+        PageInformation expectedPageInfo = new PageInformation();
+        expectedPageInfo.setTotalRecords(3);
+        expectedPageInfo.setResultsPerPage(100);
+        expectedPageInfo.setCurrentPage(1);
+
         ExtractableResponse<Response> response = when()
                 .get(TAXONOMY_BASE_PATH + "/id/10/children?format=json")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.JSON,
-                true);
+        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent(response, ContentType.JSON,
+                true,expectedPageInfo);
     }
 
     @Test
@@ -132,13 +143,18 @@ public class TaxonomyRestSubResourcesIT{
 
     @Test
     public void lookupTaxonomyChildrenDetailedWithXmlResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
+        PageInformation expectedPageInfo = new PageInformation();
+        expectedPageInfo.setTotalRecords(3);
+        expectedPageInfo.setResultsPerPage(100);
+        expectedPageInfo.setCurrentPage(1);
+
         ExtractableResponse<Response> response = when()
                 .get(TAXONOMY_BASE_PATH + "/id/10/children?format=xml")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.XML,
-                true);
+        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent(response, ContentType.XML,
+                true,expectedPageInfo);
     }
 
     @Test
@@ -205,24 +221,34 @@ public class TaxonomyRestSubResourcesIT{
 
     @Test
     public void lookupTaxonomyChildrenWithDefaultResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
+        PageInformation expectedPageInfo = new PageInformation();
+        expectedPageInfo.setTotalRecords(3);
+        expectedPageInfo.setResultsPerPage(100);
+        expectedPageInfo.setCurrentPage(1);
+
         ExtractableResponse<Response> response = when()
                 .get(TAXONOMY_BASE_PATH + "/id/10/children/node")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.JSON,
-                false);
+        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent(response, ContentType.JSON,
+                false,expectedPageInfo);
     }
 
     @Test
     public void lookupTaxonomyChildrenWithJsonResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
+        PageInformation expectedPageInfo = new PageInformation();
+        expectedPageInfo.setTotalRecords(3);
+        expectedPageInfo.setResultsPerPage(100);
+        expectedPageInfo.setCurrentPage(1);
+
         ExtractableResponse<Response> response = when()
                 .get(TAXONOMY_BASE_PATH + "/id/10/children/node?format=json")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.JSON,
-                false);
+        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent(response, ContentType.JSON,
+                false,expectedPageInfo);
     }
 
     @Test
@@ -244,13 +270,18 @@ public class TaxonomyRestSubResourcesIT{
 
     @Test
     public void lookupTaxonomyChildrenWithXmlResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
+        PageInformation expectedPageInfo = new PageInformation();
+        expectedPageInfo.setTotalRecords(3);
+        expectedPageInfo.setResultsPerPage(100);
+        expectedPageInfo.setCurrentPage(1);
+
         ExtractableResponse<Response> response = when()
                 .get(TAXONOMY_BASE_PATH + "/id/10/children/node?format=xml")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.XML,
-                false);
+        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent(response, ContentType.XML,
+                false,expectedPageInfo);
     }
 
     @Test
@@ -285,13 +316,18 @@ public class TaxonomyRestSubResourcesIT{
 
     @Test
     public void lookupTaxonomySiblingsDetailedWithDefaultResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
+        PageInformation expectedPageInfo = new PageInformation();
+        expectedPageInfo.setTotalRecords(2);
+        expectedPageInfo.setResultsPerPage(100);
+        expectedPageInfo.setCurrentPage(1);
+
         ExtractableResponse<Response> response = when()
                 .get(TAXONOMY_BASE_PATH + "/id/10/siblings")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.JSON,
-                true);
+        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent(response, ContentType.JSON,
+                true,false,true,expectedPageInfo);
     }
 
     @Test
@@ -313,13 +349,18 @@ public class TaxonomyRestSubResourcesIT{
 
     @Test
     public void lookupTaxonomySiblingsDetailedWithJsonResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
+        PageInformation expectedPageInfo = new PageInformation();
+        expectedPageInfo.setTotalRecords(2);
+        expectedPageInfo.setResultsPerPage(100);
+        expectedPageInfo.setCurrentPage(1);
+
         ExtractableResponse<Response> response = when()
                 .get(TAXONOMY_BASE_PATH + "/id/10/siblings?format=json")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.JSON,
-                true);
+        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent(response, ContentType.JSON,
+                true,false,true,expectedPageInfo);
     }
 
     @Test
@@ -341,13 +382,18 @@ public class TaxonomyRestSubResourcesIT{
 
     @Test
     public void lookupTaxonomySiblingsDetailedWithXmlResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
+        PageInformation expectedPageInfo = new PageInformation();
+        expectedPageInfo.setTotalRecords(2);
+        expectedPageInfo.setResultsPerPage(100);
+        expectedPageInfo.setCurrentPage(1);
+
         ExtractableResponse<Response> response = when()
                 .get(TAXONOMY_BASE_PATH + "/id/10/siblings?format=xml")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.XML,
-                true);
+        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent(response, ContentType.XML,
+                true,false,true,expectedPageInfo);
     }
 
     @Test
@@ -382,13 +428,18 @@ public class TaxonomyRestSubResourcesIT{
 
     @Test
     public void lookupTaxonomySiblingsWithDefaultResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
+        PageInformation expectedPageInfo = new PageInformation();
+        expectedPageInfo.setTotalRecords(2);
+        expectedPageInfo.setResultsPerPage(100);
+        expectedPageInfo.setCurrentPage(1);
+
         ExtractableResponse<Response> response = when()
                 .get(TAXONOMY_BASE_PATH + "/id/10/siblings/node")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.JSON,
-                false);
+        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent(response, ContentType.JSON,
+                false,expectedPageInfo);
     }
 
     @Test
@@ -410,13 +461,18 @@ public class TaxonomyRestSubResourcesIT{
 
     @Test
     public void lookupTaxonomySiblingsWithJsonResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
+        PageInformation expectedPageInfo = new PageInformation();
+        expectedPageInfo.setTotalRecords(2);
+        expectedPageInfo.setResultsPerPage(100);
+        expectedPageInfo.setCurrentPage(1);
+
         ExtractableResponse<Response> response = when()
                 .get(TAXONOMY_BASE_PATH + "/id/10/siblings/node?format=json")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.JSON,
-                false);
+        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent(response, ContentType.JSON,
+                false,expectedPageInfo);
     }
 
     @Test
@@ -438,13 +494,18 @@ public class TaxonomyRestSubResourcesIT{
 
     @Test
     public void lookupTaxonomySiblingsWithXmlResourcePathReturnsOKStatusJsonFormatAndTheCorrectList() {
+        PageInformation expectedPageInfo = new PageInformation();
+        expectedPageInfo.setTotalRecords(2);
+        expectedPageInfo.setResultsPerPage(100);
+        expectedPageInfo.setCurrentPage(1);
+
         ExtractableResponse<Response> response = when()
                 .get(TAXONOMY_BASE_PATH + "/id/10/siblings/node?format=xml")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.XML,
-                false);
+        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent(response, ContentType.XML,
+                false,expectedPageInfo);
     }
 
     @Test

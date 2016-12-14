@@ -253,6 +253,9 @@ public class TaxonomyImportConfig implements DisposableBean{
         batchInserter.createDeferredSchemaIndex( nodeLabel ).on(commonNameLowerCase.name()).create();
         batchInserter.createDeferredSchemaIndex( nodeLabel ).on(mnemonicLowerCase.name()).create();
 
+        Label mergedLabel = Label.label( "Merged" );
+        batchInserter.createDeferredSchemaIndex( mergedLabel ).on(taxonomyId.name()).create();
+
         logger.info("Created Neo4J index for taxonomyId, scientificName, commonName and mnemonic");
         return batchInserter;
     }

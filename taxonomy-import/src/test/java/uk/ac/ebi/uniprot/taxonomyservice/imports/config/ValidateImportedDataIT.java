@@ -69,12 +69,16 @@ public class ValidateImportedDataIT implements InstanceTestClassListener{
         try(Transaction tx = neo4jDb.beginTx()){
             Iterable<IndexDefinition> indexes = neo4jDb.schema().getIndexes();
             assertThat(indexes, notNullValue());
-            assertThat(Iterables.count(indexes),is(4L));
+            assertThat(Iterables.count(indexes),is(5L));
 
-            assertThat(hasIndexInPropertyName(indexes,taxonomyId.name()),is(true));
-            assertThat(hasIndexInPropertyName(indexes,scientificNameLowerCase.name()),is(true));
-            assertThat(hasIndexInPropertyName(indexes,commonNameLowerCase.name()),is(true));
-            assertThat(hasIndexInPropertyName(indexes,mnemonicLowerCase.name()),is(true));
+            Label nodeLabel = Label.label( "Node" );
+            assertThat(hasIndexInPropertyName(indexes,nodeLabel,taxonomyId.name()),is(true));
+            assertThat(hasIndexInPropertyName(indexes,nodeLabel,scientificNameLowerCase.name()),is(true));
+            assertThat(hasIndexInPropertyName(indexes,nodeLabel,commonNameLowerCase.name()),is(true));
+            assertThat(hasIndexInPropertyName(indexes,nodeLabel,mnemonicLowerCase.name()),is(true));
+
+            Label mergedLabel = Label.label( "Merged" );
+            assertThat(hasIndexInPropertyName(indexes,mergedLabel,taxonomyId.name()),is(true));
 
             tx.success();
         }
@@ -150,13 +154,15 @@ public class ValidateImportedDataIT implements InstanceTestClassListener{
 
     }
 
-    private boolean hasIndexInPropertyName(Iterable<IndexDefinition> indexes, String propertyName) {
+    private boolean hasIndexInPropertyName(Iterable<IndexDefinition> indexes, Label label, String propertyName) {
         Boolean result = null;
         for (IndexDefinition index: indexes) {
-            for (String key: index.getPropertyKeys()) {
-                if(key.equals(propertyName)){
-                    result = true;
-                    break;
+            if(label.name().equals(index.getLabel().name())) {
+                for (String key : index.getPropertyKeys()) {
+                    if (key.equals(propertyName)) {
+                        result = true;
+                        break;
+                    }
                 }
             }
         }

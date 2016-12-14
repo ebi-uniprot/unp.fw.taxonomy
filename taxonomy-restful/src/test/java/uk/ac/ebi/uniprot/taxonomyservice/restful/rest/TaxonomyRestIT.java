@@ -491,15 +491,18 @@ public class TaxonomyRestIT {
     @Test
     public void lookupTaxonomyNameWithSmallNameEqualsToReturnsCorrectTaxonomies() {
         String requestedURL = TAXONOMY_BASE_PATH + "/name/sn?searchType=equalsto";
-
+        PageInformation expectedPageInfo = new PageInformation();
+        expectedPageInfo.setTotalRecords(1);
+        expectedPageInfo.setResultsPerPage(100);
+        expectedPageInfo.setCurrentPage(1);
         ExtractableResponse<Response> jsonResponse = when()
                 .get(requestedURL)
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
 
-        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(jsonResponse, ContentType.JSON,
-                false);
+        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent(jsonResponse, ContentType.JSON,
+                true,true,false,expectedPageInfo);
     }
 
     @Test
@@ -519,45 +522,63 @@ public class TaxonomyRestIT {
 
     @Test
     public void lookupTaxonomyNameValidReturnsOkWithDefaultContentTypeAndCorrectTaxonomies() {
+        PageInformation expectedPageInfo = new PageInformation();
+        expectedPageInfo.setTotalRecords(1);
+        expectedPageInfo.setResultsPerPage(100);
+        expectedPageInfo.setCurrentPage(1);
+
         ExtractableResponse<Response> response = when()
                 .get(TAXONOMY_BASE_PATH + "/name/Equals to Only")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.JSON,
-                false);
+        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent(response, ContentType.JSON,
+                true,expectedPageInfo);
     }
 
     @Test
     public void lookupTaxonomyNameCaseInsensitiveValidReturnsOkWithDefaultContentTypeAndCorrectTaxonomies() {
+        PageInformation expectedPageInfo = new PageInformation();
+        expectedPageInfo.setTotalRecords(1);
+        expectedPageInfo.setResultsPerPage(100);
+        expectedPageInfo.setCurrentPage(1);
         ExtractableResponse<Response> response = when()
                 .get(TAXONOMY_BASE_PATH + "/name/EQUALS tO OnLY")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.JSON,
-                false);
+        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent(response, ContentType.JSON,
+                true,expectedPageInfo);
     }
 
     @Test
     public void lookupTaxonomyNameValidReturnsOkWithXmlContentTypeAndCorrectTaxonomies() {
+        PageInformation expectedPageInfo = new PageInformation();
+        expectedPageInfo.setTotalRecords(1);
+        expectedPageInfo.setResultsPerPage(100);
+        expectedPageInfo.setCurrentPage(1);
         ExtractableResponse<Response> response = when()
                 .get(TAXONOMY_BASE_PATH + "/name/Equals to Only?format=xml")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.XML, true);
+        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent
+                (response, ContentType.XML, true,expectedPageInfo);
     }
 
     @Test
     public void lookupTaxonomyNameValidReturnsOkWithJsonContentTypeAndCorrectTaxonomies() {
+        PageInformation expectedPageInfo = new PageInformation();
+        expectedPageInfo.setTotalRecords(1);
+        expectedPageInfo.setResultsPerPage(100);
+        expectedPageInfo.setCurrentPage(1);
         ExtractableResponse<Response> response = when()
                 .get(TAXONOMY_BASE_PATH + "/name/Equals to Only?format=json")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.JSON,
-                true);
+        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent(response, ContentType.JSON,
+                true,expectedPageInfo);
     }
 
     @Test
@@ -648,7 +669,7 @@ public class TaxonomyRestIT {
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidPageMetadataAndContent(response,
+        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent(response,
                 ContentType.XML,true,expectedPageInfo);
     }
 
@@ -664,7 +685,7 @@ public class TaxonomyRestIT {
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidPageMetadataAndContent(response,
+        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent(response,
                 ContentType.JSON,true,expectedPageInfo);
     }
 
@@ -695,12 +716,16 @@ public class TaxonomyRestIT {
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidPageMetadataAndContent(response,
+        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent(response,
                 ContentType.XML,true,expectedPageInfo);
     }
 
     @Test
     public void lookupTaxonomyNodeNameWithSmallNameEqualsToReturnsCorrectTaxonomies() {
+        PageInformation expectedPageInfo = new PageInformation();
+        expectedPageInfo.setTotalRecords(1);
+        expectedPageInfo.setResultsPerPage(100);
+        expectedPageInfo.setCurrentPage(1);
         String requestedURL = TAXONOMY_BASE_PATH + "/name/sn/node?searchType=equalsto";
 
         ExtractableResponse<Response> jsonResponse = when()
@@ -709,8 +734,8 @@ public class TaxonomyRestIT {
                 .statusCode(OK.getStatusCode())
                 .extract();
 
-        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(jsonResponse, ContentType.JSON,
-                false);
+        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent(jsonResponse, ContentType.JSON,
+                false,expectedPageInfo);
     }
 
     @Test
@@ -730,13 +755,17 @@ public class TaxonomyRestIT {
 
     @Test
     public void lookupTaxonomyNodeNameValidReturnsOkWithDefaultContentTypeAndCorrectTaxonomies() {
+        PageInformation expectedPageInfo = new PageInformation();
+        expectedPageInfo.setTotalRecords(1);
+        expectedPageInfo.setResultsPerPage(100);
+        expectedPageInfo.setCurrentPage(1);
         ExtractableResponse<Response> response = when()
                 .get(TAXONOMY_BASE_PATH + "/name/Equals to Only/node")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract();
-        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(response, ContentType.JSON,
-                false);
+        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent(response, ContentType.JSON,
+                false,expectedPageInfo);
     }
     /*
         END: Test with /taxonomy/name

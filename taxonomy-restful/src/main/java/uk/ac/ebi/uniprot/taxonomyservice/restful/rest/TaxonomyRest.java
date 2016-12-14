@@ -46,6 +46,7 @@ public class TaxonomyRest {
     private HttpServletRequest request;
 
     @GET
+    @ApiOperation(value = "",hidden = true)
     @Path("status")
     public Response getTaxonomyStatus(){
         Map<String,String> response = new HashMap<>();

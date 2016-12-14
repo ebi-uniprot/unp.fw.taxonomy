@@ -55,10 +55,9 @@ public class ResponseAssert {
         ResponseAssert.assertTaxonomyNodeAttributesHasValues(node, taxonomyId, checkLinks);
     }
 
-    public static void assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidPageMetadataAndContent(
-            ExtractableResponse<com.jayway.restassured.response.Response> response, ContentType contentType, boolean checkLinks,PageInformation
-            expectedPageInfo
-    ){
+    public static void assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent(
+            ExtractableResponse<com.jayway.restassured.response.Response> response, ContentType contentType,
+            boolean parentLink,boolean siblingsLink, boolean childrenLink,PageInformation expectedPageInfo){
         assertThat(response, notNullValue());
         assertThat(response.contentType(), equalTo(contentType.toString()));
 
@@ -68,18 +67,29 @@ public class ResponseAssert {
 
         TaxonomyNode node = taxonomies.getTaxonomies().get(0);
         assertThat(node, notNullValue());
-        ResponseAssert.assertTaxonomyNodeAttributesHasValues(node, node.getTaxonomyId(), checkLinks);
+        ResponseAssert.assertTaxonomyNodeAttributesHasValues(node, node.getTaxonomyId(), parentLink,siblingsLink,childrenLink);
 
         if(expectedPageInfo != null){
             assertThat(taxonomies.getPageInfo(), notNullValue());
             assertThat(taxonomies.getPageInfo(), equalTo(expectedPageInfo));
+        }else{
+            assertThat(taxonomies.getPageInfo(), nullValue());
         }
+
     }
 
-    public static void assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidContent(
-            ExtractableResponse<com.jayway.restassured.response.Response> response, ContentType contentType, boolean checkLinks) {
-        assertValidTaxonomiesResponseWithCorrectContentTypeNotEmptyListAndValidPageMetadataAndContent(response,
-                contentType,checkLinks,null);
+    public static void assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent(
+            ExtractableResponse<com.jayway.restassured.response.Response> response, ContentType contentType,
+            boolean checkLinks,PageInformation expectedPageInfo){
+
+        if(checkLinks) {
+            assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent(response,contentType,
+                    true,true,true,expectedPageInfo);
+        }else{
+            assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent(response,contentType,
+                    false,false,false,expectedPageInfo);
+        }
+
     }
 
     public static void assertValidTaxonomiesResponseForLineageWithCorrectContentTypeNotEmptyListAndValidContent(
@@ -120,22 +130,44 @@ public class ResponseAssert {
 
         assertResponseErrorMessage(expectedError, errorResponse);
     }
-
     public static void assertTaxonomyNodeAttributesHasValues(TaxonomyNode node, long taxonomyId, boolean checkLinks) {
+        if(checkLinks){
+            assertTaxonomyNodeAttributesHasValues(node,taxonomyId,true,true,true);
+        }else{
+            assertTaxonomyNodeAttributesHasValues(node,taxonomyId,false,false,false);
+        }
+    }
+
+    public static void assertTaxonomyNodeAttributesHasValues(TaxonomyNode node, long taxonomyId, boolean parent,boolean siblings, boolean children) {
         assertThat(node.getTaxonomyId(), equalTo(taxonomyId));
         assertThat(node.getCommonName(), not(isEmptyOrNullString()));
         assertThat(node.getMnemonic(), not(isEmptyOrNullString()));
         assertThat(node.getRank(), not(isEmptyOrNullString()));
         assertThat(node.getScientificName(), not(isEmptyOrNullString()));
         assertThat(node.getSynonym(), not(isEmptyOrNullString()));
-        if (checkLinks) {
-            assertThat(node.getParentLink(), not(isEmptyOrNullString()));
+        assertTaxonomyNodeLinks(node,parent,siblings,children);
 
+    }
+
+    public static void assertTaxonomyNodeLinks(TaxonomyNode node,boolean parent,boolean siblings, boolean children) {
+        if(parent) {
+            assertThat(node.getParentLink(), not(isEmptyOrNullString()));
+        }else{
+            assertThat(node.getParentLink(), isEmptyOrNullString());
+        }
+
+        if(children) {
             assertThat(node.getChildrenLinks(), notNullValue());
             assertThat(node.getChildrenLinks(), not(emptyIterable()));
+        }else{
+            assertThat(node.getChildrenLinks(), nullValue());
+        }
 
+        if(siblings) {
             assertThat(node.getSiblingsLinks(), notNullValue());
             assertThat(node.getSiblingsLinks(), not(emptyIterable()));
+        }else{
+            assertThat(node.getSiblingsLinks(), nullValue());
         }
     }
 
