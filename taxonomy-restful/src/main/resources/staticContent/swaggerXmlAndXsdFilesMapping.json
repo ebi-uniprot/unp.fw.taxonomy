@@ -3,11 +3,20 @@
     "taxonomy": "/proteins/api/taxonomy/docs/xsd/taxonomy.xsd"
   },
   "xml": {
+    "/ancestor/{ids}":"/proteins/api/taxonomy/docs/xml/taxonomy.xml",
     "/id/{id}":"/proteins/api/taxonomy/docs/xml/taxonomy.xml",
+    "/id/{id}/node":"/proteins/api/taxonomy/docs/xml/taxonomy.xml",
     "/id/{id}/siblings":"/proteins/api/taxonomy/docs/xml/taxonomies.xml",
+    "/id/{id}/siblings/node":"/proteins/api/taxonomy/docs/xml/taxonomies.xml",
     "/id/{id}/parent":"/proteins/api/taxonomy/docs/xml/taxonomy.xml",
+    "/id/{id}/parent/node":"/proteins/api/taxonomy/docs/xml/taxonomy.xml",
     "/id/{id}/children":"/proteins/api/taxonomy/docs/xml/taxonomies.xml",
+    "/id/{id}/children/node":"/proteins/api/taxonomy/docs/xml/taxonomies.xml",
+    "/ids/{ids}":"/proteins/api/taxonomy/docs/xml/taxonomies.xml",
+    "/ids/{ids}/node":"/proteins/api/taxonomy/docs/xml/taxonomies.xml",
     "/name/{name}":"/proteins/api/taxonomy/docs/xml/taxonomies.xml",
+    "/name/{name}/node":"/proteins/api/taxonomy/docs/xml/taxonomies.xml",
+    "/lineage/{id}":"/proteins/api/taxonomy/docs/xml/taxonomy.xml",
     "/relationship":"/proteins/api/taxonomy/docs/xml/taxonomy.xml",
     "/path":"/proteins/api/taxonomy/docs/xml/taxonomy.xml"
   }

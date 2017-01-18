@@ -1,31 +1,38 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<taxonomies>
-    <taxonomyNode>
-        <taxonomyId>0</taxonomyId>
-        <mnemonic>string</mnemonic>
-        <scientificName>string</scientificName>
-        <commonName>string</commonName>
-        <synonym>string</synonym>
-        <rank>string</rank>
-        <parent>
+<taxonomies xmlns="http://www.ebi.ac.uk/proteins/api/taxonomy/docs/xsd/taxonomy">
+    <taxonomies>
+        <taxonomy>
             <taxonomyId>0</taxonomyId>
-        </parent>
-        <parentLink>string</parentLink>
-        <children>
-            <child>
+            <mnemonic>string</mnemonic>
+            <scientificName>string</scientificName>
+            <commonName>string</commonName>
+            <synonym>string</synonym>
+            <rank>string</rank>
+            <parent>
                 <taxonomyId>0</taxonomyId>
-            </child>
-        </children>
-        <childrenLinks>
-            <childLink>string</childLink>
-        </childrenLinks>
-        <siblings>
-            <sibling>
-                <taxonomyId>0</taxonomyId>
-            </sibling>
-        </siblings>
-        <siblingsLinks>
-            <siblingLinks>string</siblingLinks>
-        </siblingsLinks>
-    </taxonomyNode>
+            </parent>
+            <parentLink>string</parentLink>
+            <children>
+                <child>
+                    <taxonomyId>0</taxonomyId>
+                </child>
+            </children>
+            <childrenLinks>
+                <childLink>string</childLink>
+            </childrenLinks>
+            <siblings>
+                <sibling>
+                    <taxonomyId>0</taxonomyId>
+                </sibling>
+            </siblings>
+            <siblingsLinks>
+                <siblingLinks>string</siblingLinks>
+            </siblingsLinks>
+        </taxonomy>
+    </taxonomies>
+    <pageInfo>
+        <resultsPerPage>0</resultsPerPage>
+        <currentPage>0</currentPage>
+        <totalRecords>0</totalRecords>
+    </pageInfo>
 </taxonomies>
