@@ -9,6 +9,7 @@ set -euo pipefail
 IFS=$'\n\t '
 
 SERVICE_BIN_PATH="$(dirname `which $0`)"
+cd $SERVICE_BIN_PATH
 # ======= read the variables used by the control scripts =======================================
 source "$SERVICE_BIN_PATH/environment.properties" || {
     echo "Please create a file called, environment.properties, containing the necessary environment variables."
@@ -102,3 +103,4 @@ $JAVA_HOME/bin/java -Dcom.sun.management.jmxremote \
     fi
     echo "done!!"
 fi
+cd ~
