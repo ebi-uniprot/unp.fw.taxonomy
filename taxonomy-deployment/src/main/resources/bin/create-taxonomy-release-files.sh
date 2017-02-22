@@ -23,17 +23,12 @@ if ! echo "$PERMITTED_USER" | grep "$USER" > /dev/null 2>&1; then
     exit 1;
 fi;
 
-if [ $# -ne 2 ]; then
-   echo "Missing parameter, You must pass as parameter release name, for example (2016_07) and environment == (stage,dev or prod)";
-   echo "command example: deploy-taxonomy.sh 2016_07 dev";
+if [ $# -ne 1 ]; then
+   echo "Missing parameter, You must pass a parameter for release name, for example (2016_07)";
+   echo "command example: deploy-taxonomy.sh 2016_07";
    exit 1;
 fi
 
-ENVIRONMENT=$2
-if [[ ("$ENVIRONMENT" != 'stage') && ("$ENVIRONMENT" != 'dev') && ("$ENVIRONMENT" != 'prod') ]]; then
-   echo "second parameter environment must be (stage,dev or prod)";
-   exit 1;
-fi
 
 RELEASE_NAME=$1
 SERVICE_BIN_PATH="$(pwd -P)"
@@ -72,8 +67,8 @@ function executeBuildProcess(){
     RELEASE_CONF_DIR="$BUILD_RELEASE_DIR/$CONF_DIR"
     createDirectory "$RELEASE_CONF_DIR" 1
 
-    echo "Moving config file from $SERVICE_BIN_PATH/config-$ENVIRONMENT.properties to $RELEASE_CONF_DIR/config.properties"
-    cp "$SERVICE_BIN_PATH/config-$ENVIRONMENT.properties" "$RELEASE_CONF_DIR/config.properties"
+    echo "Moving config file from $SERVICE_BIN_PATH/config.properties to $RELEASE_CONF_DIR/config.properties"
+    cp "$SERVICE_BIN_PATH/config.properties" "$RELEASE_CONF_DIR/config.properties"
 
     echo "Release build completed...."
 }
