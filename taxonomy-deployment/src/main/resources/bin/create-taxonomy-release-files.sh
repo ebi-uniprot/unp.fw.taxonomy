@@ -79,21 +79,4 @@ function executeBuildProcess(){
 }
 
 
-echo "This script will execute the following steps below to build taxonomy service release:";
-echo "1- clean $SERVICE_TARGET_PATH directory ";
-echo "2- Get most update taxonomy source code from git";
-echo "3- Build taxonomy-restful-service project libs";
-echo "4- Update taxonomy release libs";
-echo "5- Update taxonomy release conf";
-echo "Are you sure that you want to execute these steps above? Yes/No";
-while true; do
-    read yn;
-    case $yn in
-        Yes) executeBuildProcess;
-             break;;
-        No) echo "Deploy taxonomy canceled ";
-             exit 1;;
-        * ) echo "Please answer Yes or No.";;
-    esac
-done
-echo "done"
+executeBuildProcess;
