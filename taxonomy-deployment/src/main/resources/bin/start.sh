@@ -6,7 +6,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 # ======= read the variables used by the control scripts =======================================
-source "environment.properties" || {
+source /taxonomy/bin/environment.properties || {
     echo "Please create a file called, environment.properties, containing the necessary environment variables."
     exit 1;
 }
@@ -17,16 +17,16 @@ if ! echo "$PERMITTED_USER" | grep "$USER" > /dev/null 2>&1; then
     exit 1;
 fi;
 
-SERVICE_BIN_PATH="$(pwd -P)"
+SERVICE_BIN_PATH=/taxonomy/bin
 PIDFILE="$SERVICE_BIN_PATH/run.pid"
 CONFIG_FILE="$SERVICE_BIN_PATH/config.properties"
-LOG_DIR="$(readlink -f $SERVICE_BIN_PATH/../$CURRENT_RELEASE_LINK_NAME/$LOG_DIR)"
+LOG_DIR=/taxonomy/$CURRENT_RELEASE_LINK_NAME/$LOG_DIR
 CONSOLE_LOG_FILE="$LOG_DIR/$CONSOLE_LOG_FILE_NAME"
 
 
 JAR_NAME="$TAXONOMY_RESTFUL_ARTIFACT_ID-$TAXONOMY_VERSION.jar"
 echo "Using the service jar: $JAR_NAME"
-TAXONOMY_JAR_PATH="$(readlink -f $SERVICE_BIN_PATH/../$CURRENT_RELEASE_LINK_NAME/$LIB_DIR/$JAR_NAME)"
+TAXONOMY_JAR_PATH=/taxonomy/$CURRENT_RELEASE_LINK_NAME/$LIB_DIR/$JAR_NAME
 
 
 if [ -e $PIDFILE ]
@@ -57,7 +57,6 @@ nohup $JAVA_HOME/bin/java -server -XX:+UseG1GC $TAXONOMY_RESTFUL_JVM_MEM_MAX $TA
 -Dcom.sun.management.jmxremote.authenticate=false \
 -Dcom.sun.management.jmxremote.ssl=false \
 -Dcom.sun.management.jmxremote.port=9093 \
--javaagent:$MONITOR_TOOLS_DIR/dist/jmx_prometheus_javaagent-0.7-SNAPSHOT.jar=$JXM_REMOTE_PORT:$SERVICE_BIN_PATH/taxonomy-jmx-config.yaml \
 -Dbacklog.base.path=$LOG_DIR \
 -jar $TAXONOMY_JAR_PATH > $CONSOLE_LOG_FILE 2>&1 &
 
@@ -78,3 +77,4 @@ curl http://localhost:9090/proteins/api/taxonomy/id/329 > /dev/null || {
 
 echo "$! `hostname`" > $PIDFILE
 echo "Service is running with PID: `cat $PIDFILE`"
+tail -f /dev/null
