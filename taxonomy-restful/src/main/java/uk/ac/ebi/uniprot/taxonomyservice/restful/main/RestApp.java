@@ -84,7 +84,7 @@ public class RestApp extends ResourceConfig {
 
     private BeanConfig setupSwagger(){
         BeanConfig beanConfig = new BeanConfig();
-        beanConfig.setSchemes(new String[]{"http"}); //TODO: Enable HTTPS
+        beanConfig.setSchemes(new String[]{"http","https"});
 
         String version = TaxonomyProperties.getProperty(APP_PROPERTY_NAME.SWAGGER_VERSION);
         if(version == null || version.isEmpty()){
