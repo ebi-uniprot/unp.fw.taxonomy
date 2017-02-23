@@ -17,9 +17,8 @@ if ! echo "$PERMITTED_USER" | grep "$USER" > /dev/null 2>&1; then
     exit 1;
 fi;
 
-SERVICE_BIN_PATH=/taxonomy/bin
+
 PIDFILE="$SERVICE_BIN_PATH/run.pid"
-CONFIG_FILE="$SERVICE_BIN_PATH/config.properties"
 LOG_DIR=/taxonomy/$CURRENT_RELEASE_LINK_NAME/$LOG_DIR
 CONSOLE_LOG_FILE="$LOG_DIR/$CONSOLE_LOG_FILE_NAME"
 
