@@ -1,7 +1,8 @@
 FROM centos:latest
 
+
 #Get common libraries
-RUN yum -y install wget rsync git gcc gcc-c++ kernel-devel openssh-client autoconf automake make sudo unzip which libaio
+RUN yum -y install wget rsync git unzip which libaio
 
 #Install Java JDK 1.8.0.60
 RUN wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u60-b27/jdk-8u60-linux-x64.rpm" \
@@ -46,6 +47,7 @@ ENV M2_HOME /maven/apache-maven-3.3.9
 ENV JAVA_HOME /usr/java/jdk1.8.0_60
 ENV JAVA_PATH /usr/java/jdk1.8.0_60
 ENV USER root
+ENV PATH $PATH:${JAVA_HOME}/bin:${M2_HOME}/bin:${ORACLE_HOME}/bin
 
 #Set PATH on container startup
 RUN echo 'export PATH=$PATH:${JAVA_HOME}/bin:${M2_HOME}/bin:${ORACLE_HOME}/bin' >> /root/.bashrc
@@ -67,15 +69,19 @@ RUN mkdir taxonomy \
 RUN ${M2_HOME}/bin/mvn install:install-file -Dfile=${ORACLE_HOME}/lib/ojdbc6.jar -DgroupId=com.oracle -DartifactId=ojdbc6 -Dversion=11.2.0.4 -Dpackaging=jar
     
 
+#Remove Oracle clients from image
+RUN rm -rf /usr/lib/oracle \
+    && rm -rf /oracle
+
 #Build taxonomy
 RUN cd /taxonomy/bin \
     && ./create-taxonomy-release-files.sh 2017_02
 
 
 #Adding and Extract Latest Release Neo4j database
-ADD neo4j-taxonomy-database.tar.gz /taxonomy/releases/2017_02/
 RUN cd /taxonomy/releases/2017_02 \
-RUN tar xzvf neo4j-taxonomy-database.tar.gz \
+    && wget http://ftp.ebi.ac.uk/pub/contrib/UniProtKB/taxonomy/neo4j-taxonomy-database.tar.gz \
+    && tar xzvf neo4j-taxonomy-database.tar.gz 
 RUN rm -rf neo4j-taxonomy-database.tar.gz
 
     
