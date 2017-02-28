@@ -5,7 +5,7 @@ build directory as your dockerfile.
 
 --------------------------------------------------------------------------------------------------
 The UniProt Neo4j data file can be downloaded from:
-
+http://ftp.ebi.ac.uk/pub/contrib/UniProtKB/taxonomy/neo4j-taxonomy-database.tar.gz
 
 --------------------------------------------------------------------------------------------------
 The oracle client driver can be downloaded from the Oracle technology network here:
