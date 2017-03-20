@@ -74,7 +74,7 @@ RUN cd /taxonomy/bin \
 
 #Adding and Extract Latest Release Neo4j database
 RUN cd /taxonomy/releases/2017_03 \
-    && wget http://ftp.ebi.ac.uk/pub/contrib/UniProtKB/taxonomy/neo4j-taxonomy-database.tar.gz \
+    && wget http://ftp.ebi.ac.uk/pub/contrib/UniProtKB/taxonomy/2017_03/neo4j-taxonomy-database.tar.gz \
     && tar xzvf neo4j-taxonomy-database.tar.gz 
 RUN rm -rf neo4j-taxonomy-database.tar.gz
 
