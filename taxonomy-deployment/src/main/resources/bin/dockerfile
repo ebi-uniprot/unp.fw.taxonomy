@@ -1,6 +1,5 @@
 FROM centos:latest
 
-
 #Get common libraries
 RUN yum -y install wget git unzip which libaio
 
@@ -83,8 +82,7 @@ RUN cd /taxonomy \
     && ln -s /taxonomy/releases/2017_03 currentrelease \
     && touch /taxonomy/releases/2017_03/logs/application.log \
     && touch /taxonomy/releases/2017_03/logs/console.log 
-    
-    
+      
 #Expose ports for service
 EXPOSE 9090 9091 9096 9991
 
