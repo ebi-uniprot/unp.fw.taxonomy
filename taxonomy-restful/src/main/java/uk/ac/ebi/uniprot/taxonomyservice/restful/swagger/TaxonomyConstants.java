@@ -139,10 +139,10 @@ public class TaxonomyConstants {
             "endsWith or contains";
     public static final String FIELD_NAME_VALID_VALUES = "fieldName parameter value must be scientificName, commonName, " +
             "or mnemonic";
-    public static final String PAGE_NUMBER_PARAMETER_VALID_NUMBER = "The paramenter pageNumber must be a valid number";
-    public static final String PAGE_NUMBER_PARAMETER_MIN_VALUE = "The paramenter pageNumber must be more than {min}";
-    public static final String PAGE_SIZE_PARAMETER_VALID_NUMBER = "The paramenter pageSize must be a valid number";
-    public static final String PAGE_SIZE_PARAMETER_MAX_VALUE = "The paramenter pageSize must be less than {max}";
+    public static final String PAGE_NUMBER_PARAMETER_VALID_NUMBER = "The parameter pageNumber must be a valid number";
+    public static final String PAGE_NUMBER_PARAMETER_MIN_VALUE = "The parameter pageNumber must be more than {min}";
+    public static final String PAGE_SIZE_PARAMETER_VALID_NUMBER = "The parameter pageSize must be a valid number";
+    public static final String PAGE_SIZE_PARAMETER_MAX_VALUE = "The parameter pageSize must be less than {max}";
     public static final String DEPTH_PARAMETER_IS_REQUIRED = "depth parameter is required";
     public static final String DEPTH_PARAM_MIN_MAX = "depth param value must be between {min} and {max} for bottom " +
             "direction";
@@ -150,12 +150,12 @@ public class TaxonomyConstants {
     public static final String DIRECTION_PARAMETER_IS_REQUIRED = "direction parameter is required";
     public static final String TO_PARAMETER_IS_REQUIRED = "to parameter is required";
     public static final String FROM_PARAMETER_IS_REQUIRED = "from parameter is required";
-    public static final String TO_PARAMETER_VALID_NUMBER = "The paramenter to must be a valid number";
-    public static final String FROM_PARAMETER_VALID_NUMBER = "The paramenter from must be a valid number";
-    public static final String ID_PARAMETER_VALID_NUMBER = "The paramenter id must be a valid number";
-    public static final String IDS_PARAMETER_VALID_NUMBER = "The paramenter ids must be a list of comma " +
+    public static final String TO_PARAMETER_VALID_NUMBER = "The parameter to must be a valid number";
+    public static final String FROM_PARAMETER_VALID_NUMBER = "The parameter from must be a valid number";
+    public static final String ID_PARAMETER_VALID_NUMBER = "The parameter id must be a valid number";
+    public static final String IDS_PARAMETER_VALID_NUMBER = "The parameter ids must be a list of comma " +
             "separated valid taxonomy identification";
-    public static final String IDS_PARAMETER_MIN_MAX_SIZE = "The paramenter ids must have between {minSize} and " +
+    public static final String IDS_PARAMETER_MIN_MAX_SIZE = "The parameter ids must have between {minSize} and " +
             "{maxSize} comma separated valid taxonomy identification";
 
     public static final String API_RESPONSE_500 =
