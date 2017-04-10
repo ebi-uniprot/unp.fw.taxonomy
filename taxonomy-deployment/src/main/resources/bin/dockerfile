@@ -69,19 +69,19 @@ RUN rm -rf /usr/lib/oracle \
 
 #Build taxonomy structures
 RUN cd /taxonomy/bin \
-    && ./create-taxonomy-release-files.sh 2017_03
+    && ./create-taxonomy-release-files.sh 2017_04
 
 #Adding and Extract Latest Release Neo4j database
-RUN cd /taxonomy/releases/2017_03 \
-    && wget http://ftp.ebi.ac.uk/pub/contrib/UniProtKB/taxonomy/2017_03/neo4j-taxonomy-database.tar.gz \
+RUN cd /taxonomy/releases/2017_04 \
+    && wget http://ftp.ebi.ac.uk/pub/contrib/UniProtKB/taxonomy/2017_04/neo4j-taxonomy-database.tar.gz \
     && tar xzvf neo4j-taxonomy-database.tar.gz 
 RUN rm -rf neo4j-taxonomy-database.tar.gz
 
     
 RUN cd /taxonomy \
-    && ln -s /taxonomy/releases/2017_03 currentrelease \
-    && touch /taxonomy/releases/2017_03/logs/application.log \
-    && touch /taxonomy/releases/2017_03/logs/console.log 
+    && ln -s /taxonomy/releases/2017_04 currentrelease \
+    && touch /taxonomy/releases/2017_04/logs/application.log \
+    && touch /taxonomy/releases/2017_04/logs/console.log 
       
 #Expose ports for service
 EXPOSE 9090 9091 9096 9991
