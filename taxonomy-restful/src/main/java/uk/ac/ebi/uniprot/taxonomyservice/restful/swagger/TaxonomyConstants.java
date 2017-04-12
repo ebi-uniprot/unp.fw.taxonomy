@@ -112,54 +112,47 @@ public class TaxonomyConstants {
     public static final String TAXONOMY_TO_PARAM = "Final taxonomy element unique identification for relationship";
 
     //ERROR MESSAGES
-    public static final String API_RESPONSE_303 = "Taxonomy identification changed and new identification is now " +
-            "{newId}.";
+    public static final String API_RESPONSE_303 = "The taxonomy ID has changed to {newId}";
 
-    public static final String API_RESPONSE_404_GENERAL = "Taxonomy entry was not found for searched resource.";
-    public static final String API_RESPONSE_404_ENTRY = "Taxonomy entry was not found for this taxonomy " +
-            "identification.";
-    public static final String API_RESPONSE_404_LINEAGE = "Taxonomy lineage was not found for this taxonomy " +
-            "identification.";
-    public static final String API_RESPONSE_404_ANCESTOR = "Taxonomy ancestor was not found for these taxonomy " +
-            "identification list. Please make sure all taxonomy identification are valids";
-    public static final String API_RESPONSE_404_NAME = "Taxonomy entries were not found for search name criteria.";
-    public static final String API_RESPONSE_404_RELATIONSHIP = "Taxonomy entries were not found for searched " +
-            "relationship.";
-    public static final String API_RESPONSE_404_PATH = "Taxonomy entries were not found for searched " +
-            "path.";
+    public static final String API_RESPONSE_404_GENERAL = "No taxonomy results found for the searched resource";
+    public static final String API_RESPONSE_404_ENTRY = "No results found for the taxonomy ID";
+    public static final String API_RESPONSE_404_LINEAGE = "No lineage found for the taxonomy ID";
+    public static final String API_RESPONSE_404_ANCESTOR = "No ancestors found for the taxonomy IDs";
+    public static final String API_RESPONSE_404_NAME = "No results found for the taxonomy name";
+    public static final String API_RESPONSE_404_RELATIONSHIP = "No taxonomy results found for the searched relationship";
+    public static final String API_RESPONSE_404_PATH = "No taxonomy results found for the searched path";
 
-    public static final String API_RESPONSE_400 = "Invalid request parameters.";
+    public static final String API_RESPONSE_400 = "Invalid request parameters";
 
-    public static final String ID_PARAMETER_IS_REQUIRED = "id parameter is required";
-    public static final String IDS_PARAMETER_IS_REQUIRED = "a coma separated list of id parameter is required";
-    public static final String NAME_PARAMETER_IS_REQUIRED = "name parameter is required";
-    public static final String NAME_PARAMETER_MIN_SIZE_FOR_PARTIAL_SEARCHES = "name parameter minimun size is {min} " +
-            "characters for startWith, endsWith or contains searchType value";
-    public static final String SEARCH_TYPE_VALID_VALUES = "searchType parameter value must be equalsto, startsWith, " +
-            "endsWith or contains";
-    public static final String FIELD_NAME_VALID_VALUES = "fieldName parameter value must be scientificName, commonName, " +
-            "or mnemonic";
-    public static final String PAGE_NUMBER_PARAMETER_VALID_NUMBER = "The parameter pageNumber must be a valid number";
-    public static final String PAGE_NUMBER_PARAMETER_MIN_VALUE = "The parameter pageNumber must be more than {min}";
-    public static final String PAGE_SIZE_PARAMETER_VALID_NUMBER = "The parameter pageSize must be a valid number";
-    public static final String PAGE_SIZE_PARAMETER_MAX_VALUE = "The parameter pageSize must be less than {max}";
-    public static final String DEPTH_PARAMETER_IS_REQUIRED = "depth parameter is required";
-    public static final String DEPTH_PARAM_MIN_MAX = "depth param value must be between {min} and {max} for bottom " +
-            "direction";
-    public static final String DIRECTION_VALID_VALUES = "direction parameter value must be top or bottom";
-    public static final String DIRECTION_PARAMETER_IS_REQUIRED = "direction parameter is required";
-    public static final String TO_PARAMETER_IS_REQUIRED = "to parameter is required";
-    public static final String FROM_PARAMETER_IS_REQUIRED = "from parameter is required";
-    public static final String TO_PARAMETER_VALID_NUMBER = "The parameter to must be a valid number";
-    public static final String FROM_PARAMETER_VALID_NUMBER = "The parameter from must be a valid number";
-    public static final String ID_PARAMETER_VALID_NUMBER = "The parameter id must be a valid number";
-    public static final String IDS_PARAMETER_VALID_NUMBER = "The parameter ids must be a list of comma " +
-            "separated valid taxonomy identification";
-    public static final String IDS_PARAMETER_MIN_MAX_SIZE = "The parameter ids must have between {minSize} and " +
-            "{maxSize} comma separated valid taxonomy identification";
+    public static final String ID_PARAMETER_IS_REQUIRED = "The id parameter cannot be null";
+    public static final String IDS_PARAMETER_IS_REQUIRED = "The ids parameter should be a comma separated list";
+    public static final String NAME_PARAMETER_IS_REQUIRED = "The name parameter cannot be null";
+    public static final String NAME_PARAMETER_MIN_SIZE_FOR_PARTIAL_SEARCHES = "The name parameter should be a minimum" +
+            " of {min} characters for searchType values startWith, endsWith, contains";
+    public static final String SEARCH_TYPE_VALID_VALUES = "The searchType parameter can only be equalsto, startsWith," +
+            " endsWith or contains";
+    public static final String FIELD_NAME_VALID_VALUES = "The fieldName parameter can only be scientificName, " +
+            "commonName, mnemonic";
+    public static final String PAGE_NUMBER_PARAMETER_VALID_NUMBER = "The pageNumber parameter should be a valid number";
+    public static final String PAGE_NUMBER_PARAMETER_MIN_VALUE = "TThe pageNumber parameter should be a minimum of {min}";
+    public static final String PAGE_SIZE_PARAMETER_VALID_NUMBER = "The pageSize parameter should be a valid number";
+    public static final String PAGE_SIZE_PARAMETER_MAX_VALUE = "The pageSize parameter should be a maximum of {max}";
+    public static final String DEPTH_PARAMETER_IS_REQUIRED = "The depth parameter cannot be null";
+    public static final String DEPTH_PARAM_MIN_MAX = "The depth parameter should be between {min} and {max} for the bottom direction";
+    public static final String DIRECTION_VALID_VALUES = "The direction parameter can only be top or bottom";
+    public static final String DIRECTION_PARAMETER_IS_REQUIRED = "The direction parameter cannot be null";
+    public static final String TO_PARAMETER_IS_REQUIRED = "The to parameter cannot be null";
+    public static final String FROM_PARAMETER_IS_REQUIRED = "The from parameter cannot be null";
+    public static final String TO_PARAMETER_VALID_NUMBER = "The to parameter should be a valid number";
+    public static final String FROM_PARAMETER_VALID_NUMBER = "The from parameter should be a valid number";
+    public static final String ID_PARAMETER_VALID_NUMBER = "The id parameter should be a valid number";
+    public static final String IDS_PARAMETER_VALID_NUMBER = "The ids parameter should be a list of valid comma " +
+            "separated taxonomy IDs";
+    public static final String IDS_PARAMETER_MIN_MAX_SIZE = "The ids parameter should have between {minSize} and " +
+            "{maxSize} valid comma separated taxonomy IDs";
 
     public static final String API_RESPONSE_500 =
-            "Unexpected error happened, could you please try again later";
+            "Unexpected error. Please try again later.";
 
     public static final String REQUEST_PARAMETER_INVALID_VALUE =
             "Request parameter {parameterName} contains not supported value.";
