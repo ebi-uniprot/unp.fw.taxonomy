@@ -30,7 +30,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class ResponseAssert {
 
-    public static final String REQUEST_URL = "http://localhost:12345/rest/test";
+    public static final String REQUEST_URL = "https://localhost:12345/rest/test";
 
 
     public static void assertErrorResponseReturnCorrectContentTypeAndResponseBody(ExtractableResponse<com.jayway.restassured.response.Response>

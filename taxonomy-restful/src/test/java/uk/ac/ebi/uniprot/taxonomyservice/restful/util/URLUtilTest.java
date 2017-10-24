@@ -21,7 +21,7 @@ public class URLUtilTest {
 
     @Test
     public void getCurrentURLWithoutQueryParameter() {
-        StringBuffer bufferedURL = new StringBuffer("http://ebi.ac.uk/uniprot/services/restful/taxonomy/id/12345");
+        StringBuffer bufferedURL = new StringBuffer("https://ebi.ac.uk/uniprot/services/restful/taxonomy/id/12345");
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getRequestURL()).thenReturn(bufferedURL);
         when(request.getQueryString()).thenReturn(null);
@@ -33,7 +33,7 @@ public class URLUtilTest {
 
     @Test
     public void getCurrentURLWithQueryParameter() {
-        StringBuffer bufferedURL = new StringBuffer("http://ebi.ac.uk/uniprot/services/restful/taxonomy/relationship");
+        StringBuffer bufferedURL = new StringBuffer("https://ebi.ac.uk/uniprot/services/restful/taxonomy/relationship");
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getRequestURL()).thenReturn(bufferedURL);
         when(request.getQueryString()).thenReturn("from=100&to=200");
@@ -46,7 +46,7 @@ public class URLUtilTest {
 
     @Test
     public void getCurrentURLWithQueryParameterEncoded() throws UnsupportedEncodingException {
-        StringBuffer bufferedURL = new StringBuffer("http://ebi.ac.uk/uniprot/services/restful/taxonomy/relationship");
+        StringBuffer bufferedURL = new StringBuffer("https://ebi.ac.uk/uniprot/services/restful/taxonomy/relationship");
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getRequestURL()).thenReturn(bufferedURL);
         when(request.getQueryString()).thenReturn(URLEncoder.encode("from=100&to=200","UTF-8"));
@@ -58,30 +58,30 @@ public class URLUtilTest {
 
     @Test
     public void getTaxonomyIdBasePath() {
-        StringBuffer bufferedURL = new StringBuffer("http://ebi.ac.uk/uniprot/services/restful/taxonomy/relationship");
+        StringBuffer bufferedURL = new StringBuffer("https://ebi.ac.uk/uniprot/services/restful/taxonomy/relationship");
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getRequestURL()).thenReturn(bufferedURL);
 
         String basePath = URLUtil.getTaxonomyIdBasePath(request);
         assertThat(basePath,notNullValue());
-        assertThat(basePath,equalTo("http://ebi.ac.uk/uniprot/services/restful/taxonomy/id/"));
+        assertThat(basePath,equalTo("https://ebi.ac.uk/uniprot/services/restful/taxonomy/id/"));
     }
 
     @Test
     public void getNewRedirectHeaderLocationURL() {
-        String currentURL = "http://ebi.ac.uk/uniprot/services/restful/taxonomy/id/12345";
+        String currentURL = "https://ebi.ac.uk/uniprot/services/restful/taxonomy/id/12345";
         String redirectURL = URLUtil.getNewRedirectHeaderLocationURL(currentURL,null,12345,54321);
         assertThat(redirectURL,notNullValue());
-        assertThat(redirectURL,equalTo("http://ebi.ac.uk/uniprot/services/restful/taxonomy/id/54321"));
+        assertThat(redirectURL,equalTo("https://ebi.ac.uk/uniprot/services/restful/taxonomy/id/54321"));
     }
 
     @Test
     public void getNewRedirectHeaderLocationURLFromAndToParameters() {
-        String currentURL = "http://ebi.ac.uk/uniprot/services/restful/taxonomy/relationship?from=9&to=99";
+        String currentURL = "https://ebi.ac.uk/uniprot/services/restful/taxonomy/relationship?from=9&to=99";
         String redirectURL = URLUtil.getNewRedirectHeaderLocationURL(currentURL,"from",9,999);
         redirectURL = URLUtil.getNewRedirectHeaderLocationURL(redirectURL,"to",99,9999);
         assertThat(redirectURL,notNullValue());
-        assertThat(redirectURL,equalTo("http://ebi.ac" +
+        assertThat(redirectURL,equalTo("https://ebi.ac" +
                 ".uk/uniprot/services/restful/taxonomy/relationship?from=999&to=9999"));
     }
 

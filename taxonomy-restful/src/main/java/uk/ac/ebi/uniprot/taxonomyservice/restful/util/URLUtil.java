@@ -24,12 +24,14 @@ public class URLUtil {
                 logger.error("Error encoding ErrorMessage.requestedURL: ",e);
             }
         }
+        currentURL = currentURL.replace("http:","https:");
         return currentURL;
     }
 
     public static String getTaxonomyIdBasePath(HttpServletRequest request){
         String currentURL = request.getRequestURL().toString();
         currentURL = currentURL.substring(0, currentURL.indexOf("taxonomy")+8)+"/id/";
+        currentURL = currentURL.replace("http:","https:");
         return currentURL;
     }
 

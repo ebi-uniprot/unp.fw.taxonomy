@@ -35,7 +35,7 @@ public class RestContainer extends ExternalResource {
         baseURI = "http://localhost";
         port = 12345;
         basePath = "/rest";
-        baseURL = baseURI+":"+port+basePath;
+        baseURL = "https://localhost:"+port+basePath;
     }
 
     @Override protected void before() throws Throwable {

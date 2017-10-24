@@ -32,7 +32,7 @@ import static org.mockito.Mockito.when;
  */
 public class PageResponseBuilderTest {
 
-    private static final String BASE_URL = "http://localhost:9090/uniprot/services/restful/taxonomy/id/";
+    private static final String BASE_URL = "https://localhost:9090/uniprot/services/restful/taxonomy/id/";
 
     private static FakeTaxonomyDataAccess neo4jDataAccess;
 
@@ -146,7 +146,7 @@ public class PageResponseBuilderTest {
         Map<String,Long> requestId = new HashMap<>();
         requestId.put("from",9L);
         requestId.put("to",99L);
-        String requestedURL = "http://localhost:9090/uniprot/services/restful/taxonomy/relationship?from=9&to=99";
+        String requestedURL = "https://localhost:9090/uniprot/services/restful/taxonomy/relationship?from=9&to=99";
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getRequestURL()).thenReturn(new StringBuffer(requestedURL));
 
@@ -163,7 +163,7 @@ public class PageResponseBuilderTest {
         assertThat(builtBody.getRequestedURL(),is(requestedURL));
         assertThat(builtBody.getErrorMessages().get(0),is(TaxonomyConstants.API_RESPONSE_303.replace("{newId}","10")));
         assertThat(builtBody.getErrorMessages().get(1),is(TaxonomyConstants.API_RESPONSE_303.replace("{newId}","100")));
-        String expectedURL = "http://localhost:9090/uniprot/services/restful/taxonomy/relationship?from=10&to=100";
+        String expectedURL = "https://localhost:9090/uniprot/services/restful/taxonomy/relationship?from=10&to=100";
         assertThat(response.getHeaderString(HttpHeaders.LOCATION),is(expectedURL));
     }
 
