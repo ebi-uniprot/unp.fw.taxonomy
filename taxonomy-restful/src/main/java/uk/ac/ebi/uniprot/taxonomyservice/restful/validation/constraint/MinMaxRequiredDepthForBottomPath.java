@@ -49,10 +49,13 @@ public @interface MinMaxRequiredDepthForBottomPath {
             boolean result = true;
             if (pathParam.getDirection() != null && PathDirections.BOTTOM.equals(pathParam.getPathDirection())) {
                 if(pathParam.getDepth() != null){
-                    if(pathParam.getDepth() > this.annotation.max() || pathParam.getDepth() < this.annotation.min()){
-                        result = false;
+                    // validated max depth only if the annotation max > 0, always validade min
+                    // if (annotation max parameter is bigger than 0 AND path depth parameter value is bigger than annotation max value) OR annotation min is < path depth parameter value
+                    if((this.annotation.max() > 0 && pathParam.getDepth() > this.annotation.max())|| pathParam.getDepth() < this.annotation.min()){
+                        return false;
                     }
                 }else{
+                    // direction is a required parameter for BOTTOM path direction.
                     result = false;
                     constraintValidatorContext.disableDefaultConstraintViolation();
                     constraintValidatorContext.buildConstraintViolationWithTemplate(this.annotation.requiredMessage()

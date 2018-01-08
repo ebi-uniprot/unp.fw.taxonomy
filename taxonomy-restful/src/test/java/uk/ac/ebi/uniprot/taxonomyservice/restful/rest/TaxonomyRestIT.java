@@ -911,6 +911,142 @@ public class TaxonomyRestIT {
     /*
         END: Test with /taxonomy/path
 
+        START: Test with /taxonomy/path/node
+    */
+
+    @Test
+    public void lookupTaxonomyPathNodeWithoutParametersReturnsBadRequest() {
+        String requestedURL = TAXONOMY_BASE_PATH + "/path/nodes";
+
+        ExtractableResponse<Response> response = when()
+                .get(requestedURL)
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode())
+                .extract();
+
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(TaxonomyConstants.ID_PARAMETER_IS_REQUIRED);
+        errorMessages.add(TaxonomyConstants.DIRECTION_PARAMETER_IS_REQUIRED);
+
+        ResponseAssert.assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
+    }
+
+    @Test
+    public void lookupTaxonomyPathNodeWithoutIdParametersReturnsBadRequest() {
+        String requestedURL = TAXONOMY_BASE_PATH + "/path/nodes?direction=TOP&depth=3";
+
+        ExtractableResponse<Response> response = when()
+                .get(requestedURL)
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode())
+                .extract();
+
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(TaxonomyConstants.ID_PARAMETER_IS_REQUIRED);
+
+        ResponseAssert.assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
+    }
+
+    @Test
+    public void lookupTaxonomyPathNodeWithoutDirectionParametersReturnsBadRequest() {
+        String requestedURL = TAXONOMY_BASE_PATH + "/path/nodes?id=10&depth=3";
+
+        ExtractableResponse<Response> response = when()
+                .get(requestedURL)
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode())
+                .extract();
+
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(TaxonomyConstants.DIRECTION_PARAMETER_IS_REQUIRED);
+
+        ResponseAssert.assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
+    }
+
+    @Test
+    public void lookupTaxonomyPathNodeWithoutDepthParametersReturnsBadRequest() {
+        String requestedURL = TAXONOMY_BASE_PATH + "/path/nodes?id=100000&direction=BOTTOM";
+
+        ExtractableResponse<Response> response = when()
+                .get(requestedURL)
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode())
+                .extract();
+
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(TaxonomyConstants.DEPTH_PARAMETER_IS_REQUIRED);
+
+        ResponseAssert.assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
+    }
+
+    @Test
+    public void lookupTaxonomyPathNodeMinDepthParametersReturnsBadRequest() {
+        String requestedURL = TAXONOMY_BASE_PATH + "/path/nodes?id=10&direction=BOTTOM&depth=0";
+
+        ExtractableResponse<Response> response = when()
+                .get(requestedURL)
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode())
+                .extract();
+
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(TaxonomyConstants.DEPTH_PARAM_MIN.replace("{min}","1"));
+
+        ResponseAssert.assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
+    }
+
+    @Test
+    public void lookupTaxonomyPathNodeValidReturnsOkWithJsonContentTypeAndCorrectTaxonomies() {
+        PageInformation expectedPageInfo = new PageInformation();
+        expectedPageInfo.setTotalRecords(6);
+        expectedPageInfo.setResultsPerPage(100);
+        expectedPageInfo.setCurrentPage(1);
+
+        ExtractableResponse<Response> response = when()
+                .get(TAXONOMY_BASE_PATH + "/path/nodes?id=100000&direction=TOP")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract();
+        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent(response,ContentType.JSON,false,expectedPageInfo);
+    }
+
+    @Test
+    public void lookupTaxonomyPathNodeBottomDirectionParametersReturnsTaxonomies() {
+        PageInformation expectedPageInfo = new PageInformation();
+        expectedPageInfo.setTotalRecords(50);
+        expectedPageInfo.setResultsPerPage(100);
+        expectedPageInfo.setCurrentPage(1);
+
+        ExtractableResponse<Response> response = when()
+                .get(TAXONOMY_BASE_PATH + "/path/nodes?id=1&direction=BOTTOM&depth=7")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract();
+        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent(response,ContentType.JSON,false,expectedPageInfo);
+    }
+
+    @Test
+    public void lookupTaxonomyPathNodeWithHistoricalChangesReturnsSeeOtherWithJsonContentType() {
+        String requestedURL = TAXONOMY_BASE_PATH + "/path/nodes?id=9&direction=TOP";
+
+        ExtractableResponse<Response> response = given().redirects().follow(false)
+                .when().get(requestedURL)
+                .then()
+                .statusCode(SEE_OTHER.getStatusCode())
+                .header(HttpHeaders.LOCATION,restContainer.baseURL+TAXONOMY_BASE_PATH +
+                        "/path/nodes?id=10&direction=TOP")
+                .extract();
+
+        List<String> errorMessages = new ArrayList<>();
+        errorMessages.add(TaxonomyConstants.API_RESPONSE_303.replace("{newId}","10"));
+        ResponseAssert.assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,
+                restContainer.baseURL+requestedURL);
+    }
+
+
+    /*
+        END: Test with /taxonomy/path/node
+
         START: Test with /taxonomy/relationship
     */
 
