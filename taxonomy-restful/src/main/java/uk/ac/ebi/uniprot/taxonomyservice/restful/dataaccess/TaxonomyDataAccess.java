@@ -2,6 +2,7 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess;
 
 import uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.NameRequestParams;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.PageRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.PathRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.TaxonomyIdWithPageRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
@@ -143,6 +144,16 @@ public interface TaxonomyDataAccess {
      * @return taxonomy path
      */
     Optional<TaxonomyNode> getTaxonomyPath(PathRequestParams nodePathParams);
+
+    /**
+     * This method return node list that has relationship with taxonomyId in a specific direction
+     * and only depth levels.
+     *
+     * @param nodePathParams {@link PathRequestParams} are taxonomyId, direction and depth
+     * @param pageRequestParams {@link PageRequestParams} pagination parameters
+     * @return taxonomy node list
+     */
+    public Optional<Taxonomies> getTaxonomyPathNodes(PathRequestParams nodePathParams,PageRequestParams pageRequestParams);
 
     /**
      * This method check if exist any historical change for {@param id} and it there is, it will return the the

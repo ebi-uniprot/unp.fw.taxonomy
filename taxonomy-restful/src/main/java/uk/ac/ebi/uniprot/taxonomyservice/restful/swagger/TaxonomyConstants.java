@@ -78,6 +78,12 @@ public class TaxonomyConstants {
 
     public static final String NOTE_TAXONOMY_PATH = "";
 
+    // TAXONOMY PATH NODES
+    public static final String API_OPERATION_TAXONOMY_PATH_NODES = "This service returns paginated taxonomy node list that have a " +
+            "relationship with the queried taxonomy ID in a specific direction (TOP or BOTTOM) and depth level.";
+
+    public static final String NOTE_TAXONOMY_PATH_NODES = "";
+
     //TAXONOMY LINEAGE
     public static final String API_OPERATION_TAXONOMY_LINEAGE = "This service returns the taxonomic lineage for a " +
             "given taxonomy node. It lists the nodes as they appear in the taxonomic tree, with the more specific " +
@@ -139,6 +145,7 @@ public class TaxonomyConstants {
     public static final String PAGE_SIZE_PARAMETER_MAX_VALUE = "The pageSize parameter should be a maximum of {max}";
     public static final String DEPTH_PARAMETER_IS_REQUIRED = "The depth parameter cannot be null";
     public static final String DEPTH_PARAM_MIN_MAX = "The depth parameter should be between {min} and {max} for the bottom direction";
+    public static final String DEPTH_PARAM_MIN = "The depth parameter should be bigger than {min} for the bottom direction";
     public static final String DIRECTION_VALID_VALUES = "The direction parameter can only be top or bottom";
     public static final String DIRECTION_PARAMETER_IS_REQUIRED = "The direction parameter cannot be null";
     public static final String TO_PARAMETER_IS_REQUIRED = "The to parameter cannot be null";

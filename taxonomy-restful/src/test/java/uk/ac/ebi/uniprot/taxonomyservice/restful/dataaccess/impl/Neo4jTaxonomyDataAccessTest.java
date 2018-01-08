@@ -484,10 +484,10 @@ public class Neo4jTaxonomyDataAccessTest {
         nameParams.setSearchType("CONTAINS");
         nameParams.setTaxonomyName("common");
         nameParams.setFieldName("commonName");
-        nameParams.setPageNumber("2");
+        nameParams.setPageNumber("1");
         nameParams.setPageSize("10");
         Optional<Taxonomies> nodeOptional = neo4jDataAccess.getTaxonomyNodesByName(nameParams,baseURL);
-        assertTaxonomiesResult(nodeOptional,10,50,nameParams, 120);
+        assertTaxonomiesResult(nodeOptional,10,50,nameParams, 1);
     }
 
     @Test
@@ -594,6 +594,130 @@ public class Neo4jTaxonomyDataAccessTest {
         Optional<TaxonomyNode> node = neo4jDataAccess.getTaxonomyPath(params);
         assertThat(node.isPresent(),is(true));
         assertNodePath(10000000L,node.get(),0,7);
+    }
+
+    @Test
+    public void getTaxonomyPathNodeListWithBottomDirectionSevenDepth() {
+        PathRequestParams params = new PathRequestParams();
+        params.setDepth(7);
+        params.setDirection("bottom");
+        params.setId("1");
+
+        PageRequestParams pageRequestParams = new PageRequestParams();
+        pageRequestParams.setPageNumber("0");
+        pageRequestParams.setPageSize("100");
+
+        Optional<Taxonomies> node = neo4jDataAccess.getTaxonomyPathNodes(params,pageRequestParams);
+        assertThat(node.isPresent(),is(true));
+        assertTaxonomiesResult(node,50,50,pageRequestParams,1);
+    }
+
+    @Test
+    public void getTaxonomyPathNodeListWithBottomDirectionTwoDepth() {
+        PathRequestParams params = new PathRequestParams();
+        params.setDepth(2);
+        params.setDirection("bottom");
+        params.setId("10");
+
+        PageRequestParams pageRequestParams = new PageRequestParams();
+        pageRequestParams.setPageNumber("0");
+        pageRequestParams.setPageSize("100");
+
+        Optional<Taxonomies> node = neo4jDataAccess.getTaxonomyPathNodes(params,pageRequestParams);
+        assertThat(node.isPresent(),is(true));
+        assertTaxonomiesResult(node,13,13,pageRequestParams,10);
+    }
+
+    @Test
+    public void getTaxonomyPathNodeListWithBottomDirectionTwoDepthInALeafNode() {
+        PathRequestParams params = new PathRequestParams();
+        params.setDepth(2);
+        params.setDirection("bottom");
+        params.setId("10000005");
+
+        PageRequestParams pageRequestParams = new PageRequestParams();
+        pageRequestParams.setPageNumber("0");
+        pageRequestParams.setPageSize("100");
+
+        Optional<Taxonomies> node = neo4jDataAccess.getTaxonomyPathNodes(params,pageRequestParams);
+        assertThat(node.isPresent(),is(false));
+    }
+
+    @Test
+    public void getTaxonomyPathNodeListWithBottomDirectionTwoDepthInAInvalidNode() {
+        PathRequestParams params = new PathRequestParams();
+        params.setDepth(2);
+        params.setDirection("bottom");
+        params.setId("5");
+
+        PageRequestParams pageRequestParams = new PageRequestParams();
+        pageRequestParams.setPageNumber("0");
+        pageRequestParams.setPageSize("100");
+
+        Optional<Taxonomies> node = neo4jDataAccess.getTaxonomyPathNodes(params,pageRequestParams);
+        assertThat(node.isPresent(),is(false));
+    }
+
+    @Test
+    public void getTaxonomyPathNodeListWithTopDirectionSevenDepth() {
+        PathRequestParams params = new PathRequestParams();
+        params.setDirection("top");
+        params.setId("10000005");
+
+        PageRequestParams pageRequestParams = new PageRequestParams();
+        pageRequestParams.setPageNumber("0");
+        pageRequestParams.setPageSize("10");
+
+        Optional<Taxonomies> node = neo4jDataAccess.getTaxonomyPathNodes(params,pageRequestParams);
+        assertThat(node.isPresent(),is(true));
+        assertTaxonomiesResult(node,8,8,pageRequestParams,1);
+    }
+
+
+    @Test
+    public void getTaxonomyPathNodeListWithTopDirectionTwoDepth() {
+        PathRequestParams params = new PathRequestParams();
+        params.setDirection("top");
+        params.setId("100");
+
+        PageRequestParams pageRequestParams = new PageRequestParams();
+        pageRequestParams.setPageNumber("0");
+        pageRequestParams.setPageSize("10");
+
+        Optional<Taxonomies> node = neo4jDataAccess.getTaxonomyPathNodes(params,pageRequestParams);
+        assertThat(node.isPresent(),is(true));
+        assertTaxonomiesResult(node,3,3,pageRequestParams,1);
+    }
+
+
+    @Test
+    public void getTaxonomyPathNodeListWithTopDirectionRoot() {
+        PathRequestParams params = new PathRequestParams();
+        params.setDirection("top");
+        params.setId("1");
+
+        PageRequestParams pageRequestParams = new PageRequestParams();
+        pageRequestParams.setPageNumber("0");
+        pageRequestParams.setPageSize("10");
+
+        Optional<Taxonomies> node = neo4jDataAccess.getTaxonomyPathNodes(params,pageRequestParams);
+        assertThat(node.isPresent(),is(true));
+        assertTaxonomiesResult(node,1,1,pageRequestParams,1);
+    }
+
+
+    @Test
+    public void getTaxonomyPathNodeListWithTopDirectionInvalidId() {
+        PathRequestParams params = new PathRequestParams();
+        params.setDirection("top");
+        params.setId("5");
+
+        PageRequestParams pageRequestParams = new PageRequestParams();
+        pageRequestParams.setPageNumber("0");
+        pageRequestParams.setPageSize("10");
+
+        Optional<Taxonomies> node = neo4jDataAccess.getTaxonomyPathNodes(params,pageRequestParams);
+        assertThat(node.isPresent(),is(false));
     }
 
     @Test

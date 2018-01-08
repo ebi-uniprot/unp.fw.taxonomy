@@ -42,7 +42,7 @@
         <!--this should be overrided in the jenkins release job to: -->
         <restful-prod-release-dir>${project.basedir}</restful-prod-release-dir>
 
-        <neo4j.version>3.0.1</neo4j.version>
+        <neo4j.version>3.3.1</neo4j.version>
     </properties>
 
     <dependencies>

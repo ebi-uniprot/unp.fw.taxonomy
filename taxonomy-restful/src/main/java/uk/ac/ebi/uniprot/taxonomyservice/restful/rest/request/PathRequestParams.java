@@ -19,7 +19,6 @@ import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstant
  * Created by lgonzales on 10/03/16.
  */
 @RequestScoped
-@MinMaxRequiredDepthForBottomPath(max = 5, message = DEPTH_PARAM_MIN_MAX, requiredMessage = DEPTH_PARAMETER_IS_REQUIRED)
 public class PathRequestParams {
 
     @NotNull(message = ID_PARAMETER_IS_REQUIRED)

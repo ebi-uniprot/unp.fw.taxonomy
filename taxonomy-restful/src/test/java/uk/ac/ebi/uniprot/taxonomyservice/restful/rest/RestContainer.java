@@ -79,7 +79,7 @@ public class RestContainer extends ExternalResource {
             return new AbstractModule() {
                 @Override
                 protected void configure() {
-                    bind(TaxonomyDataAccess.class).to(FakeTaxonomyDataAccess.class);
+                    bind(TaxonomyDataAccess.class).to(FakeTaxonomyDataAccess.class).asEagerSingleton();
                     packages(GuiceModule.PACKAGE_SCAN);
                 }
             };

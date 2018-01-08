@@ -16,7 +16,7 @@ import javax.validation.Payload;
  */
 @Documented
 @Constraint(validatedBy = {MinMaxRequiredDepthForBottomPath.MinMaxDepthForBottomPathValidator.class})
-@Target({ ElementType.TYPE, ElementType.ANNOTATION_TYPE })
+@Target({ ElementType.TYPE, ElementType.ANNOTATION_TYPE, ElementType.PARAMETER, ElementType.TYPE_PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MinMaxRequiredDepthForBottomPath {
 

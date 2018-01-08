@@ -1,5 +1,7 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.impl;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -41,15 +43,19 @@ public class FakeTaxonomyDataAccess extends Neo4jTaxonomyDataAccess {
 
     public FakeTaxonomyDataAccess(String filePath) {
         super("");
-        GraphDatabaseService neo4jDbTest = new TestGraphDatabaseFactory().newImpermanentDatabase();
-
-        importNeo4JData(neo4jDbTest, "/neo4JMockNodeData.csv",IMPORT_CYPHER_NODE_QUERY);
-        importNeo4JData(neo4jDbTest, "/neo4JMockMergedData.csv",IMPORT_CYPHER_MERGED_QUERY);
-        importNeo4JData(neo4jDbTest, "/neo4JMockDeletedData.csv",IMPORT_CYPHER_DELETED_QUERY);
-        deleteUnWantedRoot(neo4jDbTest,"0",DELETE_NODE_CYPHER_QUERY);
-
-        setNeo4jDb(neo4jDbTest);
-        registerStop(neo4jDbTest);
+        GraphDatabaseService neo4jDbTest = null;
+        try {
+            neo4jDbTest = new TestGraphDatabaseFactory().newImpermanentDatabase(File.createTempFile("temp","neo4j"));
+            importNeo4JData(neo4jDbTest, "/neo4JMockNodeData.csv",IMPORT_CYPHER_NODE_QUERY);
+            importNeo4JData(neo4jDbTest, "/neo4JMockMergedData.csv",IMPORT_CYPHER_MERGED_QUERY);
+            importNeo4JData(neo4jDbTest, "/neo4JMockDeletedData.csv",IMPORT_CYPHER_DELETED_QUERY);
+            deleteUnWantedRoot(neo4jDbTest,"0",DELETE_NODE_CYPHER_QUERY);
+            deleteUnWantedRoot(neo4jDbTest,"50","MATCH (n:Node)-[r]-() WHERE n.taxonomyId={id} DELETE n");
+            setNeo4jDb(neo4jDbTest);
+            registerStop(neo4jDbTest);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setNeo4jDb(GraphDatabaseService neo4jDb){
@@ -81,7 +87,7 @@ public class FakeTaxonomyDataAccess extends Neo4jTaxonomyDataAccess {
         {
             while (queryResult.hasNext()) {
                 Map<String, Object> row = queryResult.next();
-                System.out.println(row);
+                System.out.println("DELETED ROW: "+row);
             }
             tx.success();
         }
