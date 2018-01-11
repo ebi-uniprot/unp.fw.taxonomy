@@ -1,14 +1,15 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.impl;
 
+import org.neo4j.graphdb.GraphDatabaseService;
+import org.neo4j.graphdb.Result;
+import org.neo4j.graphdb.Transaction;
+import org.neo4j.test.TestGraphDatabaseFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Result;
-import org.neo4j.graphdb.Transaction;
-import org.neo4j.test.TestGraphDatabaseFactory;
 
 /**
  * Mock taxonomy data access that create and return mock results based on imported CSV files with mock values
@@ -43,26 +44,26 @@ public class FakeTaxonomyDataAccess extends Neo4jTaxonomyDataAccess {
 
     public FakeTaxonomyDataAccess(String filePath) {
         super("");
-        GraphDatabaseService neo4jDbTest = null;
         try {
-            neo4jDbTest = new TestGraphDatabaseFactory().newImpermanentDatabase(File.createTempFile("temp","neo4j"));
+            GraphDatabaseService neo4jDbTest = new TestGraphDatabaseFactory().newImpermanentDatabase(File.createTempFile("temp","neo4j"));
             importNeo4JData(neo4jDbTest, "/neo4JMockNodeData.csv",IMPORT_CYPHER_NODE_QUERY);
             importNeo4JData(neo4jDbTest, "/neo4JMockMergedData.csv",IMPORT_CYPHER_MERGED_QUERY);
             importNeo4JData(neo4jDbTest, "/neo4JMockDeletedData.csv",IMPORT_CYPHER_DELETED_QUERY);
             deleteUnWantedRoot(neo4jDbTest,"0",DELETE_NODE_CYPHER_QUERY);
             deleteUnWantedRoot(neo4jDbTest,"50","MATCH (n:Node)-[r]-() WHERE n.taxonomyId={id} DELETE n");
-            setNeo4jDb(neo4jDbTest);
-            registerStop(neo4jDbTest);
+            Neo4JQueryExecutor db = new Neo4JQueryExecutor(neo4jDbTest);
+            setNeo4jDb(db);
+            registerStop(db);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void setNeo4jDb(GraphDatabaseService neo4jDb){
+    public void setNeo4jDb(Neo4JQueryExecutor neo4jDb){
         this.neo4jDb = neo4jDb;
     }
 
-    public GraphDatabaseService getNeo4jDb(){
+    public Neo4JQueryExecutor getNeo4jDb(){
         return this.neo4jDb;
     }
 
