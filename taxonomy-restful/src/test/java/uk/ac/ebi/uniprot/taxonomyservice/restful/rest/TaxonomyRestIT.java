@@ -1,27 +1,24 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.rest;
 
+import com.jayway.restassured.http.ContentType;
+import com.jayway.restassured.response.ExtractableResponse;
+import com.jayway.restassured.response.Response;
+import org.junit.ClassRule;
+import org.junit.Test;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.PageInformation;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstants;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.util.ResponseAssert;
 
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.response.ExtractableResponse;
-import com.jayway.restassured.response.Response;
+import javax.ws.rs.core.HttpHeaders;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import javax.ws.rs.core.HttpHeaders;
-import org.junit.ClassRule;
-import org.junit.Test;
 
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.RestAssured.when;
-import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
-import static javax.ws.rs.core.Response.Status.NOT_FOUND;
-import static javax.ws.rs.core.Response.Status.OK;
-import static javax.ws.rs.core.Response.Status.SEE_OTHER;
+import static javax.ws.rs.core.Response.Status.*;
 
 /**
  * Class used to test Taxonomy service use cases
@@ -849,7 +846,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(TaxonomyConstants.DEPTH_PARAM_MIN_MAX.replace("{max}","5").replace("{min}","1"));
+        errorMessages.add(TaxonomyConstants.DEPTH_PARAM_MAX.replace("{max}","5"));
 
         ResponseAssert.assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
@@ -865,7 +862,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(TaxonomyConstants.DEPTH_PARAM_MIN_MAX.replace("{max}","5").replace("{min}","1"));
+        errorMessages.add(TaxonomyConstants.DEPTH_PARAM_MIN.replace("{value}","1"));
 
         ResponseAssert.assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }
@@ -964,19 +961,21 @@ public class TaxonomyRestIT {
     }
 
     @Test
-    public void lookupTaxonomyPathNodeWithoutDepthParametersReturnsBadRequest() {
-        String requestedURL = TAXONOMY_BASE_PATH + "/path/nodes?id=100000&direction=BOTTOM";
+    public void lookupTaxonomyPathNodeWithoutDepthParametersReturnsReturnsAllNodes() {
+        String requestedURL = TAXONOMY_BASE_PATH + "/path/nodes?id=10&direction=BOTTOM";
 
         ExtractableResponse<Response> response = when()
                 .get(requestedURL)
                 .then()
-                .statusCode(BAD_REQUEST.getStatusCode())
+                .statusCode(OK.getStatusCode())
                 .extract();
 
-        List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(TaxonomyConstants.DEPTH_PARAMETER_IS_REQUIRED);
+        PageInformation expectedPageInfo = new PageInformation();
+        expectedPageInfo.setTotalRecords(23);
+        expectedPageInfo.setResultsPerPage(100);
+        expectedPageInfo.setCurrentPage(1);
 
-        ResponseAssert.assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
+        ResponseAssert.assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent(response,ContentType.JSON,false,expectedPageInfo);
     }
 
     @Test
@@ -990,7 +989,7 @@ public class TaxonomyRestIT {
                 .extract();
 
         List<String> errorMessages = new ArrayList<>();
-        errorMessages.add(TaxonomyConstants.DEPTH_PARAM_MIN.replace("{min}","1"));
+        errorMessages.add(TaxonomyConstants.DEPTH_PARAM_MIN.replace("{value}","1"));
 
         ResponseAssert.assertErrorResponseReturnCorrectContentTypeAndResponseBody(response, ContentType.JSON,errorMessages,restContainer.baseURL+requestedURL);
     }

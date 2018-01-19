@@ -1,11 +1,11 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint;
 
+import org.junit.Test;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.PathRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.param.values.PathDirections;
 
-import java.lang.annotation.Annotation;
 import javax.validation.Payload;
-import org.junit.Test;
+import java.lang.annotation.Annotation;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
@@ -15,11 +15,11 @@ import static org.junit.Assert.assertThat;
  *
  * Created by lgonzales on 08/07/16.
  */
-public class MinMaxDepthForBottomPathValidatorTest {
+public class MaxDepthForBottomPathValidatorTest {
 
     @Test
     public void isValidWithBottomValidSizeReturnTrue() {
-        MockedMinMaxDepthForBottomPathValidator validator = new MockedMinMaxDepthForBottomPathValidator(1,4);
+        MockedMaxDepthForBottomPathValidator validator = new MockedMaxDepthForBottomPathValidator(1,4);
         PathRequestParams param = getPathRequestParams(4,PathDirections.BOTTOM);
         boolean result = validator.isValid(param,null);
         assertThat(result, is(true));
@@ -27,7 +27,7 @@ public class MinMaxDepthForBottomPathValidatorTest {
 
     @Test
     public void isValidWithBottomInvalidSizeReturnFalse() {
-        MockedMinMaxDepthForBottomPathValidator validator = new MockedMinMaxDepthForBottomPathValidator(1,4);
+        MockedMaxDepthForBottomPathValidator validator = new MockedMaxDepthForBottomPathValidator(1,4);
         PathRequestParams param = getPathRequestParams(5,PathDirections.BOTTOM);
         boolean result = validator.isValid(param,null);
         assertThat(result, is(false));
@@ -35,7 +35,7 @@ public class MinMaxDepthForBottomPathValidatorTest {
 
     @Test
     public void isValidWithBottomInMinValidSizeReturnFalse() {
-        MockedMinMaxDepthForBottomPathValidator validator = new MockedMinMaxDepthForBottomPathValidator(0,4);
+        MockedMaxDepthForBottomPathValidator validator = new MockedMaxDepthForBottomPathValidator(0,4);
         PathRequestParams param = getPathRequestParams(6,PathDirections.BOTTOM);
         boolean result = validator.isValid(param,null);
         assertThat(result, is(false));
@@ -43,7 +43,7 @@ public class MinMaxDepthForBottomPathValidatorTest {
 
     @Test
     public void isValidWithTopValidSizeReturnTrue() {
-        MockedMinMaxDepthForBottomPathValidator validator = new MockedMinMaxDepthForBottomPathValidator(1,4);
+        MockedMaxDepthForBottomPathValidator validator = new MockedMaxDepthForBottomPathValidator(1,4);
         PathRequestParams param = getPathRequestParams(6,PathDirections.TOP);
         boolean result = validator.isValid(param,null);
         assertThat(result, is(true));
@@ -52,7 +52,7 @@ public class MinMaxDepthForBottomPathValidatorTest {
 
     @Test
     public void isValidWithNullDirectionValidSizeReturnTrue() {
-        MockedMinMaxDepthForBottomPathValidator validator = new MockedMinMaxDepthForBottomPathValidator(1,4);
+        MockedMaxDepthForBottomPathValidator validator = new MockedMaxDepthForBottomPathValidator(1,4);
         PathRequestParams param = getPathRequestParams(6,null);
         boolean result = validator.isValid(param,null);
         assertThat(result, is(true));
@@ -69,11 +69,11 @@ public class MinMaxDepthForBottomPathValidatorTest {
     }
 
 
-    private class MockedMinMaxDepthForBottomPathValidator extends
-                                                     MinMaxRequiredDepthForBottomPath.MinMaxDepthForBottomPathValidator {
+    private class MockedMaxDepthForBottomPathValidator extends
+                                                     MaxRequiredDepthForBottomPath.MaxDepthForBottomPathValidator {
 
-        public MockedMinMaxDepthForBottomPathValidator(int min, int max){
-            MinMaxRequiredDepthForBottomPath maxDepthForDownPath = new MinMaxRequiredDepthForBottomPath() {
+        public MockedMaxDepthForBottomPathValidator(int min, int max){
+            MaxRequiredDepthForBottomPath maxDepthForDownPath = new MaxRequiredDepthForBottomPath() {
                 @Override public Class<? extends Annotation> annotationType() {
                     return null;
                 }
@@ -81,8 +81,6 @@ public class MinMaxDepthForBottomPathValidatorTest {
                 @Override public String message() {return null;}
 
                 @Override public int max() {return max;}
-
-                @Override public int min() {return min;}
 
                 @Override public String requiredMessage() {return "requiredMessage";}
 

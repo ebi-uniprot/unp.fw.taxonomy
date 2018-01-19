@@ -1,15 +1,15 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request;
 
-import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.param.values.PathDirections;
-import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint.IsEnumValue;
-import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint.MinMaxRequiredDepthForBottomPath;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiParam;
+import org.glassfish.jersey.process.internal.RequestScoped;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.param.values.PathDirections;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint.IsEnumValue;
+
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.ws.rs.QueryParam;
-import org.glassfish.jersey.process.internal.RequestScoped;
 
 import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstants.*;
 
@@ -28,7 +28,8 @@ public class PathRequestParams {
     private String id;
 
     @QueryParam(value = "depth")
-    @ApiParam(value = TAXONOMY_DEPTH_PARAM, required = true)
+    @ApiParam(value = TAXONOMY_DEPTH_PARAM)
+    @Min(value = 1,message = DEPTH_PARAM_MIN)
     private Integer depth;
 
     @IsEnumValue(enumClass = PathDirections.class,message = DIRECTION_VALID_VALUES,

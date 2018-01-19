@@ -144,8 +144,8 @@ public class TaxonomyConstants {
     public static final String PAGE_SIZE_PARAMETER_VALID_NUMBER = "The pageSize parameter should be a valid number";
     public static final String PAGE_SIZE_PARAMETER_MAX_VALUE = "The pageSize parameter should be a maximum of {max}";
     public static final String DEPTH_PARAMETER_IS_REQUIRED = "The depth parameter cannot be null";
-    public static final String DEPTH_PARAM_MIN_MAX = "The depth parameter should be between {min} and {max} for the bottom direction";
-    public static final String DEPTH_PARAM_MIN = "The depth parameter should be bigger than {min} for the bottom direction";
+    public static final String DEPTH_PARAM_MAX = "The depth parameter should be less than or equals to {max} for the bottom direction";
+    public static final String DEPTH_PARAM_MIN = "The depth parameter should be bigger or equals to {value}";
     public static final String DIRECTION_VALID_VALUES = "The direction parameter can only be top or bottom";
     public static final String DIRECTION_PARAMETER_IS_REQUIRED = "The direction parameter cannot be null";
     public static final String TO_PARAMETER_IS_REQUIRED = "The to parameter cannot be null";

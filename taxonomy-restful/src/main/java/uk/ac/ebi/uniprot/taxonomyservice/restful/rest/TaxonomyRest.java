@@ -1,5 +1,8 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.rest;
 
+import io.swagger.annotations.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.TaxonomyDataAccess;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.*;
@@ -10,9 +13,8 @@ import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.builder.PageRespo
 import uk.ac.ebi.uniprot.taxonomyservice.restful.util.URLUtil;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint.IsLongListParam;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint.ListParamMinMaxSize;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint.MaxRequiredDepthForBottomPath;
 
-import io.swagger.annotations.*;
-import java.util.*;
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -22,9 +24,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint.MinMaxRequiredDepthForBottomPath;
+import java.util.*;
 
 import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstants.*;
 
@@ -329,7 +329,7 @@ public class TaxonomyRest {
             response = TaxonomyNode.class)
     @ApiResponses(value = {@ApiResponse(code = 400, message = ID_PARAMETER_IS_REQUIRED,response = ErrorMessage.class),
             @ApiResponse(code = 400, message = DEPTH_PARAMETER_IS_REQUIRED , response = ErrorMessage.class),
-            @ApiResponse(code = 400, message = DEPTH_PARAM_MIN_MAX , response = ErrorMessage.class),
+            @ApiResponse(code = 400, message = DEPTH_PARAM_MAX , response = ErrorMessage.class),
             @ApiResponse(code = 400, message = DIRECTION_VALID_VALUES , response = ErrorMessage.class),
             @ApiResponse(code = 400, message = DIRECTION_PARAMETER_IS_REQUIRED , response = ErrorMessage.class),
             @ApiResponse(code = 400, message = REQUEST_PARAMETER_INVALID_VALUE, response = ErrorMessage.class),
@@ -337,7 +337,7 @@ public class TaxonomyRest {
             @ApiResponse(code = 500, message = API_RESPONSE_500, response = ErrorMessage.class)})
     @Path("path")
     public Response getTaxonomyPath(
-    @MinMaxRequiredDepthForBottomPath(max = 5, message = DEPTH_PARAM_MIN_MAX, requiredMessage = DEPTH_PARAMETER_IS_REQUIRED)
+    @MaxRequiredDepthForBottomPath(max = 5, message = DEPTH_PARAM_MAX, requiredMessage = DEPTH_PARAMETER_IS_REQUIRED)
     @Valid @BeanParam PathRequestParams pathRequestParam) {
 
         Optional<TaxonomyNode> response = dataAccess.getTaxonomyPath(pathRequestParam);
@@ -354,7 +354,7 @@ public class TaxonomyRest {
             response = TaxonomyNode.class)
     @ApiResponses(value = {@ApiResponse(code = 400, message = ID_PARAMETER_IS_REQUIRED,response = ErrorMessage.class),
             @ApiResponse(code = 400, message = DEPTH_PARAMETER_IS_REQUIRED , response = ErrorMessage.class),
-            @ApiResponse(code = 400, message = DEPTH_PARAM_MIN_MAX , response = ErrorMessage.class),
+            @ApiResponse(code = 400, message = DEPTH_PARAM_MAX , response = ErrorMessage.class),
             @ApiResponse(code = 400, message = DIRECTION_VALID_VALUES , response = ErrorMessage.class),
             @ApiResponse(code = 400, message = DIRECTION_PARAMETER_IS_REQUIRED , response = ErrorMessage.class),
             @ApiResponse(code = 400, message = REQUEST_PARAMETER_INVALID_VALUE, response = ErrorMessage.class),
@@ -362,7 +362,6 @@ public class TaxonomyRest {
             @ApiResponse(code = 500, message = API_RESPONSE_500, response = ErrorMessage.class)})
     @Path("path/nodes")
     public Response getTaxonomyPathNodes(
-            @MinMaxRequiredDepthForBottomPath(max = -1, message = DEPTH_PARAM_MIN, requiredMessage = DEPTH_PARAMETER_IS_REQUIRED)
             @Valid @BeanParam PathRequestParams pathRequestParam,
             @Valid @BeanParam PageRequestParams pageRequestParams) {
 
