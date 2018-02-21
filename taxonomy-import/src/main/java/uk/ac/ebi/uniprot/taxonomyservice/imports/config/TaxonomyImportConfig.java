@@ -1,22 +1,5 @@
 package uk.ac.ebi.uniprot.taxonomyservice.imports.config;
 
-import uk.ac.ebi.uniprot.taxonomyservice.imports.listener.LogJobListener;
-import uk.ac.ebi.uniprot.taxonomyservice.imports.listener.LogStepListener;
-import uk.ac.ebi.uniprot.taxonomyservice.imports.mapper.TaxonomyDeletedItemReaderMapper;
-import uk.ac.ebi.uniprot.taxonomyservice.imports.mapper.TaxonomyMergeItemReaderMapper;
-import uk.ac.ebi.uniprot.taxonomyservice.imports.mapper.TaxonomyNodeItemReaderMapper;
-import uk.ac.ebi.uniprot.taxonomyservice.imports.model.TaxonomyImportDelete;
-import uk.ac.ebi.uniprot.taxonomyservice.imports.model.TaxonomyImportMerge;
-import uk.ac.ebi.uniprot.taxonomyservice.imports.model.TaxonomyImportNode;
-import uk.ac.ebi.uniprot.taxonomyservice.imports.writer.Neo4JDeletedItemWriterWithBatchInserter;
-import uk.ac.ebi.uniprot.taxonomyservice.imports.writer.Neo4JMergedItemWriterWithBatchInserter;
-import uk.ac.ebi.uniprot.taxonomyservice.imports.writer.Neo4JNodeItemWriterWithBatchInserter;
-import uk.ac.ebi.uniprot.taxonomyservice.imports.writer.Neo4JRelationshipItemWriterWithBatchInserter;
-
-import java.io.File;
-import java.io.IOException;
-import java.sql.SQLException;
-import javax.sql.DataSource;
 import org.neo4j.graphdb.Label;
 import org.neo4j.unsafe.batchinsert.BatchInserter;
 import org.neo4j.unsafe.batchinsert.BatchInserters;
@@ -44,11 +27,25 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.transaction.PlatformTransactionManager;
+import uk.ac.ebi.uniprot.taxonomyservice.imports.listener.LogJobListener;
+import uk.ac.ebi.uniprot.taxonomyservice.imports.listener.LogStepListener;
+import uk.ac.ebi.uniprot.taxonomyservice.imports.mapper.TaxonomyDeletedItemReaderMapper;
+import uk.ac.ebi.uniprot.taxonomyservice.imports.mapper.TaxonomyMergeItemReaderMapper;
+import uk.ac.ebi.uniprot.taxonomyservice.imports.mapper.TaxonomyNodeItemReaderMapper;
+import uk.ac.ebi.uniprot.taxonomyservice.imports.model.TaxonomyImportDelete;
+import uk.ac.ebi.uniprot.taxonomyservice.imports.model.TaxonomyImportMerge;
+import uk.ac.ebi.uniprot.taxonomyservice.imports.model.TaxonomyImportNode;
+import uk.ac.ebi.uniprot.taxonomyservice.imports.writer.Neo4JDeletedItemWriterWithBatchInserter;
+import uk.ac.ebi.uniprot.taxonomyservice.imports.writer.Neo4JMergedItemWriterWithBatchInserter;
+import uk.ac.ebi.uniprot.taxonomyservice.imports.writer.Neo4JNodeItemWriterWithBatchInserter;
+import uk.ac.ebi.uniprot.taxonomyservice.imports.writer.Neo4JRelationshipItemWriterWithBatchInserter;
 
-import static uk.ac.ebi.uniprot.taxonomyservice.imports.model.constants.TaxonomyFields.commonNameLowerCase;
-import static uk.ac.ebi.uniprot.taxonomyservice.imports.model.constants.TaxonomyFields.mnemonicLowerCase;
-import static uk.ac.ebi.uniprot.taxonomyservice.imports.model.constants.TaxonomyFields.scientificNameLowerCase;
-import static uk.ac.ebi.uniprot.taxonomyservice.imports.model.constants.TaxonomyFields.taxonomyId;
+import javax.sql.DataSource;
+import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
+
+import static uk.ac.ebi.uniprot.taxonomyservice.imports.model.constants.TaxonomyFields.*;
 /**
  * This class is responsible to set up taxonomy initial full load.
  * Basically it loads taxonomy in 4 steps
@@ -157,7 +154,8 @@ public class TaxonomyImportConfig implements DisposableBean{
         JdbcCursorItemReader itemReader = new JdbcCursorItemReader();
         itemReader.setDataSource(getReadDatasource());
         itemReader.setSql("select tax_id,parent_id,hidden,internal,rank,gc_id,mgc_id,ncbi_scientific,ncbi_common," +
-                "sptr_scientific,sptr_common,sptr_synonym,sptr_code,tax_code,sptr_ff from taxonomy.v_public_node");
+                "sptr_scientific,sptr_common,sptr_synonym,sptr_code,tax_code,sptr_ff,superregnum" +
+                " from taxonomy.v_public_node");
         itemReader.setRowMapper(new TaxonomyNodeItemReaderMapper());
 
         return itemReader;
@@ -251,6 +249,8 @@ public class TaxonomyImportConfig implements DisposableBean{
         batchInserter.createDeferredSchemaIndex( nodeLabel ).on(taxonomyId.name()).create();
         batchInserter.createDeferredSchemaIndex( nodeLabel ).on(scientificNameLowerCase.name()).create();
         batchInserter.createDeferredSchemaIndex( nodeLabel ).on(commonNameLowerCase.name()).create();
+        batchInserter.createDeferredSchemaIndex( nodeLabel ).on(scientificNameLowerCase.name())
+                                                            .on(commonNameLowerCase.name()).create();
         batchInserter.createDeferredSchemaIndex( nodeLabel ).on(mnemonicLowerCase.name()).create();
 
         Label mergedLabel = Label.label( "Merged" );

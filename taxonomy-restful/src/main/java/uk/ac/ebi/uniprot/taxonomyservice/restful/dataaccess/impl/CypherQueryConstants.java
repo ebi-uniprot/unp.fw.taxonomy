@@ -56,7 +56,7 @@ public class CypherQueryConstants {
             "as children SKIP {skip} LIMIT {limit}";
 
     static final String GET_TAXONOMY_DETAILS_BY_NAME_CYPHER_QUERY_BASE =
-            "MATCH (n:Node) WHERE n.{fieldName} {searchType} {name} ";
+            "MATCH (n:Node) WHERE {nameWhere} ";
 
     static final String GET_TAXONOMY_NODES_BY_NAME_CYPHER_QUERY=
             GET_TAXONOMY_DETAILS_BY_NAME_CYPHER_QUERY_BASE+"return n as node SKIP {skip} LIMIT {limit}";

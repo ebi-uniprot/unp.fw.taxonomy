@@ -1,14 +1,5 @@
 package uk.ac.ebi.uniprot.taxonomyservice.imports.config;
 
-import uk.ac.ebi.uniprot.taxonomyservice.imports.model.constants.TaxonomyLabels;
-import uk.ac.ebi.uniprot.taxonomyservice.imports.model.constants.TaxonomyRelationships;
-import uk.ac.ebi.uniprot.taxonomyservice.imports.setup.InstanceTestClassListener;
-import uk.ac.ebi.uniprot.taxonomyservice.imports.setup.JobTestRunnerConfig;
-import uk.ac.ebi.uniprot.taxonomyservice.imports.setup.Neo4JGraphDatabase;
-import uk.ac.ebi.uniprot.taxonomyservice.imports.setup.SpringInstanceTestClassRunner;
-import uk.ac.ebi.uniprot.taxonomyservice.imports.utils.TaxonomyImportTestUtils;
-
-import java.io.IOException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.neo4j.graphdb.*;
@@ -24,6 +15,18 @@ import org.springframework.boot.test.SpringApplicationContextLoader;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import uk.ac.ebi.uniprot.taxonomyservice.imports.model.constants.TaxonomyLabels;
+import uk.ac.ebi.uniprot.taxonomyservice.imports.model.constants.TaxonomyRelationships;
+import uk.ac.ebi.uniprot.taxonomyservice.imports.setup.InstanceTestClassListener;
+import uk.ac.ebi.uniprot.taxonomyservice.imports.setup.JobTestRunnerConfig;
+import uk.ac.ebi.uniprot.taxonomyservice.imports.setup.Neo4JGraphDatabase;
+import uk.ac.ebi.uniprot.taxonomyservice.imports.setup.SpringInstanceTestClassRunner;
+import uk.ac.ebi.uniprot.taxonomyservice.imports.utils.TaxonomyImportTestUtils;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -69,13 +72,15 @@ public class ValidateImportedDataIT implements InstanceTestClassListener{
         try(Transaction tx = neo4jDb.beginTx()){
             Iterable<IndexDefinition> indexes = neo4jDb.schema().getIndexes();
             assertThat(indexes, notNullValue());
-            assertThat(Iterables.count(indexes),is(5L));
+            assertThat(Iterables.count(indexes),is(6L));
 
             Label nodeLabel = Label.label( "Node" );
             assertThat(hasIndexInPropertyName(indexes,nodeLabel,taxonomyId.name()),is(true));
             assertThat(hasIndexInPropertyName(indexes,nodeLabel,scientificNameLowerCase.name()),is(true));
             assertThat(hasIndexInPropertyName(indexes,nodeLabel,commonNameLowerCase.name()),is(true));
             assertThat(hasIndexInPropertyName(indexes,nodeLabel,mnemonicLowerCase.name()),is(true));
+            assertThat(hasIndexInPropertyName(indexes,nodeLabel,scientificNameLowerCase.name(),
+                    commonNameLowerCase.name()),is(true));
 
             Label mergedLabel = Label.label( "Merged" );
             assertThat(hasIndexInPropertyName(indexes,mergedLabel,taxonomyId.name()),is(true));
@@ -150,19 +155,20 @@ public class ValidateImportedDataIT implements InstanceTestClassListener{
         assertNodeProperty(commonNameLowerCase.name(),"sptr_common_1", node);
         assertNodeProperty(synonym.name(), "sptr_synonym_1",node);
         assertNodeProperty(rank.name(),"rank_1",node);
+        assertNodeProperty(superregnum.name(),"superregnum_1",node);
         assertChildOfRelationsShip(true,node);
 
     }
 
-    private boolean hasIndexInPropertyName(Iterable<IndexDefinition> indexes, Label label, String propertyName) {
-        Boolean result = null;
+    private boolean hasIndexInPropertyName(Iterable<IndexDefinition> indexes, Label label, String ... propertyName) {
+        boolean result = false;
         for (IndexDefinition index: indexes) {
             if(label.name().equals(index.getLabel().name())) {
-                for (String key : index.getPropertyKeys()) {
-                    if (key.equals(propertyName)) {
-                        result = true;
-                        break;
-                    }
+                List<String> propertyList = new ArrayList<>();
+                index.getPropertyKeys().forEach(propertyList::add);
+                result = Arrays.equals(propertyList.toArray(new String[propertyList.size()]),propertyName);
+                if(result){
+                    break;
                 }
             }
         }
@@ -184,6 +190,7 @@ public class ValidateImportedDataIT implements InstanceTestClassListener{
         assertNodeProperty(commonNameLowerCase.name(),"ncbi_common_2", node);
         assertNodeProperty(synonym.name(), "sptr_synonym_2",node);
         assertNodeProperty(rank.name(),"rank_2",node);
+        assertNodeProperty(superregnum.name(),"superregnum_2",node);
         assertChildOfRelationsShip(false,node);
     }
 

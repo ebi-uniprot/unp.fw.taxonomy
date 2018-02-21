@@ -1,16 +1,16 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiParam;
+import org.glassfish.jersey.process.internal.RequestScoped;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.param.values.FieldNames;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.param.values.SearchType;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint.IsEnumValue;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint.NameMinSizeForPartialSearches;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.annotations.ApiParam;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.QueryParam;
-import org.glassfish.jersey.process.internal.RequestScoped;
 
 import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstants.*;
 
@@ -75,7 +75,7 @@ public class NameRequestParams extends PageRequestParams{
     }
 
     @JsonIgnore
-    public String getFieldNameQueryKeyword(){
+    public String[] getFieldNameQueryKeyword(){
         FieldNames fieldNameEnum = FieldNames.valueOf(getFieldName().toUpperCase());
         return fieldNameEnum.getSearchFieldName();
     }

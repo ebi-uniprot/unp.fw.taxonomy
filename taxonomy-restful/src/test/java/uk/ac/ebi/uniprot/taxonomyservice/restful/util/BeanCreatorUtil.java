@@ -24,6 +24,7 @@ public class BeanCreatorUtil {
         node.setCommonName("common Name "+taxonomyId);
         node.setMnemonic("Mnemonic "+taxonomyId);
         node.setRank("Rank "+taxonomyId);
+        node.setSuperregnum("Superregnum "+taxonomyId);
         node.setScientificName("ScientificName "+taxonomyId);
         node.setSynonym("Synonym "+taxonomyId);
         return node;

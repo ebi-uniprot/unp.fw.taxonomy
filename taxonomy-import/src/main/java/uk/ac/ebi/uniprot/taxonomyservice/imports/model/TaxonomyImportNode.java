@@ -14,6 +14,7 @@ public class TaxonomyImportNode {
     private String commonName;
     private String synonym;
     private String rank;
+    private String superregnum;
 
     public Long getTaxonomyId() {
         return taxonomyId;
@@ -71,7 +72,16 @@ public class TaxonomyImportNode {
         this.rank = rank;
     }
 
-    @Override public String toString() {
+    public String getSuperregnum() {
+        return superregnum;
+    }
+
+    public void setSuperregnum(String superregnum) {
+        this.superregnum = superregnum;
+    }
+
+    @Override
+    public String toString() {
         return "TaxonomyImportNode{" +
                 "taxonomyId=" + taxonomyId +
                 ", parentId=" + parentId +
@@ -80,6 +90,7 @@ public class TaxonomyImportNode {
                 ", commonName='" + commonName + '\'' +
                 ", synonym='" + synonym + '\'' +
                 ", rank='" + rank + '\'' +
+                ", superregnum='" + superregnum + '\'' +
                 '}';
     }
 }

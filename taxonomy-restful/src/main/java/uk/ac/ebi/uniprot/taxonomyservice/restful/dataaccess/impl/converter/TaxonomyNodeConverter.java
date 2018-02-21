@@ -55,6 +55,9 @@ public class TaxonomyNodeConverter implements Neo4JQueryResulConverter<TaxonomyN
                 if(node.hasProperty(rank.name())) {
                     result.setRank("" + node.getProperty(rank.name()));
                 }
+                if(node.hasProperty(superregnum.name())) {
+                    result.setSuperregnum("" + node.getProperty(superregnum.name()));
+                }
                 if(node.hasProperty(scientificName.name())) {
                     result.setScientificName("" + node.getProperty(scientificName.name()));
                 }

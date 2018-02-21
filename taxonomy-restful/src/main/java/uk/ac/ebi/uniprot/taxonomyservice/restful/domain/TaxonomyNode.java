@@ -4,12 +4,13 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSetter;
-import java.util.ArrayList;
-import java.util.List;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class represents a Taxonomy Element(node) in the taxonomy Tree.
@@ -22,11 +23,11 @@ import javax.xml.bind.annotation.XmlType;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @XmlRootElement
 @XmlType(name = "taxonomyNode", propOrder = {"taxonomyId","mnemonic","scientificName","commonName","synonym","rank",
-        "parent","parentLink","children","childrenLinks","siblings","siblingsLinks"})
+        "superregnum","parent","parentLink","children","childrenLinks","siblings","siblingsLinks"})
 public class TaxonomyNode implements Comparable<TaxonomyNode>{
 
     public enum TAXONOMY_NODE_FIELDS{
-        taxonomyId,mnemonic,scientificName,commonName,synonym,rank,
+        taxonomyId,mnemonic,scientificName,commonName,synonym,rank,superregnum,
         parent,parentLink,children,childrenLinks,siblings,siblingsLinks
     }
 
@@ -36,6 +37,7 @@ public class TaxonomyNode implements Comparable<TaxonomyNode>{
     private String commonName;
     private String synonym;
     private String rank;
+    private String superregnum;
 
     private TaxonomyNode parent;
     private String parentLink;
@@ -98,6 +100,15 @@ public class TaxonomyNode implements Comparable<TaxonomyNode>{
 
     public void setRank(String rank) {
         this.rank = rank;
+    }
+
+    @XmlElement
+    public String getSuperregnum() {
+        return superregnum;
+    }
+
+    public void setSuperregnum(String superregnum) {
+        this.superregnum = superregnum;
     }
 
     @XmlElement
@@ -211,6 +222,7 @@ public class TaxonomyNode implements Comparable<TaxonomyNode>{
                 ", commonName='" + commonName + '\'' +
                 ", synonym='" + synonym + '\'' +
                 ", rank='" + rank + '\'' +
+                ", superregnum='" + superregnum + '\'' +
                 ", parent=" + parent +
                 ", parentLink='" + parentLink + '\'' +
                 ", children=" + children +

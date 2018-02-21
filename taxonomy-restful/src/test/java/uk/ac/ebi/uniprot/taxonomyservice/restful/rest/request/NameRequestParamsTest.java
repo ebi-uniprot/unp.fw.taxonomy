@@ -3,6 +3,7 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -60,25 +61,41 @@ public class NameRequestParamsTest {
     public void getFieldNameQueryKeywordWithNullReturnDefaultScientificName() {
         NameRequestParams param = getAncestorRequestParam(null,null,null,null);
 
-        String fieldName = param.getFieldNameQueryKeyword();
+        String[] fieldName = param.getFieldNameQueryKeyword();
 
-        assertThat(fieldName,is("scientificNameLowerCase"));
+        assertThat(fieldName, notNullValue());
+        assertThat(fieldName.length, is(1));
+        assertThat(fieldName[0],is("scientificNameLowerCase"));
     }
 
     @Test
     public void getFieldNameQueryKeywordWithValidValueReturnValue() {
         NameRequestParams param = getAncestorRequestParam("commonname",null,null,null);
 
-        String fieldName = param.getFieldNameQueryKeyword();
+        String[] fieldName = param.getFieldNameQueryKeyword();
 
-        assertThat(fieldName,is("commonNameLowerCase"));
+        assertThat(fieldName, notNullValue());
+        assertThat(fieldName.length, is(1));
+        assertThat(fieldName[0],is("commonNameLowerCase"));
+    }
+
+    @Test
+    public void getFieldNameQueryKeywordWithValidNameValueReturnValue() {
+        NameRequestParams param = getAncestorRequestParam("name",null,null,null);
+
+        String[] fieldName = param.getFieldNameQueryKeyword();
+
+        assertThat(fieldName, notNullValue());
+        assertThat(fieldName.length, is(2));
+        assertThat(fieldName[0],is("commonNameLowerCase"));
+        assertThat(fieldName[1],is("scientificNameLowerCase"));
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void getFieldNameQueryKeywordWithInvalidValueThrowsException() {
         NameRequestParams param = getAncestorRequestParam("invalid",null,null,null);
 
-        String fieldName = param.getFieldNameQueryKeyword();
+        String[] fieldName = param.getFieldNameQueryKeyword();
     }
 
     private NameRequestParams getAncestorRequestParam(String fieldName, String pageNumber, String pageSize,

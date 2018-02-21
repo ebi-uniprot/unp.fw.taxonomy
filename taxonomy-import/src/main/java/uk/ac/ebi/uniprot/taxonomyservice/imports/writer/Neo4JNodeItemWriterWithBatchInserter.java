@@ -1,12 +1,5 @@
 package uk.ac.ebi.uniprot.taxonomyservice.imports.writer;
 
-import uk.ac.ebi.uniprot.taxonomyservice.imports.model.TaxonomyImportNode;
-import uk.ac.ebi.uniprot.taxonomyservice.imports.model.constants.TaxonomyLabels;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.neo4j.graphdb.Label;
 import org.neo4j.unsafe.batchinsert.BatchInserter;
 import org.slf4j.Logger;
@@ -14,6 +7,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.annotation.AfterStep;
 import org.springframework.batch.core.annotation.BeforeStep;
 import org.springframework.batch.item.ItemWriter;
+import uk.ac.ebi.uniprot.taxonomyservice.imports.model.TaxonomyImportNode;
+import uk.ac.ebi.uniprot.taxonomyservice.imports.model.constants.TaxonomyLabels;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static uk.ac.ebi.uniprot.taxonomyservice.imports.model.constants.TaxonomyFields.*;
 
@@ -59,6 +59,9 @@ public class Neo4JNodeItemWriterWithBatchInserter implements ItemWriter<Taxonomy
             }
             if (nodeModel.getRank() != null) {
                 properties.put(rank.name(), nodeModel.getRank());
+            }
+            if (nodeModel.getSuperregnum() != null) {
+                properties.put(superregnum.name(), nodeModel.getSuperregnum());
             }
             batchInserter.createNode(nodeModel.getTaxonomyId(),properties,nodeLabel);
         }

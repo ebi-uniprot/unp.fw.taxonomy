@@ -15,7 +15,8 @@ CREATE TABLE taxonomy.v_public_node
         sptr_synonym VARCHAR(64),
         sptr_code VARCHAR(64),
         tax_code VARCHAR(64),
-        sptr_ff VARCHAR(64)
+        sptr_ff VARCHAR(64),
+        superregnum VARCHAR(64)
    );
 
 CREATE TABLE taxonomy.v_public_merged

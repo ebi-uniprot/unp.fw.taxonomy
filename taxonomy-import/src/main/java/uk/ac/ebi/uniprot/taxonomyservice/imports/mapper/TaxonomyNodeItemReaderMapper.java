@@ -1,11 +1,11 @@
 package uk.ac.ebi.uniprot.taxonomyservice.imports.mapper;
 
+import org.springframework.jdbc.core.RowMapper;
 import uk.ac.ebi.uniprot.taxonomyservice.imports.config.TaxonomyImportConfig;
 import uk.ac.ebi.uniprot.taxonomyservice.imports.model.TaxonomyImportNode;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import org.springframework.jdbc.core.RowMapper;
 
 /**
  * This class is mapping {@link java.sql.ResultSet} returned by SQL executed in
@@ -34,6 +34,7 @@ public class TaxonomyNodeItemReaderMapper implements RowMapper<TaxonomyImportNod
         node.setScientificName(scientificName);
         node.setSynonym(resultSet.getString("SPTR_SYNONYM"));
         node.setTaxonomyId(resultSet.getLong("TAX_ID"));
+        node.setSuperregnum(resultSet.getString("SUPERREGNUM"));
         return node;
     }
 }

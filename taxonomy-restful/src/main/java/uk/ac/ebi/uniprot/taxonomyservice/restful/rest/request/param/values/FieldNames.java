@@ -6,6 +6,7 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.param.values;
  * Created by lgonzales on 21/06/16.
  */
 public enum FieldNames {
+    NAME("commonNameLowerCase,scientificNameLowerCase"),
     SCIENTIFICNAME("scientificNameLowerCase"),
     COMMONNAME("commonNameLowerCase"),
     MNEMONIC("mnemonicLowerCase");
@@ -16,7 +17,7 @@ public enum FieldNames {
         this.seachFieldName = fieldName;
     }
 
-    public String getSearchFieldName() {
-        return seachFieldName;
+    public String[] getSearchFieldName() {
+        return seachFieldName.split(",");
     }
 }

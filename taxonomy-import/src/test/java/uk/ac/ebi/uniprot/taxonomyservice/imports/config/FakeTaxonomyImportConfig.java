@@ -1,11 +1,5 @@
 package uk.ac.ebi.uniprot.taxonomyservice.imports.config;
 
-import uk.ac.ebi.uniprot.taxonomyservice.imports.utils.TaxonomyImportTestUtils;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import javax.sql.DataSource;
 import org.neo4j.unsafe.batchinsert.BatchInserter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +9,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.test.context.TestPropertySource;
+import uk.ac.ebi.uniprot.taxonomyservice.imports.utils.TaxonomyImportTestUtils;
+
+import javax.sql.DataSource;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 /**
  * This class is responsible to override external resources for Integration test taxonomy full load.
