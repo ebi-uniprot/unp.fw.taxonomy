@@ -1,12 +1,12 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.filter;
 
 
-
-import java.io.IOException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.ext.Provider;
+import java.io.IOException;
 
 /**
  * This filter class is used to add CORS (Cross Origin Resource Sharing) response headers, this way external services
@@ -23,5 +23,7 @@ public class CORSFilter implements ContainerResponseFilter {
         response.getHeaders().add("Access-Control-Allow-Origin", "*");
         response.getHeaders().add("Access-Control-Allow-Headers", "origin, content-type, accept, authorization");
         response.getHeaders().add("Access-Control-Allow-Methods", "GET, OPTIONS, HEAD");
+        response.getHeaders().add("Access-Control-Allow-Credentials", "true");
+        response.getHeaders().add(HttpHeaders.VARY,HttpHeaders.ACCEPT);
     }
 }
