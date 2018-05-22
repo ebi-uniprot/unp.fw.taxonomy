@@ -1,14 +1,6 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.main;
 
-import uk.ac.ebi.uniprot.taxonomyservice.restful.main.TaxonomyProperties.APP_PROPERTY_NAME;
-
 import ch.qos.logback.classic.ViewStatusMessagesServlet;
-import java.io.IOException;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.LogManager;
-import javax.servlet.Servlet;
 import org.glassfish.grizzly.http.server.HttpHandlerRegistration;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.server.accesslog.AccessLogBuilder;
@@ -19,6 +11,14 @@ import org.glassfish.jersey.servlet.ServletContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.main.TaxonomyProperties.APP_PROPERTY_NAME;
+
+import javax.servlet.Servlet;
+import java.io.IOException;
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.LogManager;
 
 /**
  * This class is the Main project class and is responsible to initialize the application Grizzly Server,setup
@@ -125,7 +125,7 @@ public class RestAppMain {
         final AccessLogBuilder builder = new AccessLogBuilder(TaxonomyProperties.getProperty(
                 APP_PROPERTY_NAME.TAXONOMY_ACCESS_LOG_PATH));
         builder.synchronous(true);
-        builder.rotatedHourly();
+        builder.rotationPattern("yyyyMMdd");
         builder.instrument(httpServer.getServerConfiguration());
     }
 
