@@ -23,11 +23,11 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @XmlRootElement
 @XmlType(name = "taxonomyNode", propOrder = {"taxonomyId","mnemonic","scientificName","commonName","synonym","rank",
-        "superregnum","parent","parentLink","children","childrenLinks","siblings","siblingsLinks"})
+        "superregnum","hidden","parent","parentLink","children","childrenLinks","siblings","siblingsLinks"})
 public class TaxonomyNode implements Comparable<TaxonomyNode>{
 
     public enum TAXONOMY_NODE_FIELDS{
-        taxonomyId,mnemonic,scientificName,commonName,synonym,rank,superregnum,
+        taxonomyId,mnemonic,scientificName,commonName,synonym,rank,superregnum,hidden,
         parent,parentLink,children,childrenLinks,siblings,siblingsLinks
     }
 
@@ -38,6 +38,7 @@ public class TaxonomyNode implements Comparable<TaxonomyNode>{
     private String synonym;
     private String rank;
     private String superregnum;
+    private boolean hidden;
 
     private TaxonomyNode parent;
     private String parentLink;
@@ -109,6 +110,15 @@ public class TaxonomyNode implements Comparable<TaxonomyNode>{
 
     public void setSuperregnum(String superregnum) {
         this.superregnum = superregnum;
+    }
+
+    @XmlElement
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
     }
 
     @XmlElement
@@ -223,6 +233,7 @@ public class TaxonomyNode implements Comparable<TaxonomyNode>{
                 ", synonym='" + synonym + '\'' +
                 ", rank='" + rank + '\'' +
                 ", superregnum='" + superregnum + '\'' +
+                ", hidden=" + hidden +
                 ", parent=" + parent +
                 ", parentLink='" + parentLink + '\'' +
                 ", children=" + children +

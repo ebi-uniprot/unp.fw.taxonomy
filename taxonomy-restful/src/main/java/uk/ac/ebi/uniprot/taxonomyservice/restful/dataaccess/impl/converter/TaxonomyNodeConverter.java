@@ -64,6 +64,9 @@ public class TaxonomyNodeConverter implements Neo4JQueryResulConverter<TaxonomyN
                 if(node.hasProperty(synonym.name())) {
                     result.setSynonym("" + node.getProperty(synonym.name()));
                 }
+                if(node.hasProperty(hidden.name())) {
+                    result.setHidden(Boolean.valueOf("" + node.getProperty(hidden.name())));
+                }
             }
         }
 

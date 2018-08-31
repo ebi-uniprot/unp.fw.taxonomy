@@ -21,6 +21,7 @@ Created by lgonzales on 19/02/16.]]></xs:documentation>
       <xs:element minOccurs="0" name="synonym" type="xs:string"/>
       <xs:element minOccurs="0" name="rank" type="xs:string"/>
       <xs:element minOccurs="0" name="superregnum" type="xs:string"/>
+      <xs:element name="hidden" type="xs:boolean"/>
       <xs:element minOccurs="0" name="parent" type="tns:taxonomyNode"/>
       <xs:element minOccurs="0" name="parentLink" type="xs:string"/>
       <xs:element minOccurs="0" name="children">

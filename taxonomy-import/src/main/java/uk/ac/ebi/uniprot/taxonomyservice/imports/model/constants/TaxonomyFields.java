@@ -12,5 +12,6 @@ public enum TaxonomyFields {
     commonName,commonNameLowerCase,
     synonym,
     rank,
-    superregnum
+    superregnum,
+    hidden
 }

@@ -3,7 +3,7 @@ CREATE SCHEMA taxonomy;
 CREATE TABLE taxonomy.v_public_node
    (    tax_id INTEGER,
         parent_id INTEGER,
-        hidden VARCHAR(64),
+        hidden INTEGER,
         internal VARCHAR(64),
         rank VARCHAR(64),
         gc_id VARCHAR(64),

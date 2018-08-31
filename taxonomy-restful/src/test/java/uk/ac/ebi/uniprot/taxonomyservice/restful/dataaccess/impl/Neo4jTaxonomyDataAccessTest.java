@@ -1,5 +1,8 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.impl;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.NameRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.PageRequestParams;
@@ -8,13 +11,8 @@ import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.TaxonomyIdWithPage
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
 
 import java.util.*;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
@@ -741,6 +739,9 @@ public class Neo4jTaxonomyDataAccessTest {
         assertThat(nodes.getTaxonomies(),notNullValue());
         assertThat(nodes.getTaxonomies().size(),is(1));
         assertThat(nodes.getTaxonomies().get(0).getTaxonomyId(),is(1L));
+        assertThat(nodes.getTaxonomies().get(0).getScientificName(),is("scientific 1"));
+        assertThat(nodes.getTaxonomies().get(0).getRank(),is("rank 1"));
+        assertThat(nodes.getTaxonomies().get(0).isHidden(),is(true));
     }
 
     @Test
@@ -839,6 +840,8 @@ public class Neo4jTaxonomyDataAccessTest {
         assertThat(node.getRank(),notNullValue());
         assertThat(node.getSynonym(),notNullValue());
         assertThat(node.getScientificName(),notNullValue());
+        assertThat(node.getSuperregnum(),notNullValue());
+        assertThat(node.isHidden(),is(true));
     }
 
     private void assertNodePath(Long expectedRootId, TaxonomyNode node, int expectedChildrenLevels, int

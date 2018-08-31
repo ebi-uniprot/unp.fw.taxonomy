@@ -156,6 +156,7 @@ public class ValidateImportedDataIT implements InstanceTestClassListener{
         assertNodeProperty(synonym.name(), "sptr_synonym_1",node);
         assertNodeProperty(rank.name(),"rank_1",node);
         assertNodeProperty(superregnum.name(),"superregnum_1",node);
+        assertNodeProperty(hidden.name(),"false",node);
         assertChildOfRelationsShip(true,node);
 
     }
@@ -191,6 +192,7 @@ public class ValidateImportedDataIT implements InstanceTestClassListener{
         assertNodeProperty(synonym.name(), "sptr_synonym_2",node);
         assertNodeProperty(rank.name(),"rank_2",node);
         assertNodeProperty(superregnum.name(),"superregnum_2",node);
+        assertNodeProperty(hidden.name(),"true",node);
         assertChildOfRelationsShip(false,node);
     }
 

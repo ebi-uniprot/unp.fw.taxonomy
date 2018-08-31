@@ -15,6 +15,7 @@ public class TaxonomyImportNode {
     private String synonym;
     private String rank;
     private String superregnum;
+    private boolean hidden;
 
     public Long getTaxonomyId() {
         return taxonomyId;
@@ -80,6 +81,14 @@ public class TaxonomyImportNode {
         this.superregnum = superregnum;
     }
 
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
+    }
+
     @Override
     public String toString() {
         return "TaxonomyImportNode{" +
@@ -91,6 +100,7 @@ public class TaxonomyImportNode {
                 ", synonym='" + synonym + '\'' +
                 ", rank='" + rank + '\'' +
                 ", superregnum='" + superregnum + '\'' +
+                ", hidden=" + hidden +
                 '}';
     }
 }

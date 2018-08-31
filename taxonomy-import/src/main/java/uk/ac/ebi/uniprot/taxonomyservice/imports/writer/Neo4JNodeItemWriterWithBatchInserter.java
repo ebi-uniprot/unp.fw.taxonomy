@@ -63,6 +63,7 @@ public class Neo4JNodeItemWriterWithBatchInserter implements ItemWriter<Taxonomy
             if (nodeModel.getSuperregnum() != null) {
                 properties.put(superregnum.name(), nodeModel.getSuperregnum());
             }
+            properties.put(hidden.name(), nodeModel.isHidden());
             batchInserter.createNode(nodeModel.getTaxonomyId(),properties,nodeLabel);
         }
         pageCount++;

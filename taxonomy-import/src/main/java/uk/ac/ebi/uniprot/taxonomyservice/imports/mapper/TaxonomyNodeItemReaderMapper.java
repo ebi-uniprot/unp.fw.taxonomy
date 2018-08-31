@@ -35,6 +35,7 @@ public class TaxonomyNodeItemReaderMapper implements RowMapper<TaxonomyImportNod
         node.setSynonym(resultSet.getString("SPTR_SYNONYM"));
         node.setTaxonomyId(resultSet.getLong("TAX_ID"));
         node.setSuperregnum(resultSet.getString("SUPERREGNUM"));
+        node.setHidden(resultSet.getBoolean("HIDDEN"));
         return node;
     }
 }

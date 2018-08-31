@@ -25,7 +25,8 @@ public class FakeTaxonomyDataAccess extends Neo4jTaxonomyDataAccess {
             "SET node += {taxonomyId : row.TAX_ID, mnemonic : row.SPTR_CODE, mnemonicLowerCase : " +
             "lower(row.SPTR_CODE), scientificName : row.SPTR_SCIENTIFIC, scientificNameLowerCase : " +
             "lower(row.SPTR_SCIENTIFIC), commonName : row.SPTR_COMMON, commonNameLowerCase : " +
-            "lower(row.SPTR_COMMON), synonym : row .SPTR_SYNONYM, rank : row.RANK} " +
+            "lower(row.SPTR_COMMON), synonym : row.SPTR_SYNONYM, rank : row.RANK, " +
+            "superregnum : row.SUPER_REGNUM, hidden : row.HIDDEN} " +
             "MERGE (parent:Node {taxonomyId:row.PARENT_ID}) " +
             "MERGE (node)-[:CHILD_OF]-(parent)";
 

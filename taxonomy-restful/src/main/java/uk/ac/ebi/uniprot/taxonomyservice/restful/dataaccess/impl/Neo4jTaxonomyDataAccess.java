@@ -425,7 +425,6 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
     private void updateLineageNode(TaxonomyNode node) {
         node.setMnemonic(null);
         node.setCommonName(null);
-        node.setRank(null);
         node.setSynonym(null);
         node.setSuperregnum(null);
     }
