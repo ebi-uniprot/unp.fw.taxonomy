@@ -36,6 +36,15 @@ public class TaxonomyNodeItemReaderMapper implements RowMapper<TaxonomyImportNod
         node.setTaxonomyId(resultSet.getLong("TAX_ID"));
         node.setSuperregnum(resultSet.getString("SUPERREGNUM"));
         node.setHidden(resultSet.getBoolean("HIDDEN"));
+
+        if(node.getTaxonomyId() == 2697049){
+            node.setScientificName("Severe acute respiratory syndrome coronavirus 2");
+            node.setCommonName("2019-nCoV");
+            node.setSynonym("SARS-CoV-2");
+            node.setMnemonic("SARS2");
+            node.setParentId(694009L);
+            node.setRank("no rank");
+        }
         return node;
     }
 }
