@@ -72,7 +72,7 @@ public class TaxonomyRest {
             @Pattern(regexp = "[0-9]+", message = ID_PARAMETER_VALID_NUMBER)
             String id) {
 
-        long taxonomyId = Long.valueOf(id);
+        long taxonomyId = Long.parseLong(id);
         Optional<TaxonomyNode> response = dataAccess.getTaxonomyDetailsById(taxonomyId,URLUtil.getTaxonomyIdBasePath(request));
 
         return buildResponse(taxonomyId, response,API_RESPONSE_404_ENTRY);
@@ -121,7 +121,7 @@ public class TaxonomyRest {
             @Pattern(regexp = "[0-9]+", message = ID_PARAMETER_VALID_NUMBER)
                     String id) {
 
-        long taxonomyId = Long.valueOf(id);
+        long taxonomyId = Long.parseLong(id);
         Optional<TaxonomyNode> response = dataAccess.getTaxonomyBaseNodeById(taxonomyId);
 
         return buildResponse(taxonomyId, response,API_RESPONSE_404_ENTRY);
@@ -141,7 +141,7 @@ public class TaxonomyRest {
             @ApiParam(value = TAXONOMY_IDS_PARAM, required = true)
             @NotNull(message = IDS_PARAMETER_IS_REQUIRED)
             @IsLongListParam(message = IDS_PARAMETER_VALID_NUMBER)
-            @ListParamMinMaxSize(maxSize = 50, minSize = 1, message = IDS_PARAMETER_MIN_MAX_SIZE)
+            @ListParamMinMaxSize(maxSize = 100, minSize = 1, message = IDS_PARAMETER_MIN_MAX_SIZE)
             @PathParam("ids")
                     String ids) {
 
@@ -239,7 +239,7 @@ public class TaxonomyRest {
             String id) {
         logger.debug(">>TaxonomyRest.getTaxonomyNodeParentByIdWithDetail");
 
-        long taxonomyId = Long.valueOf(id);
+        long taxonomyId = Long.parseLong(id);
         Optional<TaxonomyNode> response = dataAccess.getTaxonomyParentByIdWithDetail(taxonomyId,URLUtil
                 .getTaxonomyIdBasePath(request));
 
@@ -260,7 +260,7 @@ public class TaxonomyRest {
                     String id) {
         logger.debug(">>TaxonomyRest.getTaxonomyDetailsById");
 
-        long taxonomyId = Long.valueOf(id);
+        long taxonomyId = Long.parseLong(id);
         Optional<TaxonomyNode> response = dataAccess.getTaxonomyParentById(taxonomyId);
 
         return buildResponse(taxonomyId, response,API_RESPONSE_404_ENTRY);
@@ -313,8 +313,8 @@ public class TaxonomyRest {
     @Path("relationship")
     public Response checkRelationshipBetweenTaxonomies(@Valid @BeanParam RelationshipRequestParams params) {
 
-        long from = Long.valueOf(params.getFrom());
-        long to = Long.valueOf(params.getTo());
+        long from = Long.parseLong(params.getFrom());
+        long to = Long.parseLong(params.getTo());
 
         Optional<TaxonomyNode> response = dataAccess.getTaxonomiesRelationship(from,to);
         Map<String, Long> idsForHistoricalCheck = new HashMap<>();
@@ -343,7 +343,7 @@ public class TaxonomyRest {
         Optional<TaxonomyNode> response = dataAccess.getTaxonomyPath(pathRequestParam);
 
         Map<String, Long> idsForHistoricalCheck = new HashMap<>();
-        idsForHistoricalCheck.put("id", Long.valueOf(pathRequestParam.getId()));
+        idsForHistoricalCheck.put("id", Long.parseLong(pathRequestParam.getId()));
 
         return buildResponse(idsForHistoricalCheck,response,API_RESPONSE_404_PATH);
     }
@@ -368,7 +368,7 @@ public class TaxonomyRest {
         Optional<Taxonomies> response = dataAccess.getTaxonomyPathNodes(pathRequestParam,pageRequestParams);
 
         Map<String, Long> idsForHistoricalCheck = new HashMap<>();
-        idsForHistoricalCheck.put("id", Long.valueOf(pathRequestParam.getId()));
+        idsForHistoricalCheck.put("id", Long.parseLong(pathRequestParam.getId()));
 
         return buildResponse(idsForHistoricalCheck,response,API_RESPONSE_404_PATH);
     }
@@ -390,7 +390,7 @@ public class TaxonomyRest {
             @PathParam("id")
             @Pattern(regexp = "[0-9]+", message = ID_PARAMETER_VALID_NUMBER) String id) {
 
-        long taxonomyId = Long.valueOf(id);
+        long taxonomyId = Long.parseLong(id);
         Optional<Taxonomies> response = dataAccess.getTaxonomyLineageById(taxonomyId);
         return buildResponse(taxonomyId,response,API_RESPONSE_404_LINEAGE);
     }
