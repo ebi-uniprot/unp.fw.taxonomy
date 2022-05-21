@@ -153,6 +153,7 @@ public class TaxonomyImportConfig implements DisposableBean{
     public ItemReader<TaxonomyImportNode> itemNodeReader() throws SQLException {
         JdbcCursorItemReader itemReader = new JdbcCursorItemReader();
         itemReader.setDataSource(getReadDatasource());
+        itemReader.setVerifyCursorPosition(false);
         itemReader.setSql("select tax_id,parent_id,hidden,internal,rank,gc_id,mgc_id,ncbi_scientific,ncbi_common," +
                 "sptr_scientific,sptr_common,sptr_synonym,sptr_code,tax_code,sptr_ff,superregnum" +
                 " from taxonomy.v_public_node");
@@ -165,6 +166,7 @@ public class TaxonomyImportConfig implements DisposableBean{
     public ItemReader<TaxonomyImportMerge> itemMergedReader() throws SQLException {
         JdbcCursorItemReader itemReader = new JdbcCursorItemReader();
         itemReader.setDataSource(getReadDatasource());
+        itemReader.setVerifyCursorPosition(false);
         itemReader.setSql("select old_tax_id,new_tax_id from taxonomy.v_public_merged");
         itemReader.setRowMapper(new TaxonomyMergeItemReaderMapper());
 
@@ -175,6 +177,7 @@ public class TaxonomyImportConfig implements DisposableBean{
     public ItemReader<TaxonomyImportDelete> itemDeletedReader() throws SQLException {
         JdbcCursorItemReader itemReader = new JdbcCursorItemReader();
         itemReader.setDataSource(getReadDatasource());
+        itemReader.setVerifyCursorPosition(false);
         itemReader.setSql("select tax_id, sysdate created from taxonomy.v_public_deleted");
         itemReader.setRowMapper(new TaxonomyDeletedItemReaderMapper());
 
