@@ -15,7 +15,6 @@ import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.batch.core.launch.support.SimpleJobLauncher;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
-import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.JdbcCursorItemReader;
 import org.springframework.batch.support.transaction.ResourcelessTransactionManager;
@@ -150,7 +149,7 @@ public class TaxonomyImportConfig implements DisposableBean{
     }
 
     @Bean
-    public ItemReader<TaxonomyImportNode> itemNodeReader() throws SQLException {
+    public JdbcCursorItemReader<TaxonomyImportNode> itemNodeReader() throws SQLException {
         JdbcCursorItemReader itemReader = new JdbcCursorItemReader();
         itemReader.setDataSource(getReadDatasource());
         itemReader.setVerifyCursorPosition(false);
@@ -163,7 +162,7 @@ public class TaxonomyImportConfig implements DisposableBean{
     }
 
     @Bean
-    public ItemReader<TaxonomyImportMerge> itemMergedReader() throws SQLException {
+    public JdbcCursorItemReader<TaxonomyImportMerge> itemMergedReader() throws SQLException {
         JdbcCursorItemReader itemReader = new JdbcCursorItemReader();
         itemReader.setDataSource(getReadDatasource());
         itemReader.setVerifyCursorPosition(false);
@@ -174,7 +173,7 @@ public class TaxonomyImportConfig implements DisposableBean{
     }
 
     @Bean
-    public ItemReader<TaxonomyImportDelete> itemDeletedReader() throws SQLException {
+    public JdbcCursorItemReader<TaxonomyImportDelete> itemDeletedReader() throws SQLException {
         JdbcCursorItemReader itemReader = new JdbcCursorItemReader();
         itemReader.setDataSource(getReadDatasource());
         itemReader.setVerifyCursorPosition(false);
