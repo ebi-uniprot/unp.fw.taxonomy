@@ -3,12 +3,12 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.validation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.List;
-import javax.validation.ParameterNameProvider;
-import javax.validation.Validation;
-import javax.ws.rs.container.ResourceContext;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.ext.ContextResolver;
-import javax.ws.rs.ext.Provider;
+import jakarta.validation.ParameterNameProvider;
+import jakarta.validation.Validation;
+import jakarta.ws.rs.container.ResourceContext;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.ext.ContextResolver;
+import jakarta.ws.rs.ext.Provider;
 import org.glassfish.jersey.server.validation.ValidationConfig;
 
 /**

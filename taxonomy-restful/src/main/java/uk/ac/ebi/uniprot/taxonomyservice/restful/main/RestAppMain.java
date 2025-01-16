@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.main.TaxonomyProperties.APP_PROPERTY_NAME;
 
-import javax.servlet.Servlet;
+import jakarta.servlet.Servlet;
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
@@ -43,7 +43,8 @@ public class RestAppMain {
 
         final Map<String, String> initParams = new HashMap<>();
 
-        initParams.put("javax.ws.rs.Application", "uk.ac.ebi.uniprot.taxonomyservice.restful.main.RestApp");
+        initParams.put("jakarta.ws.rs.Application", "uk.ac.ebi.uniprot.taxonomyservice.restful.main.RestApp");
+        initParams.put("jersey.config.server.provider.packages", "com.fasterxml.jackson.jaxrs.json");
 
         HttpServer httpServer = create(URI.create(baseUri), ServletContainer.class, null, initParams, null);
 
@@ -63,37 +64,48 @@ public class RestAppMain {
      * @return Grizzly http server
      * @throws IOException
      */
-    public static HttpServer create(URI baseUri, Class<? extends Servlet> servletClass, Servlet servlet,
-            Map<String, String> initParams, Map<String, String> contextInitParams)
+    public static HttpServer create(URI u, Class<? extends ServletContainer> c, Servlet servlet,
+                                    Map<String, String> initParams, Map<String, String> contextInitParams)
             throws IOException {
 
-        HttpServer server = GrizzlyHttpServerFactory.createHttpServer(baseUri,false);
+        HttpServer server = GrizzlyHttpServerFactory.createHttpServer(u,false);
         server.getServerConfiguration().setJmxEnabled(true);
-        // adding services
+        registerRestServlet(c, servlet, initParams, contextInitParams, server);
+        setupAccessLog(server);
+        return server;
+    }
+
+    private static void registerRestServlet(Class<? extends ServletContainer> c, Servlet servlet,
+                                            Map<String, String> initParams, Map<String, String> contextInitParams,
+                                            HttpServer server) {
+        registerRestServlet(c, servlet, initParams, contextInitParams, server, TaxonomyProperties.getProperty(APP_PROPERTY_NAME.TAXONOMY_DOCS_CONTEXT_PATH));
+    }
+
+    private static void registerRestServlet(Class<? extends ServletContainer> c, Servlet servlet,
+                                            Map<String, String> initParams, Map<String, String> contextInitParams,
+                                            HttpServer server, String root) {
         WebappContext context = new WebappContext("GrizzlyContext", TaxonomyProperties.getProperty(
                 APP_PROPERTY_NAME.TAXONOMY_SERVICE_CONTEXT_PATH));
         ServletRegistration registration;
-        if (servletClass != null) {
-            registration = context.addServlet(servletClass.getName(), servletClass);
+        if (c != null) {
+            registration = context.addServlet(ServletContainer.class.getName(), c.getName());
         } else {
             registration = context.addServlet(servlet.getClass().getName(), servlet);
         }
 
         registration.addMapping("/*");
+        //adding mapping for docs.
+        HttpHandlerRegistration docHandler = new HttpHandlerRegistration.Builder().contextPath
+                        (TaxonomyProperties.getProperty(APP_PROPERTY_NAME.TAXONOMY_DOCS_CONTEXT_PATH))
+                .urlPattern("/*").build();
+        server.getServerConfiguration().addHttpHandler(new CLStaticHttpHandlerWithCORS(RestAppMain.class.getClassLoader(),
+                "staticContent/"), docHandler);
 
         if (initParams != null) {
             registration.setInitParameters(initParams);
         }
-
-        registration = context.addServlet("ViewStatusMessagesServlet", ViewStatusMessagesServlet.class);
+//        registration = context.addServlet("ViewStatusMessagesServlet", (Class<? extends Servlet>) ViewStatusMessagesServlet.class);
         registration.addMapping("/logBackStatus");
-
-        //adding mapping for docs.
-        HttpHandlerRegistration docHandler = new HttpHandlerRegistration.Builder().contextPath
-                (TaxonomyProperties.getProperty(APP_PROPERTY_NAME.TAXONOMY_DOCS_CONTEXT_PATH))
-                .urlPattern("/*").build();
-        server.getServerConfiguration().addHttpHandler(new CLStaticHttpHandlerWithCORS(RestAppMain.class.getClassLoader(),
-                "staticContent/"), docHandler);
 
         if (contextInitParams != null) {
             for (Map.Entry<String, String> e : contextInitParams.entrySet()) {
@@ -101,9 +113,6 @@ public class RestAppMain {
             }
         }
         context.deploy(server);
-
-        return server;
-
     }
 
     /**

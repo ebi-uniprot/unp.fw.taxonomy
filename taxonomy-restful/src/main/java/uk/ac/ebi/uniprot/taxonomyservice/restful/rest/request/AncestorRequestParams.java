@@ -1,15 +1,15 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint.IsLongListParam;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint.ListParamMinMaxSize;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.annotations.ApiParam;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.PathParam;
+import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.PathParam;
 import org.glassfish.jersey.process.internal.RequestScoped;
 
 import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstants.IDS_PARAMETER_IS_REQUIRED;
@@ -25,7 +25,7 @@ import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstant
 @RequestScoped
 public class AncestorRequestParams {
 
-    @ApiParam(value = TAXONOMY_IDS_PARAM, required = true)
+    @Parameter(name = TAXONOMY_IDS_PARAM, required = true)
     @NotNull(message = IDS_PARAMETER_IS_REQUIRED)
     @IsLongListParam(message = IDS_PARAMETER_VALID_NUMBER)
     @ListParamMinMaxSize(maxSize = 50, minSize = 2, message = IDS_PARAMETER_MIN_MAX_SIZE)

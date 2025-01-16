@@ -1,16 +1,16 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.util;
 
+import io.restassured.mapper.ObjectMapperType;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.ErrorMessage;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.PageInformation;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
 
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.internal.mapper.ObjectMapperType;
-import com.jayway.restassured.response.ExtractableResponse;
+import io.restassured.http.ContentType;
+import io.restassured.response.ExtractableResponse;
 import java.util.Collections;
 import java.util.List;
-import javax.ws.rs.core.Response;
+import jakarta.ws.rs.core.Response;
 import org.junit.Assert;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -33,7 +33,7 @@ public class ResponseAssert {
     public static final String REQUEST_URL = "https://localhost:12345/rest/test";
 
 
-    public static void assertErrorResponseReturnCorrectContentTypeAndResponseBody(ExtractableResponse<com.jayway.restassured.response.Response>
+    public static void assertErrorResponseReturnCorrectContentTypeAndResponseBody(ExtractableResponse<io.restassured.response.Response>
             response, ContentType contentType, List<String> errorMessages, String requestedURL) {
         assertThat(response, notNullValue());
         assertThat(response.contentType(), equalTo(contentType.toString()));
@@ -46,7 +46,7 @@ public class ResponseAssert {
     }
 
     public static void assertValidTaxonomyNodeResponseWithCorrectContentTypeAndValidContent
-            (ExtractableResponse<com.jayway.restassured.response.Response> response, ContentType contentType, long taxonomyId, boolean checkLinks) {
+            (ExtractableResponse<io.restassured.response.Response> response, ContentType contentType, long taxonomyId, boolean checkLinks) {
         assertThat(response, notNullValue());
         assertThat(response.contentType(), equalTo(contentType.toString()));
 
@@ -56,7 +56,7 @@ public class ResponseAssert {
     }
 
     public static void assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent(
-            ExtractableResponse<com.jayway.restassured.response.Response> response, ContentType contentType,
+            ExtractableResponse<io.restassured.response.Response> response, ContentType contentType,
             boolean parentLink,boolean siblingsLink, boolean childrenLink,PageInformation expectedPageInfo){
         assertThat(response, notNullValue());
         assertThat(response.contentType(), equalTo(contentType.toString()));
@@ -79,7 +79,7 @@ public class ResponseAssert {
     }
 
     public static void assertValidTaxonomiesResponseWithCorrectContentTypeAndValidPageMetadataAndContent(
-            ExtractableResponse<com.jayway.restassured.response.Response> response, ContentType contentType,
+            ExtractableResponse<io.restassured.response.Response> response, ContentType contentType,
             boolean checkLinks,PageInformation expectedPageInfo){
 
         if(checkLinks) {
@@ -93,7 +93,7 @@ public class ResponseAssert {
     }
 
     public static void assertValidTaxonomiesResponseForLineageWithCorrectContentTypeNotEmptyListAndValidContent(
-            ExtractableResponse<com.jayway.restassured.response.Response> response, ContentType contentType, long first, long last) {
+            ExtractableResponse<io.restassured.response.Response> response, ContentType contentType, long first, long last) {
         assertThat(response, notNullValue());
         assertThat(response.contentType(), equalTo(contentType.toString()));
 
@@ -118,12 +118,12 @@ public class ResponseAssert {
         assertResponseErrorMessage(expectedError, errorResponse);
     }
 
-    public static void assertResponseErrorMessage(ErrorMessage expectedError, ExtractableResponse<com.jayway.restassured.response.Response> response) {
+    public static void assertResponseErrorMessage(ErrorMessage expectedError, ExtractableResponse<io.restassured.response.Response> response) {
         assertThat(response, notNullValue());
 
         ErrorMessage errorResponse = null;
         if(response.contentType().isEmpty()){
-            errorResponse = response.as(ErrorMessage.class,ObjectMapperType.JACKSON_2);
+            errorResponse = response.as(ErrorMessage.class, ObjectMapperType.JACKSON_2);
         }else{
             errorResponse = response.as(ErrorMessage.class);
         }
@@ -171,7 +171,7 @@ public class ResponseAssert {
         }
     }
 
-    public static void assertTaxonomiesListResponse(ExtractableResponse<com.jayway.restassured.response.Response>
+    public static void assertTaxonomiesListResponse(ExtractableResponse<io.restassured.response.Response>
             response, ContentType contentType,Integer taxonomiesSize,Long firstTaxonomiesId,Integer redirectSize, Long
             firstRedirectId,Integer errorSize, Long firstErrorId,boolean checkLinks){
         assertThat(response, notNullValue());

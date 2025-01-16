@@ -3,7 +3,7 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.param.values.SearchType;
 
 import java.lang.annotation.Annotation;
-import javax.validation.Payload;
+import jakarta.validation.Payload;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;

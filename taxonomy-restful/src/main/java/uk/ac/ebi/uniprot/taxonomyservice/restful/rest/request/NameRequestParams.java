@@ -1,16 +1,16 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.glassfish.jersey.process.internal.RequestScoped;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.param.values.FieldNames;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.param.values.SearchType;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint.IsEnumValue;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint.NameMinSizeForPartialSearches;
 
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
+import jakarta.validation.constraints.NotNull;
+import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.QueryParam;
 
 import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstants.*;
 
@@ -23,17 +23,17 @@ import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstant
 @NameMinSizeForPartialSearches(message = NAME_PARAMETER_MIN_SIZE_FOR_PARTIAL_SEARCHES, min = 3)
 public class NameRequestParams extends PageRequestParams{
 
-    @ApiParam(value = TAXONOMY_NAME_PARAM, required = true)
+    @Parameter(name = TAXONOMY_NAME_PARAM, required = true)
     @NotNull(message = NAME_PARAMETER_IS_REQUIRED)
     @PathParam("name")
     private String taxonomyName;
 
-    @ApiParam(value = TAXONOMY_SEARCH_TYPE_PARAM,defaultValue = "EQUALSTO")
+    @Parameter(name = TAXONOMY_SEARCH_TYPE_PARAM, example= "EQUALSTO")
     @IsEnumValue(enumClass = SearchType.class,message = SEARCH_TYPE_VALID_VALUES, ignoreCase = true)
     @QueryParam("searchType")
     private String searchType;
 
-    @ApiParam(value = TAXONOMY_FIELD_NAME_PARAM,defaultValue = "SCIENTIFICNAME")
+    @Parameter(name = TAXONOMY_FIELD_NAME_PARAM,example = "SCIENTIFICNAME")
     @IsEnumValue(enumClass = FieldNames.class,message = FIELD_NAME_VALID_VALUES, ignoreCase = true)
     @QueryParam("fieldName")
     private String fieldName;

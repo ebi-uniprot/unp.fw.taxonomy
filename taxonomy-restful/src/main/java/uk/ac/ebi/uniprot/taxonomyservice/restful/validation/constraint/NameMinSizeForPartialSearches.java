@@ -4,10 +4,10 @@ import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.NameRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.param.values.SearchType;
 
 import java.lang.annotation.*;
-import javax.validation.Constraint;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-import javax.validation.Payload;
+import jakarta.validation.Constraint;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+import jakarta.validation.Payload;
 
 /**
  * This validation class will validate if taxonomy name search value has a minimum of {@code min()} characters for

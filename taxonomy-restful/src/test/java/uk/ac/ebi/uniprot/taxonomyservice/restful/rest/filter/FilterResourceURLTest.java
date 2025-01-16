@@ -2,8 +2,8 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.filter;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.*;
+import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.core.*;
 import org.glassfish.jersey.server.ParamException;
 import org.junit.Before;
 import org.junit.Test;

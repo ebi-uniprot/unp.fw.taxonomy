@@ -6,15 +6,14 @@ import uk.ac.ebi.uniprot.taxonomyservice.restful.main.GuiceModule;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.main.RestApp;
 
 import com.google.inject.AbstractModule;
-import com.jayway.restassured.RestAssured;
+import io.restassured.RestAssured;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Logger;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.hk2.api.ServiceLocator;
-import org.glassfish.jersey.filter.LoggingFilter;
 import org.glassfish.jersey.grizzly2.servlet.GrizzlyWebContainerFactory;
 import org.junit.rules.ExternalResource;
 
@@ -59,7 +58,7 @@ public class RestContainer extends ExternalResource {
 
     private Map<String, String> containerInitParams() {
         HashMap<String, String> objectObjectHashMap = new HashMap<>();
-        objectObjectHashMap.put("javax.ws.rs.Application", TaxonomyAppMock.class.getName());
+        objectObjectHashMap.put("jakarta.ws.rs.Application", TaxonomyAppMock.class.getName());
         return objectObjectHashMap;
     }
 
@@ -70,8 +69,6 @@ public class RestContainer extends ExternalResource {
         @Inject
         public TaxonomyAppMock(ServiceLocator serviceLocator) {
             super(serviceLocator);
-
-            registerInstances(new LoggingFilter(Logger.getLogger(TaxonomyAppMock.class.getName()), true));
         }
 
         @Override

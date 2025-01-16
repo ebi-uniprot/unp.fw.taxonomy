@@ -5,8 +5,8 @@ import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.NameRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.param.values.FieldNames;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.param.values.SearchType;
 
-import javax.inject.Inject;
-import javax.ws.rs.ext.Provider;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.ext.Provider;
 import org.glassfish.jersey.server.monitoring.ApplicationEvent;
 import org.glassfish.jersey.server.monitoring.ApplicationEventListener;
 import org.glassfish.jersey.server.monitoring.RequestEvent;

@@ -2,7 +2,7 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.util;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

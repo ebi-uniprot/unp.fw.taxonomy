@@ -2,10 +2,10 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint;
 
 import java.lang.annotation.*;
-import javax.validation.Constraint;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-import javax.validation.Payload;
+import jakarta.validation.Constraint;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+import jakarta.validation.Payload;
 
 /**
  * Checks if values in the list of comma separated taxonomy ids are valid long values.

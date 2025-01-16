@@ -3,14 +3,14 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.exception;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.ErrorMessage;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.util.URLUtil;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.BadRequestException;
+import jakarta.ws.rs.NotFoundException;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.ext.ExceptionMapper;
+import jakarta.ws.rs.ext.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,9 +44,9 @@ public class GeneralExceptionMapper implements ExceptionMapper<Exception> {
         } else if (exception instanceof BadRequestException) {
             error.addErrorMessage(API_RESPONSE_400+" "+exception.getMessage());
             return Response.status(Response.Status.BAD_REQUEST).entity(error).build();
-        } else if (exception instanceof javax.ws.rs.WebApplicationException) {
+        } else if (exception instanceof jakarta.ws.rs.WebApplicationException) {
             error.addErrorMessage(API_RESPONSE_500);
-            javax.ws.rs.WebApplicationException e = (javax.ws.rs.WebApplicationException) exception;
+            jakarta.ws.rs.WebApplicationException e = (jakarta.ws.rs.WebApplicationException) exception;
             return Response
                     .status(e.getResponse().getStatus()).entity(error)
                     .build();

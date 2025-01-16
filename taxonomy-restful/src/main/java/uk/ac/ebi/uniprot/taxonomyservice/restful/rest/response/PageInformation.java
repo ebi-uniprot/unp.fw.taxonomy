@@ -1,8 +1,8 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlType;
 
 /**
  * This class represents page metadata information in a search result content

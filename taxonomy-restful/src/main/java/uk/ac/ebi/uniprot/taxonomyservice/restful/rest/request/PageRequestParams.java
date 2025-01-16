@@ -1,12 +1,12 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint.Maximum;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint.Minimum;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.annotations.ApiParam;
-import javax.validation.constraints.Pattern;
-import javax.ws.rs.QueryParam;
+import jakarta.validation.constraints.Pattern;
+import jakarta.ws.rs.QueryParam;
 import org.glassfish.jersey.process.internal.RequestScoped;
 
 import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstants.*;
@@ -19,13 +19,13 @@ import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstant
 @RequestScoped
 public class PageRequestParams {
 
-    @ApiParam(value = TAXONOMY_PAGE_NUMBER_PARAM,defaultValue = "1")
+    @Parameter(name = TAXONOMY_PAGE_NUMBER_PARAM,example = "1")
     @Pattern(regexp = "[0-9]+", message = PAGE_NUMBER_PARAMETER_VALID_NUMBER)
     @Minimum(min = 1, message = PAGE_NUMBER_PARAMETER_MIN_VALUE)
     @QueryParam("pageNumber")
     private String pageNumber;
 
-    @ApiParam(value = TAXONOMY_PAGE_SIZE_PARAM,defaultValue = "100")
+    @Parameter(name = TAXONOMY_PAGE_SIZE_PARAM,example = "100")
     @Pattern(regexp = "[0-9]+", message = PAGE_SIZE_PARAMETER_VALID_NUMBER)
     @Maximum(max = 200, message = PAGE_SIZE_PARAMETER_MAX_VALUE)
     @QueryParam("pageSize")

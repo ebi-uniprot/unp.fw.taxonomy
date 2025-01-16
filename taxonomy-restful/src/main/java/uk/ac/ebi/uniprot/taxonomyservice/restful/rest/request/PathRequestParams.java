@@ -1,15 +1,16 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.annotations.ApiParam;
+
+import io.swagger.v3.oas.annotations.Parameter;
 import org.glassfish.jersey.process.internal.RequestScoped;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.param.values.PathDirections;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint.IsEnumValue;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.ws.rs.QueryParam;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.ws.rs.QueryParam;
 
 import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstants.*;
 
@@ -24,11 +25,11 @@ public class PathRequestParams {
     @NotNull(message = ID_PARAMETER_IS_REQUIRED)
     @Pattern(regexp = "[0-9]+", message = ID_PARAMETER_VALID_NUMBER)
     @QueryParam(value = "id")
-    @ApiParam(value = TAXONOMY_ID_PARAM, required = true)
+    @Parameter(name = TAXONOMY_ID_PARAM, required = true)
     private String id;
 
     @QueryParam(value = "depth")
-    @ApiParam(value = TAXONOMY_DEPTH_PARAM)
+    @Parameter(name = TAXONOMY_DEPTH_PARAM)
     @Min(value = 1,message = DEPTH_PARAM_MIN)
     private Integer depth;
 
@@ -36,7 +37,7 @@ public class PathRequestParams {
             ignoreCase = true)
     @NotNull(message = DIRECTION_PARAMETER_IS_REQUIRED)
     @QueryParam(value = "direction")
-    @ApiParam(value = TAXONOMY_DIRECTION_PARAM, required = true)
+    @Parameter(name = TAXONOMY_DIRECTION_PARAM, required = true)
     private String direction;
 
     public String getId() {

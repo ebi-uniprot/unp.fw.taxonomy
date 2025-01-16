@@ -1,9 +1,9 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request;
 
-import io.swagger.annotations.ApiParam;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.ws.rs.QueryParam;
+import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.ws.rs.QueryParam;
 import org.glassfish.jersey.process.internal.RequestScoped;
 
 import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstants.*;
@@ -19,13 +19,13 @@ public class RelationshipRequestParams {
     @NotNull(message = FROM_PARAMETER_IS_REQUIRED)
     @Pattern(regexp = "[0-9]+", message = FROM_PARAMETER_VALID_NUMBER)
     @QueryParam(value = "from")
-    @ApiParam(value = TAXONOMY_FROM_PARAM, required = true)
+    @Parameter(name = TAXONOMY_FROM_PARAM, required = true)
     private String from;
 
     @NotNull(message = TO_PARAMETER_IS_REQUIRED)
     @Pattern(regexp = "[0-9]+", message = TO_PARAMETER_VALID_NUMBER)
     @QueryParam(value = "to")
-    @ApiParam(value = TAXONOMY_TO_PARAM, required = true)
+    @Parameter(name = TAXONOMY_TO_PARAM, required = true)
     private String to;
 
 

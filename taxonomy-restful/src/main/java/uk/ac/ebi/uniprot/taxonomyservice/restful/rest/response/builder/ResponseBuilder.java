@@ -3,8 +3,8 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.builder;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.TaxonomyDataAccess;
 
 import java.util.Optional;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Response;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.ws.rs.core.Response;
 
 /**
  * This abstract class contains commons methods and attributes to build {@link Response} objects

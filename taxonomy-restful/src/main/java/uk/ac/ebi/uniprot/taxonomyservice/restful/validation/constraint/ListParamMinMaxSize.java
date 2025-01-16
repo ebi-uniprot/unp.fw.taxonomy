@@ -1,10 +1,10 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint;
 
 import java.lang.annotation.*;
-import javax.validation.Constraint;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-import javax.validation.Payload;
+import jakarta.validation.Constraint;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+import jakarta.validation.Payload;
 
 /**
  * Checks if list of comma separated taxonomy ids size is between @link{minSize} and @link{maxSize}

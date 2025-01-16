@@ -4,7 +4,7 @@ import org.junit.Test;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.PathRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.param.values.PathDirections;
 
-import javax.validation.Payload;
+import jakarta.validation.Payload;
 import java.lang.annotation.Annotation;
 
 import static org.hamcrest.CoreMatchers.is;

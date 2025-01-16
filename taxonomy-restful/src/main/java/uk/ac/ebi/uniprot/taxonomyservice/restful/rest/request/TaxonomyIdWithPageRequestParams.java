@@ -1,10 +1,11 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.annotations.ApiParam;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.ws.rs.PathParam;
+
+import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.ws.rs.PathParam;
 import org.glassfish.jersey.process.internal.RequestScoped;
 
 import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstants.ID_PARAMETER_IS_REQUIRED;
@@ -19,7 +20,7 @@ import static uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstant
 @RequestScoped
 public class TaxonomyIdWithPageRequestParams extends PageRequestParams{
 
-    @ApiParam(value = TAXONOMY_ID_PARAM, required = true)
+    @Parameter(name = TAXONOMY_ID_PARAM, required = true)
     @NotNull(message = ID_PARAMETER_IS_REQUIRED)
     @PathParam("id")
     @Pattern(regexp = "[0-9]+", message = ID_PARAMETER_VALID_NUMBER)

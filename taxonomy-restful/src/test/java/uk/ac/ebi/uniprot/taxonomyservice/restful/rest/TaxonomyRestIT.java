@@ -1,24 +1,24 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.rest;
 
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.response.ExtractableResponse;
-import com.jayway.restassured.response.Response;
+import io.restassured.http.ContentType;
+import io.restassured.response.ExtractableResponse;
+import io.restassured.response.Response;
 import org.junit.ClassRule;
 import org.junit.Test;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.PageInformation;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstants;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.util.ResponseAssert;
 
-import javax.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.HttpHeaders;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.RestAssured.when;
-import static javax.ws.rs.core.Response.Status.*;
+import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.when;
+import static jakarta.ws.rs.core.Response.Status.*;
 
 /**
  * Class used to test Taxonomy service use cases

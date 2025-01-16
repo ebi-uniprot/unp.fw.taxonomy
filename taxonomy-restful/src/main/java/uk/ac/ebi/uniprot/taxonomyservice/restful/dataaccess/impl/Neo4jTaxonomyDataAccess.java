@@ -2,6 +2,8 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.impl;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import jakarta.annotation.PostConstruct;
+import jakarta.annotation.PreDestroy;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.graphdb.factory.GraphDatabaseSettings;
@@ -18,8 +20,6 @@ import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.TaxonomyIdWithPage
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.param.values.PathDirections;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.PageInformation;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
-
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -69,6 +69,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
      * TODO: Currently I am registering the stop manually
      *       There is an automatic way, like uniprot restfull service does
      **/
+    @PreDestroy
     public void registerStop(final Neo4JQueryExecutor graphDb) {
         logger.debug("Shutting down Neo4jTaxonomyDataAccess service");
         Runtime.getRuntime().addShutdownHook( new Thread()

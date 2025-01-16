@@ -1,9 +1,9 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.validation;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorFactory;
-import javax.ws.rs.container.ResourceContext;
-import javax.ws.rs.core.Context;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorFactory;
+import jakarta.ws.rs.container.ResourceContext;
+import jakarta.ws.rs.core.Context;
 
 /**
  * A {@link ConstraintValidatorFactory} that is used to create ConstraintValidator objects from ResourceContext object.
