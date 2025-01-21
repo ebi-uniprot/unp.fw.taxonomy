@@ -3,7 +3,8 @@ package uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.impl;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
-import org.neo4j.test.TestGraphDatabaseFactory;
+import org.neo4j.graphdb.factory.GraphDatabaseFactory;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.main.LifecycleManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,69 +31,75 @@ public class FakeTaxonomyDataAccess extends Neo4jTaxonomyDataAccess {
             "MERGE (parent:Node {taxonomyId:row.PARENT_ID}) " +
             "MERGE (node)-[:CHILD_OF]-(parent)";
 
-    private static final String IMPORT_CYPHER_MERGED_QUERY  = LOAD_CSV +
+    private static final String IMPORT_CYPHER_MERGED_QUERY = LOAD_CSV +
             "MERGE (node:Merged { taxonomyId : row.OLD_TAX_ID })-[:MERGED_TO]-(node1:Node { taxonomyId : " +
             "row.NEW_TAX_ID})";
 
-    private static final String IMPORT_CYPHER_DELETED_QUERY  = LOAD_CSV +
+    private static final String IMPORT_CYPHER_DELETED_QUERY = LOAD_CSV +
             "MERGE(n:Node {taxonomyId:row.TAX_ID}) SET n:Deleted REMOVE n:Node";
 
     private static final String DELETE_NODE_CYPHER_QUERY = "MATCH (n:Node)-[r]-() WHERE n.taxonomyId={id} DELETE n,r";
 
-    public FakeTaxonomyDataAccess(){
-        this("");
+    public FakeTaxonomyDataAccess(LifecycleManager lifecycleManager) {
+        this("", lifecycleManager);
     }
 
-    public FakeTaxonomyDataAccess(String filePath) {
-        super("");
+    public FakeTaxonomyDataAccess(String filePath, LifecycleManager lifecycleManager) {
+        // Pass the filePath and LifecycleManager to the superclass constructor
+        super(filePath, lifecycleManager);
+
         try {
-            GraphDatabaseService neo4jDbTest = new TestGraphDatabaseFactory().newImpermanentDatabase(File.createTempFile("temp","neo4j"));
-            importNeo4JData(neo4jDbTest, "/neo4JMockNodeData.csv",IMPORT_CYPHER_NODE_QUERY);
-            importNeo4JData(neo4jDbTest, "/neo4JMockMergedData.csv",IMPORT_CYPHER_MERGED_QUERY);
-            importNeo4JData(neo4jDbTest, "/neo4JMockDeletedData.csv",IMPORT_CYPHER_DELETED_QUERY);
-            deleteUnWantedRoot(neo4jDbTest,"0",DELETE_NODE_CYPHER_QUERY);
-            deleteUnWantedRoot(neo4jDbTest,"50","MATCH (n:Node)-[r]-() WHERE n.taxonomyId={id} DELETE n");
+            GraphDatabaseService neo4jDbTest = new GraphDatabaseFactory()
+                    .newEmbeddedDatabase(File.createTempFile("temp", "neo4j"));
+            // Register a shutdown hook to properly shut down the database
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                System.out.println("Shutting down database ...");
+                neo4jDbTest.shutdown();
+            }));
+            importNeo4JData(neo4jDbTest, "/neo4JMockNodeData.csv", IMPORT_CYPHER_NODE_QUERY);
+            importNeo4JData(neo4jDbTest, "/neo4JMockMergedData.csv", IMPORT_CYPHER_MERGED_QUERY);
+            importNeo4JData(neo4jDbTest, "/neo4JMockDeletedData.csv", IMPORT_CYPHER_DELETED_QUERY);
+            deleteUnWantedRoot(neo4jDbTest, "0", DELETE_NODE_CYPHER_QUERY);
+            deleteUnWantedRoot(neo4jDbTest, "50", "MATCH (n:Node)-[r]-() WHERE n.taxonomyId={id} DELETE n");
             Neo4JQueryExecutor db = new Neo4JQueryExecutor(neo4jDbTest);
             setNeo4jDb(db);
-            registerStop(db);
+            close();
+            neo4jDbTest.shutdown();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void setNeo4jDb(Neo4JQueryExecutor neo4jDb){
+    public void setNeo4jDb(Neo4JQueryExecutor neo4jDb) {
         this.neo4jDb = neo4jDb;
     }
 
-    public Neo4JQueryExecutor getNeo4jDb(){
+    public Neo4JQueryExecutor getNeo4jDb() {
         return this.neo4jDb;
     }
 
-    private static void importNeo4JData(GraphDatabaseService neo4jDb,String resourcePath, String query) {
-        URL csvFilePath = Neo4jTaxonomyDataAccessTest.class.getResource(resourcePath);
+    private static void importNeo4JData(GraphDatabaseService neo4jDb, String resourcePath, String query) {
+        URL csvFilePath = Neo4jTaxonomyDataAccess.class.getResource(resourcePath);
         Map<String, Object> params = new HashMap<>();
-        params.put( "csvPath",csvFilePath.toString());
+        params.put("csvPath", csvFilePath.toString());
 
-        try ( Transaction tx = neo4jDb.beginTx();
-                Result queryResult = neo4jDb.execute(query,params ) )
-        {
+        try (Transaction tx = neo4jDb.beginTx();
+             Result queryResult = neo4jDb.execute(query, params)) {
             tx.success();
         }
     }
 
-    private static void deleteUnWantedRoot(GraphDatabaseService neo4jDb,String id, String query) {
+    private static void deleteUnWantedRoot(GraphDatabaseService neo4jDb, String id, String query) {
         Map<String, Object> params = new HashMap<>();
-        params.put( "id",id);
+        params.put("id", id);
 
-        try ( Transaction tx = neo4jDb.beginTx();
-                Result queryResult = neo4jDb.execute(query,params ) )
-        {
+        try (Transaction tx = neo4jDb.beginTx();
+             Result queryResult = neo4jDb.execute(query, params)) {
             while (queryResult.hasNext()) {
                 Map<String, Object> row = queryResult.next();
-                System.out.println("DELETED ROW: "+row);
+                System.out.println("DELETED ROW: " + row);
             }
             tx.success();
         }
     }
-
 }

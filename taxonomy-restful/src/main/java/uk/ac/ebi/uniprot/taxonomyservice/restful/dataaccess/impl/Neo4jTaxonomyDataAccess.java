@@ -1,9 +1,9 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.impl;
 
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
+import jakarta.inject.Named;
 import jakarta.annotation.PostConstruct;
-import jakarta.annotation.PreDestroy;
 import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.neo4j.graphdb.factory.GraphDatabaseSettings;
@@ -20,6 +20,7 @@ import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.TaxonomyIdWithPage
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.param.values.PathDirections;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.PageInformation;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
+
 import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,6 +28,7 @@ import java.util.stream.Stream;
 
 import static uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.impl.CypherQueryConstants.*;
 import static uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode.TAXONOMY_NODE_FIELDS.taxonomyId;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.main.LifecycleManager;
 
 /**
  * Neo4J taxonomy data access class is responsible to query information from Neo4J Taxonomy database and build the
@@ -34,7 +36,10 @@ import static uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode.TAXO
  *
  * Created by lgonzales on 08/04/16.
  */
+@Singleton
 public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
+
+    private final LifecycleManager lifecycleManager;
 
     private static final Logger logger = LoggerFactory.getLogger(Neo4jTaxonomyDataAccess.class);
     private static final String FOR_LOGGER = " for ";
@@ -44,8 +49,10 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
     protected String filePath;
 
     @Inject
-    public Neo4jTaxonomyDataAccess(@Named("NEO4J_DATABASE_PATH") String filePath){
+    public Neo4jTaxonomyDataAccess(@Named("NEO4J_DATABASE_PATH") String filePath, LifecycleManager lifecycleManager){
         this.filePath = filePath;
+        this.lifecycleManager = lifecycleManager;
+        lifecycleManager.register(this);
     }
 
     @PostConstruct
@@ -56,31 +63,19 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
             logger.debug("Creating an instance for Neo4jTaxonomyDataAccess and using neo4jDb filePath: "+filePath);
             GraphDatabaseService graphDatabase = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(new File(filePath))
                     .setConfig("dbms.threads.worker_count", "20" )
+                    .setConfig("dbms.logs.debug.level", "DEBUG")
                     .setConfig(GraphDatabaseSettings.read_only,"true")
                     .newGraphDatabase();
             neo4jDb = new Neo4JQueryExecutor(graphDatabase);
-
-            registerStop(neo4jDb);
         }
-
     }
 
-    /**
-     * TODO: Currently I am registering the stop manually
-     *       There is an automatic way, like uniprot restfull service does
-     **/
-    @PreDestroy
-    public void registerStop(final Neo4JQueryExecutor graphDb) {
-        logger.debug("Shutting down Neo4jTaxonomyDataAccess service");
-        Runtime.getRuntime().addShutdownHook( new Thread()
-        {
-            @Override
-            public void run()
-            {
-                logger.debug("Shutting down Hook Neo4jTaxonomyDataAccess service");
-                graphDb.shutdown();
-            }
-        } );
+    @Override
+    public void close() {
+        if (neo4jDb != null) {
+            logger.debug("Shutting down Neo4jTaxonomyDataAccess service");
+            neo4jDb.shutdown();
+        }
     }
 
     @Override

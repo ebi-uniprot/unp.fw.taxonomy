@@ -6,6 +6,7 @@ import org.glassfish.jersey.server.monitoring.ApplicationEvent;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.main.LifecycleManager;
 
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
@@ -23,12 +24,15 @@ public class StartupListenerTest {
 
     @BeforeClass
     public static void setUpAndLoadMockDataFromCSVFile() {
-        neo4jDataAccess = new FakeTaxonomyDataAccess("");
+        LifecycleManager lifecycleManager = new LifecycleManager();
+        neo4jDataAccess = new FakeTaxonomyDataAccess("", lifecycleManager);
     }
 
     @AfterClass
     public static void tearDown() {
-        neo4jDataAccess.getNeo4jDb().shutdown();
+        if (neo4jDataAccess != null) {
+            neo4jDataAccess.getNeo4jDb().shutdown();
+        }
     }
 
     @Test

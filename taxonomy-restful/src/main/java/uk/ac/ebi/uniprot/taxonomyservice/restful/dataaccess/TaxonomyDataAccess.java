@@ -15,7 +15,10 @@ import java.util.Optional;
  *
  * Created by lgonzales on 19/02/16.
  */
-public interface TaxonomyDataAccess {
+public interface TaxonomyDataAccess extends AutoCloseable {
+    @Override
+    void close();
+
     /**
      * This method return details about searched {@param taxonomyId}, including it siblings and children
      *

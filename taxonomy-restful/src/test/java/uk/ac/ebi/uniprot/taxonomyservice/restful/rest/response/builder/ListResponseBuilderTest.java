@@ -1,6 +1,7 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.builder;
 
 import uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.impl.FakeTaxonomyDataAccess;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.main.LifecycleManager;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstants;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.util.BeanCreatorUtil;
@@ -35,13 +36,17 @@ public class ListResponseBuilderTest {
 
     @BeforeClass
     public static void setUpAndLoadMockDataFromCSVFile() {
-        neo4jDataAccess = new FakeTaxonomyDataAccess("");
+        LifecycleManager lifecycleManager = new LifecycleManager();
+        neo4jDataAccess = new FakeTaxonomyDataAccess("", lifecycleManager);
     }
 
     @AfterClass
     public static void tearDown() {
-        neo4jDataAccess.getNeo4jDb().shutdown();
+        if (neo4jDataAccess != null) {
+            neo4jDataAccess.getNeo4jDb().shutdown();
+        }
     }
+
 
     @Test(expected=IllegalStateException.class)
     public void buildResponseWithoutRequiredAttributes() {

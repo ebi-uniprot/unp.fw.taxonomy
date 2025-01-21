@@ -1,5 +1,6 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.rest;
 
+import jakarta.inject.Inject;
 import io.swagger.v3.oas.annotations.*;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -9,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.TaxonomyDataAccess;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.*;
-import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.ErrorMessage;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.builder.ListResponseBuilder;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.builder.PageResponseBuilder;
@@ -18,7 +18,6 @@ import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint.IsLongLis
 import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint.ListParamMinMaxSize;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.constraint.MaxRequiredDepthForBottomPath;
 
-import jakarta.inject.Inject;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;

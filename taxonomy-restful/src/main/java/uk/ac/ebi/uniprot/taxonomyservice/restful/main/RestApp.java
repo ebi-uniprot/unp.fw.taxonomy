@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.util.JacksonFeature;
 import com.fasterxml.jackson.jakarta.rs.json.JacksonJsonProvider;
 import com.fasterxml.jackson.jakarta.rs.json.JacksonXmlBindJsonProvider;
+import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
+import com.google.inject.*;
 import com.google.inject.Module;
 import com.mycila.guice.ext.closeable.CloseableModule;
 import com.mycila.guice.ext.jsr250.Jsr250Module;
@@ -20,6 +22,7 @@ import jakarta.servlet.ServletConfig;
 import jakarta.ws.rs.core.Context;
 import org.glassfish.hk2.utilities.ServiceLocatorUtilities;
 import org.glassfish.jersey.server.validation.ValidationFeature;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.impl.Neo4jTaxonomyDataAccess;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.exception.GeneralExceptionMapper;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.exception.ParamExceptionMapper;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.exception.ValidationExceptionMapper;
@@ -29,16 +32,10 @@ import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.filter.FilterResourceURL;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.listener.StartupListener;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.ValidationConfigurationContextResolver;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Stage;
-
 import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import jakarta.inject.Inject;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
@@ -59,6 +56,10 @@ public class RestApp extends ResourceConfig {
     @Context
     ServletConfig servletConfig;
 
+    public RestApp() {
+        this(null);
+    }
+
     /**
      * This constructor inject all necessary services and also register jackson response provider for the application
      * @param serviceLocator Hk2 service Locator
@@ -76,16 +77,25 @@ public class RestApp extends ResourceConfig {
         }
         logger.info("Starting up RestApp");
 
-        AbstractModule abstractModule = configGuice(TaxonomyProperties.getConfigProperties());
-        Injector injector = Guice.createInjector(Stage.PRODUCTION, new CloseableModule(), new Jsr250Module(),
-                abstractModule);
+        Module abstractModule = configGuice(TaxonomyProperties.getConfigProperties());
+        Injector injector = Guice.createInjector(Stage.PRODUCTION, abstractModule);
+
+        // Obtain the LifecycleManager
+        LifecycleManager lifecycleManager = injector.getInstance(LifecycleManager.class);
+        // Add a shutdown hook
+        Runtime.getRuntime().addShutdownHook(new Thread(lifecycleManager::shutdown));
+
+        // Start Neo4jTaxonomyDataAccess manually
+        Neo4jTaxonomyDataAccess taxonomyDataAccess = injector.getInstance(Neo4jTaxonomyDataAccess.class);
+        taxonomyDataAccess.start();
+
         bindingGuice(serviceLocator, injector);
         register(new ServiceLifecycleManager(injector));
 
         property(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true);
         property(ServerProperties.BV_DISABLE_VALIDATE_ON_EXECUTABLE_OVERRIDE_CHECK, true);
-        property(ServerProperties.MONITORING_STATISTICS_MBEANS_ENABLED,true);
-        property(ServerProperties.APPLICATION_NAME,"Taxonomy");
+        property(ServerProperties.MONITORING_STATISTICS_MBEANS_ENABLED, true);
+        property(ServerProperties.APPLICATION_NAME, "Taxonomy");
         property(ServerProperties.RESPONSE_SET_STATUS_OVER_SEND_ERROR, "true");
         register(OpenApiResource.class);
         register(SwaggerSerializers.class);
@@ -112,22 +122,15 @@ public class RestApp extends ResourceConfig {
 //        property(ServerProperties.BV_DISABLE_VALIDATE_ON_EXECUTABLE_OVERRIDE_CHECK, true);
 //        property(ServerProperties.MONITORING_STATISTICS_MBEANS_ENABLED,true);
 //        property(ServerProperties.APPLICATION_NAME,"Taxonomy");
-//
+//        packages("uk.ac.ebi.uniprot.taxonomyservice.restful.rest",
+//                "uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request");
 //        JacksonJaxbJsonProvider jacksonJaxbJsonProvider = new JacksonJaxbJsonProvider();
 //        register(jacksonJaxbJsonProvider);
-//
 //        register(ValidationExceptionMapper.class);
 //        register(ParamExceptionMapper.class);
 //        register(GeneralExceptionMapper.class);
-//
-//        BeanConfig beanConfig = setupSwagger();
-//
-//        packages("uk.ac.ebi.uniprot.taxonomyservice.restful.rest",
-//                "uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request");
-//
-//        register(ApiListingResource.class);
+//        register(OpenApiResource.class);
 //        register(SwaggerSerializers.class);
-//
 //        register(FilterResourceURL.class);
 //        register(CORSFilter.class);
 //        register(ValidationConfigurationContextResolver.class);
