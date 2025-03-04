@@ -1,5 +1,9 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.impl.converter;
 
+import org.neo4j.driver.Record;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode;
+
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 

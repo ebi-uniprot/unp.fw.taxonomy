@@ -4,9 +4,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import jakarta.inject.Named;
 import jakarta.annotation.PostConstruct;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.factory.GraphDatabaseFactory;
-import org.neo4j.graphdb.factory.GraphDatabaseSettings;
+import org.neo4j.driver.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.TaxonomyDataAccess;
@@ -21,7 +19,6 @@ import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.param.values.PathD
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.PageInformation;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
 
-import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -39,44 +36,45 @@ import uk.ac.ebi.uniprot.taxonomyservice.restful.main.LifecycleManager;
 @Singleton
 public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
 
-    private final LifecycleManager lifecycleManager;
-
     private static final Logger logger = LoggerFactory.getLogger(Neo4jTaxonomyDataAccess.class);
     private static final String FOR_LOGGER = " for ";
 
+    private Driver driver;
+    private final String uri;
+    private final String username;
+    private final String password;
     protected Neo4JQueryExecutor neo4jDb;
 
-    protected String filePath;
-
     @Inject
-    public Neo4jTaxonomyDataAccess(@Named("NEO4J_DATABASE_PATH") String filePath, LifecycleManager lifecycleManager){
-        this.filePath = filePath;
-        this.lifecycleManager = lifecycleManager;
-        lifecycleManager.register(this);
+    public Neo4jTaxonomyDataAccess(@Named("NEO4J_URI") String uri,
+                                   @Named("NEO4J_USERNAME") String username,
+                                   @Named("NEO4J_PASSWORD") String password){
+        this.uri = uri;
+        this.username = username;
+        this.password = password;
     }
 
     @PostConstruct
     public void start() {
         logger.debug("Starting up Neo4jTaxonomyDataAccess service");
-
-        if (this.neo4jDb == null) {
-            logger.debug("Creating an instance for Neo4jTaxonomyDataAccess and using neo4jDb filePath: "+filePath);
-            GraphDatabaseService graphDatabase = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(new File(filePath))
-                    .setConfig("dbms.threads.worker_count", "20" )
-                    .setConfig("dbms.logs.debug.level", "DEBUG")
-                    .setConfig(GraphDatabaseSettings.read_only,"true")
-                    .newGraphDatabase();
-            neo4jDb = new Neo4JQueryExecutor(graphDatabase);
+        if (driver == null) {
+            logger.debug("Creating Neo4j Driver instance for URI: " + uri);
+            driver = GraphDatabase.driver(uri, AuthTokens.basic(username, password));
+            Neo4JQueryExecutor executor = new Neo4JQueryExecutor(driver);
         }
     }
 
     @Override
     public void close() {
-        if (neo4jDb != null) {
-            logger.debug("Shutting down Neo4jTaxonomyDataAccess service");
-            neo4jDb.shutdown();
-        }
+        logger.debug("Registering shutdown hook for Neo4j Driver");
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            if (driver != null) {
+                logger.debug("Shutting down Neo4j Driver");
+                driver.close();
+            }
+        }));
     }
+
 
     @Override
     public Optional<TaxonomyNode> getTaxonomyDetailsById(long taxonomyId, String basePath) {

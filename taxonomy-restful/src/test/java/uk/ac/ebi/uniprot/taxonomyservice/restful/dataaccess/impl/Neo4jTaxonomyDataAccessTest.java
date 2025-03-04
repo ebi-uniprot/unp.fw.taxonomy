@@ -4,7 +4,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode;
-import uk.ac.ebi.uniprot.taxonomyservice.restful.main.LifecycleManager;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.NameRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.PageRequestParams;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request.PathRequestParams;
@@ -26,18 +25,18 @@ public class Neo4jTaxonomyDataAccessTest {
 
     private static final String baseURL = "http://localhost:9090/uniprot/services/restful/taxonomy/id/";
 
+
     private static FakeTaxonomyDataAccess neo4jDataAccess;
 
     @BeforeClass
     public static void setUpAndLoadMockDataFromCSVFile() {
-        LifecycleManager lifecycleManager = new LifecycleManager();
-        neo4jDataAccess = new FakeTaxonomyDataAccess("", lifecycleManager);
+        neo4jDataAccess = new FakeTaxonomyDataAccess();
     }
 
     @AfterClass
     public static void tearDown() {
         if (neo4jDataAccess != null) {
-            neo4jDataAccess.getNeo4jDb().shutdown();
+            neo4jDataAccess.close();
         }
     }
 

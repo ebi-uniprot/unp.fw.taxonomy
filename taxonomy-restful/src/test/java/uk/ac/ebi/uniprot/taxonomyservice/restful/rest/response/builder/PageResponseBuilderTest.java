@@ -39,14 +39,13 @@ public class PageResponseBuilderTest {
 
     @BeforeClass
     public static void setUpAndLoadMockDataFromCSVFile() {
-        LifecycleManager lifecycleManager = new LifecycleManager();
-        neo4jDataAccess = new FakeTaxonomyDataAccess("", lifecycleManager);
+        neo4jDataAccess = new FakeTaxonomyDataAccess();
     }
 
     @AfterClass
     public static void tearDown() {
         if (neo4jDataAccess != null) {
-            neo4jDataAccess.getNeo4jDb().shutdown();
+            neo4jDataAccess.close();
         }
     }
 

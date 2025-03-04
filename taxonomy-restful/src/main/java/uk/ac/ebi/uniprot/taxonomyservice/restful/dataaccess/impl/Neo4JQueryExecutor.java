@@ -1,8 +1,5 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.impl;
 
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Result;
-import org.neo4j.graphdb.Transaction;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.impl.converter.Neo4JQueryResulConverter;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.impl.converter.TaxonomyNodePathConverter;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode;
@@ -15,70 +12,72 @@ import java.util.Optional;
 /**
  * Class responsible to execute cypher queries and map it to our model objects
  */
+import org.neo4j.driver.*;
+
 public class Neo4JQueryExecutor {
 
-    protected GraphDatabaseService neo4jDb;
+    private final Driver driver;
 
-    public Neo4JQueryExecutor(GraphDatabaseService neo4jDb) {
-        this.neo4jDb = neo4jDb;
+    public Neo4JQueryExecutor(Driver driver) {
+        this.driver = driver;
     }
 
-    <T> Optional<T> executeQuery(String query, Map<String, Object> params, Neo4JQueryResulConverter<T> converter ){
+    public <T> Optional<T> executeQuery(String query, Map<String, Object> params, Neo4JQueryResulConverter<T> converter) {
         Optional<T> result = Optional.empty();
-        try (Transaction tx = neo4jDb.beginTx();
-             Result queryResult = neo4jDb.execute(query,params ) )
-        {
+        try (Session session = driver.session();
+             Transaction tx = session.beginTransaction()) {
+
+            Result queryResult = tx.run(query, params);
+
             if (queryResult.hasNext()) {
-                result = converter.convert(queryResult.next());
+                result = converter.convert(queryResult.next().asMap());
             }
-            queryResult.close();
-            tx.success();
-            tx.close();
+
+            tx.commit();
         }
         return result;
     }
 
-    <T> Optional<List<T>> executeQueryList(String query, Map<String, Object> params, Neo4JQueryResulConverter<T> converter ){
+    public <T> Optional<List<T>> executeQueryList(String query, Map<String, Object> params, Neo4JQueryResulConverter<T> converter) {
         List<T> items = new ArrayList<>();
-        try ( Transaction tx = neo4jDb.beginTx();
-              Result queryResult = neo4jDb.execute(query,params ) )
-        {
+
+        try (Session session = driver.session();
+             Transaction tx = session.beginTransaction()) {
+
+            Result queryResult = tx.run(query, params);
+
             while (queryResult.hasNext()) {
-                Optional<T> converted = converter.convert(queryResult.next());
+                Optional<T> converted = converter.convert(queryResult.next().asMap());
                 converted.ifPresent(items::add);
             }
-            queryResult.close();
-            tx.success();
-            tx.close();
+
+            tx.commit();
         }
-        Optional<List<T>> result = Optional.empty();
-        if(!items.isEmpty()){
-            result = Optional.of(items);
-        }
-        return result;
+
+        return items.isEmpty() ? Optional.empty() : Optional.of(items);
     }
 
-     Optional<TaxonomyNode> executeQueryForPath(String query, Map<String, Object> params, long baseTaxId){
+    public Optional<TaxonomyNode> executeQueryForPath(String query, Map<String, Object> params, long baseTaxId) {
         TaxonomyNode result = null;
-        try ( Transaction tx = neo4jDb.beginTx();
-              Result queryResult = neo4jDb.execute(query,params ) )
-        {
+
+        try (Session session = driver.session();
+             Transaction tx = session.beginTransaction()) {
+
+            Result queryResult = tx.run(query, params);
+
             while (queryResult.hasNext()) {
-                TaxonomyNodePathConverter converter = new TaxonomyNodePathConverter(baseTaxId,result);
-                Optional<TaxonomyNode> converted = converter.convert(queryResult.next());
-                if(converted.isPresent()){
+                TaxonomyNodePathConverter converter = new TaxonomyNodePathConverter(baseTaxId, result);
+                Optional<TaxonomyNode> converted = converter.convert(queryResult.next().asMap());
+
+                if (converted.isPresent()) {
                     result = converted.get();
                 }
             }
-            queryResult.close();
-            tx.success();
-            tx.close();
+
+            tx.commit();
         }
 
         return Optional.ofNullable(result);
     }
 
-    public void shutdown() {
-        neo4jDb.shutdown();
-    }
 }

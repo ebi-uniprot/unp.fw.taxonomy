@@ -1,9 +1,9 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.impl;
 
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Result;
-import org.neo4j.graphdb.Transaction;
-import org.neo4j.graphdb.factory.GraphDatabaseFactory;
+import com.google.inject.Singleton;
+import org.neo4j.driver.*;
+import org.neo4j.driver.Record;
+import org.testcontainers.containers.Neo4jContainer;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.main.LifecycleManager;
 
 import java.io.File;
@@ -17,55 +17,56 @@ import java.util.Map;
  *
  * Created by lgonzales on 19/02/16.
  */
-public class FakeTaxonomyDataAccess extends Neo4jTaxonomyDataAccess {
 
-    private static final String LOAD_CSV = "LOAD CSV WITH HEADERS FROM {csvPath} AS row FIELDTERMINATOR ',' ";
+@Singleton
+public class FakeTaxonomyDataAccess extends Neo4jTaxonomyDataAccess implements AutoCloseable {
+
+    private static final String LOAD_CSV = "LOAD CSV WITH HEADERS FROM $csvPath AS row FIELDTERMINATOR ',' ";
 
     private static final String IMPORT_CYPHER_NODE_QUERY = LOAD_CSV +
-            "MERGE (node:Node { taxonomyId : row.TAX_ID }) " +
-            "SET node += {taxonomyId : row.TAX_ID, mnemonic : row.SPTR_CODE, mnemonicLowerCase : " +
-            "lower(row.SPTR_CODE), scientificName : row.SPTR_SCIENTIFIC, scientificNameLowerCase : " +
-            "lower(row.SPTR_SCIENTIFIC), commonName : row.SPTR_COMMON, commonNameLowerCase : " +
-            "lower(row.SPTR_COMMON), synonym : row.SPTR_SYNONYM, rank : row.RANK, " +
-            "superregnum : row.SUPER_REGNUM, hidden : row.HIDDEN} " +
-            "MERGE (parent:Node {taxonomyId:row.PARENT_ID}) " +
-            "MERGE (node)-[:CHILD_OF]-(parent)";
+            "MERGE (node:Node { taxonomyId: row.TAX_ID }) " +
+            "SET node += {taxonomyId: row.TAX_ID, mnemonic: row.SPTR_CODE, mnemonicLowerCase: " +
+            "lower(row.SPTR_CODE), scientificName: row.SPTR_SCIENTIFIC, scientificNameLowerCase: " +
+            "lower(row.SPTR_SCIENTIFIC), commonName: row.SPTR_COMMON, commonNameLowerCase: " +
+            "lower(row.SPTR_COMMON), synonym: row.SPTR_SYNONYM, rank: row.RANK, " +
+            "superregnum: row.SUPER_REGNUM, hidden: row.HIDDEN} " +
+            "MERGE (parent:Node { taxonomyId: row.PARENT_ID }) " +
+            "MERGE (node)-[:CHILD_OF]->(parent)";
 
     private static final String IMPORT_CYPHER_MERGED_QUERY = LOAD_CSV +
-            "MERGE (node:Merged { taxonomyId : row.OLD_TAX_ID })-[:MERGED_TO]-(node1:Node { taxonomyId : " +
+            "MERGE (node:Merged { taxonomyId: row.OLD_TAX_ID })-[:MERGED_TO]->(node1:Node { taxonomyId: " +
             "row.NEW_TAX_ID})";
 
     private static final String IMPORT_CYPHER_DELETED_QUERY = LOAD_CSV +
-            "MERGE(n:Node {taxonomyId:row.TAX_ID}) SET n:Deleted REMOVE n:Node";
+            "MERGE (n:Node {taxonomyId: row.TAX_ID}) SET n:Deleted REMOVE n:Node";
 
-    private static final String DELETE_NODE_CYPHER_QUERY = "MATCH (n:Node)-[r]-() WHERE n.taxonomyId={id} DELETE n,r";
+    private static final String DELETE_NODE_CYPHER_QUERY = "MATCH (n:Node)-[r]-() WHERE n.taxonomyId=$id DELETE n, r";
 
-    public FakeTaxonomyDataAccess(LifecycleManager lifecycleManager) {
-        this("", lifecycleManager);
+    private static final Neo4jContainer<?> neo4jContainer = new Neo4jContainer<>("neo4j:5.26.2-community")
+            .withAdminPassword("password")
+            .withEnv("NEO4J_dbms_memory_heap_initial__size", "512M")
+            .withEnv("NEO4J_dbms_memory_heap_max__size", "1G");
+
+    static {
+        neo4jContainer.start();
     }
+    private final Driver testDriver; // Explicitly store the test driver instance
 
-    public FakeTaxonomyDataAccess(String filePath, LifecycleManager lifecycleManager) {
-        // Pass the filePath and LifecycleManager to the superclass constructor
-        super(filePath, lifecycleManager);
+    public FakeTaxonomyDataAccess() {
+        super(neo4jContainer.getBoltUrl(), "neo4j", "password");
+        // Explicitly initialize the driver since the superclass constructor has not finished yet
+        this.testDriver = GraphDatabase.driver(neo4jContainer.getBoltUrl(), AuthTokens.basic("neo4j", "password"));
 
         try {
-            GraphDatabaseService neo4jDbTest = new GraphDatabaseFactory()
-                    .newEmbeddedDatabase(File.createTempFile("temp", "neo4j"));
-            // Register a shutdown hook to properly shut down the database
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                System.out.println("Shutting down database ...");
-                neo4jDbTest.shutdown();
-            }));
-            importNeo4JData(neo4jDbTest, "/neo4JMockNodeData.csv", IMPORT_CYPHER_NODE_QUERY);
-            importNeo4JData(neo4jDbTest, "/neo4JMockMergedData.csv", IMPORT_CYPHER_MERGED_QUERY);
-            importNeo4JData(neo4jDbTest, "/neo4JMockDeletedData.csv", IMPORT_CYPHER_DELETED_QUERY);
-            deleteUnWantedRoot(neo4jDbTest, "0", DELETE_NODE_CYPHER_QUERY);
-            deleteUnWantedRoot(neo4jDbTest, "50", "MATCH (n:Node)-[r]-() WHERE n.taxonomyId={id} DELETE n");
-            Neo4JQueryExecutor db = new Neo4JQueryExecutor(neo4jDbTest);
-            setNeo4jDb(db);
-            close();
-            neo4jDbTest.shutdown();
-        } catch (IOException e) {
+            // Import mock data
+            importNeo4JData(testDriver, "/neo4JMockNodeData.csv", IMPORT_CYPHER_NODE_QUERY);
+            importNeo4JData(testDriver, "/neo4JMockMergedData.csv", IMPORT_CYPHER_MERGED_QUERY);
+            importNeo4JData(testDriver, "/neo4JMockDeletedData.csv", IMPORT_CYPHER_DELETED_QUERY);
+            deleteUnWantedRoot(testDriver, "0", DELETE_NODE_CYPHER_QUERY);
+            deleteUnWantedRoot(testDriver, "50", DELETE_NODE_CYPHER_QUERY);
+
+            this.neo4jDb = new Neo4JQueryExecutor(testDriver);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -78,28 +79,47 @@ public class FakeTaxonomyDataAccess extends Neo4jTaxonomyDataAccess {
         return this.neo4jDb;
     }
 
-    private static void importNeo4JData(GraphDatabaseService neo4jDb, String resourcePath, String query) {
-        URL csvFilePath = Neo4jTaxonomyDataAccess.class.getResource(resourcePath);
+    /**
+     * Imports mock CSV data into the Neo4j database.
+     */
+    private static void importNeo4JData(Driver driver, String resourcePath, String query) {
+        URL csvFilePath = FakeTaxonomyDataAccess.class.getResource(resourcePath);
         Map<String, Object> params = new HashMap<>();
         params.put("csvPath", csvFilePath.toString());
 
-        try (Transaction tx = neo4jDb.beginTx();
-             Result queryResult = neo4jDb.execute(query, params)) {
-            tx.success();
+        try (Session session = driver.session();
+             Transaction tx = session.beginTransaction()) {
+            tx.run(query, params);
+            tx.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    private static void deleteUnWantedRoot(GraphDatabaseService neo4jDb, String id, String query) {
+    /**
+     * Deletes unwanted root nodes from the Neo4j database.
+     */
+    private static void deleteUnWantedRoot(Driver driver, String id, String query) {
         Map<String, Object> params = new HashMap<>();
         params.put("id", id);
 
-        try (Transaction tx = neo4jDb.beginTx();
-             Result queryResult = neo4jDb.execute(query, params)) {
-            while (queryResult.hasNext()) {
-                Map<String, Object> row = queryResult.next();
-                System.out.println("DELETED ROW: " + row);
+        try (Session session = driver.session();
+             Transaction tx = session.beginTransaction()) {
+            Result result = tx.run(query, params);
+            while (result.hasNext()) {
+                Record row = result.next();
+                System.out.println("DELETED ROW: " + row.asMap());
             }
-            tx.success();
+            tx.commit();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
+
+    @Override
+    public void close() {
+        super.close();
+        testDriver.close();  // Close the explicitly created driver
+        neo4jContainer.stop();
     }
 }
