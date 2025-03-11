@@ -1,7 +1,6 @@
 package uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.builder;
 
 import uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.impl.FakeTaxonomyDataAccess;
-import uk.ac.ebi.uniprot.taxonomyservice.restful.main.LifecycleManager;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.response.Taxonomies;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.swagger.TaxonomyConstants;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.util.BeanCreatorUtil;

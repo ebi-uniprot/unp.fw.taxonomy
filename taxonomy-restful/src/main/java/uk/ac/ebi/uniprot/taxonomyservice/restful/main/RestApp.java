@@ -31,6 +31,18 @@ import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.filter.CORSFilter;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.filter.FilterResourceURL;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.rest.listener.StartupListener;
 import uk.ac.ebi.uniprot.taxonomyservice.restful.validation.ValidationConfigurationContextResolver;
+import org.glassfish.hk2.utilities.binding.AbstractBinder;
+import uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.TaxonomyDataAccess;
+import jakarta.inject.Singleton;
+import org.glassfish.hk2.api.ServiceLocator;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.server.ServerProperties;
+import org.jvnet.hk2.guice.bridge.api.GuiceBridge;
+import org.jvnet.hk2.guice.bridge.api.GuiceIntoHK2Bridge;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.google.inject.Scopes;
+import org.glassfish.hk2.api.PerLookup;
 
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -66,37 +78,60 @@ public class RestApp extends ResourceConfig {
      */
     @Inject
     public RestApp(ServiceLocator serviceLocator) {
-        try {
-            this.setupSwagger();
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+        logger.info("Starting up RestApp");
+        
+        // Create ServiceLocator if null
         if (serviceLocator == null) {
             logger.warn("ServiceLocator is null");
             serviceLocator = ServiceLocatorUtilities.createAndPopulateServiceLocator();
         }
-        logger.info("Starting up RestApp");
 
-        Module abstractModule = configGuice(TaxonomyProperties.getConfigProperties());
+        // Setup Guice and HK2 bridge first
+        Properties configProperties = TaxonomyProperties.getConfigProperties();
+        Module abstractModule = configGuice(configProperties);
         Injector injector = Guice.createInjector(Stage.PRODUCTION, abstractModule);
+        
+        // Initialize Guice-HK2 bridge
+        bindingGuice(serviceLocator, injector);
 
-        // Obtain the LifecycleManager
-        LifecycleManager lifecycleManager = injector.getInstance(LifecycleManager.class);
-        // Add a shutdown hook
-        Runtime.getRuntime().addShutdownHook(new Thread(lifecycleManager::shutdown));
+        // Register HK2 bindings explicitly
+        register(new AbstractBinder() {
+            @Override
+            protected void configure() {
+                // Bind Neo4jTaxonomyDataAccess from Guice
+                bind(injector.getInstance(Neo4jTaxonomyDataAccess.class))
+                    .to(TaxonomyDataAccess.class);
+            }
+        });
 
-        // Start Neo4jTaxonomyDataAccess manually
+        // Start Neo4jTaxonomyDataAccess
         Neo4jTaxonomyDataAccess taxonomyDataAccess = injector.getInstance(Neo4jTaxonomyDataAccess.class);
         taxonomyDataAccess.start();
 
-        bindingGuice(serviceLocator, injector);
-        register(new ServiceLifecycleManager(injector));
+        // Setup server properties
+        configureServerProperties();
+        
+        // Register components
+        registerComponents();
+        
+        try {
+            setupSwagger();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
+        logger.info("Starting of RestApp Done");
+    }
+
+    private void configureServerProperties() {
         property(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true);
         property(ServerProperties.BV_DISABLE_VALIDATE_ON_EXECUTABLE_OVERRIDE_CHECK, true);
         property(ServerProperties.MONITORING_STATISTICS_MBEANS_ENABLED, true);
         property(ServerProperties.APPLICATION_NAME, "Taxonomy");
         property(ServerProperties.RESPONSE_SET_STATUS_OVER_SEND_ERROR, "true");
+    }
+
+    private void registerComponents() {
         register(OpenApiResource.class);
         register(SwaggerSerializers.class);
         register(AcceptHeaderOpenApiResource.class);
@@ -108,36 +143,9 @@ public class RestApp extends ResourceConfig {
         register(ValidationExceptionMapper.class);
         register(FilterResourceURL.class);
         register(CORSFilter.class);
-        register(StartupListener.class);
+        register(StartupListener.class);  // Register this after HK2 bindings are set up
         register(ValidationConfigurationContextResolver.class);
         register(ValidationFeature.class);
-        logger.info("Starting of RestApp Done");
-//        AbstractModule abstractModule = configGuice(TaxonomyProperties.getConfigProperties());
-//        Injector injector = Guice.createInjector(Stage.PRODUCTION, new CloseableModule(), new Jsr250Module(),
-//                abstractModule);
-//        bindingGuice(serviceLocator, injector);
-//        register(new ServiceLifecycleManager(injector));
-//
-//        property(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true);
-//        property(ServerProperties.BV_DISABLE_VALIDATE_ON_EXECUTABLE_OVERRIDE_CHECK, true);
-//        property(ServerProperties.MONITORING_STATISTICS_MBEANS_ENABLED,true);
-//        property(ServerProperties.APPLICATION_NAME,"Taxonomy");
-//        packages("uk.ac.ebi.uniprot.taxonomyservice.restful.rest",
-//                "uk.ac.ebi.uniprot.taxonomyservice.restful.rest.request");
-//        JacksonJaxbJsonProvider jacksonJaxbJsonProvider = new JacksonJaxbJsonProvider();
-//        register(jacksonJaxbJsonProvider);
-//        register(ValidationExceptionMapper.class);
-//        register(ParamExceptionMapper.class);
-//        register(GeneralExceptionMapper.class);
-//        register(OpenApiResource.class);
-//        register(SwaggerSerializers.class);
-//        register(FilterResourceURL.class);
-//        register(CORSFilter.class);
-//        register(ValidationConfigurationContextResolver.class);
-//        register(StartupListener.class);
-//
-//        logger.info("Starting of RestApp Done");
-
     }
 
     private void setupSwagger() throws JsonProcessingException {

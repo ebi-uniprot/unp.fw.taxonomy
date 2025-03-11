@@ -45,6 +45,7 @@ public class RestAppMain {
 
         initParams.put("jakarta.ws.rs.Application", "uk.ac.ebi.uniprot.taxonomyservice.restful.main.RestApp");
         initParams.put("jersey.config.server.provider.packages", "com.fasterxml.jackson.jaxrs.json");
+        initParams.put("jersey.config.server.wadl.disableWadl", "true");
 
         HttpServer httpServer = create(URI.create(baseUri), ServletContainer.class, null, initParams, null);
 

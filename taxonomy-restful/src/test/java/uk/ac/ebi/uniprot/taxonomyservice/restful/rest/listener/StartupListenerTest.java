@@ -6,8 +6,6 @@ import org.glassfish.jersey.server.monitoring.ApplicationEvent;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import uk.ac.ebi.uniprot.taxonomyservice.restful.main.LifecycleManager;
-
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;

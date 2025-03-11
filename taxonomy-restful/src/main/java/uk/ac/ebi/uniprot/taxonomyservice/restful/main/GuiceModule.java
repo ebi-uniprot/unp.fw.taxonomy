@@ -40,8 +40,6 @@ public class GuiceModule extends AbstractModule {
      */
     @Override
     protected void configure() {
-        // Bind the custom LifecycleManager
-        bind(LifecycleManager.class).in(Scopes.SINGLETON);
 
         Names.bindProperties(binder(), configProperties);
 

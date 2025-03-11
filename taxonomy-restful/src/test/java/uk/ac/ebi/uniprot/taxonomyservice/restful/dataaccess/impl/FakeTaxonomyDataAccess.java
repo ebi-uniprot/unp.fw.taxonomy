@@ -4,7 +4,6 @@ import com.google.inject.Singleton;
 import org.neo4j.driver.*;
 import org.neo4j.driver.Record;
 import org.testcontainers.containers.Neo4jContainer;
-import uk.ac.ebi.uniprot.taxonomyservice.restful.main.LifecycleManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -83,7 +82,12 @@ public class FakeTaxonomyDataAccess extends Neo4jTaxonomyDataAccess implements A
      * Imports mock CSV data into the Neo4j database.
      */
     private static void importNeo4JData(Driver driver, String resourcePath, String query) {
-        URL csvFilePath = FakeTaxonomyDataAccess.class.getResource(resourcePath);
+        URL csvFilePath = FakeTaxonomyDataAccess.class.getClassLoader().getResource(resourcePath);
+
+        if (csvFilePath == null) {
+            throw new IllegalArgumentException("Resource not found: " + resourcePath);
+        }
+
         Map<String, Object> params = new HashMap<>();
         params.put("csvPath", csvFilePath.toString());
 

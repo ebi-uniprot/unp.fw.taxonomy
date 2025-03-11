@@ -25,7 +25,6 @@ import java.util.stream.Stream;
 
 import static uk.ac.ebi.uniprot.taxonomyservice.restful.dataaccess.impl.CypherQueryConstants.*;
 import static uk.ac.ebi.uniprot.taxonomyservice.restful.domain.TaxonomyNode.TAXONOMY_NODE_FIELDS.taxonomyId;
-import uk.ac.ebi.uniprot.taxonomyservice.restful.main.LifecycleManager;
 
 /**
  * Neo4J taxonomy data access class is responsible to query information from Neo4J Taxonomy database and build the
@@ -60,7 +59,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
         if (driver == null) {
             logger.debug("Creating Neo4j Driver instance for URI: " + uri);
             driver = GraphDatabase.driver(uri, AuthTokens.basic(username, password));
-            Neo4JQueryExecutor executor = new Neo4JQueryExecutor(driver);
+            this.neo4jDb = new Neo4JQueryExecutor(driver);
         }
     }
 
@@ -162,7 +161,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
         long startTime = System.currentTimeMillis();
 
         String whereStatement = buildNameSearchWhereStatement(nameParams);
-        String query = GET_TAXONOMY_NODES_BY_NAME_CYPHER_QUERY.replace("{nameWhere}", whereStatement);
+        String query = GET_TAXONOMY_NODES_BY_NAME_CYPHER_QUERY.replace("$nameWhere", whereStatement);
         Optional<Taxonomies> result = getTaxonomyDetailsByName(nameParams,basePath,query);
 
         long elapsed = System.currentTimeMillis() - startTime;
@@ -174,7 +173,7 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
     public Optional<Taxonomies> getTaxonomyDetailsByName(NameRequestParams nameParams, String basePath) {
         long startTime = System.currentTimeMillis();
         String whereStatement = buildNameSearchWhereStatement(nameParams);
-        String query = GET_TAXONOMY_DETAILS_BY_NAME_CYPHER_QUERY.replace("{nameWhere}", whereStatement);
+        String query = GET_TAXONOMY_DETAILS_BY_NAME_CYPHER_QUERY.replace("$nameWhere", whereStatement);
         Optional<Taxonomies> result =  getTaxonomyDetailsByName(nameParams,basePath,query);
 
         long elapsed = System.currentTimeMillis() - startTime;
@@ -321,16 +320,22 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
         Optional<Taxonomies> taxonomies = Optional.empty();
         int totalRecords = getTaxonomyDetailsByNameTotalRecords(nameParams);
         if(nameParams.getSkip() < totalRecords) {
-            Optional<List<TaxonomyNode>> result = null;
             Map<String, Object> params = new HashMap<>();
             params.put("name", nameParams.getTaxonomyName().toLowerCase());
             params.put("skip", nameParams.getSkip());
             params.put("limit", nameParams.getPageSizeInt());
+            params.put("nameWhere", buildNameSearchWhereStatement(nameParams));
 
-            result = neo4jDb.executeQueryList(query, params, new TaxonomyNodeConverter(basePath,true));
+            Optional<List<TaxonomyNode>> result = neo4jDb.executeQueryList(query, params, new TaxonomyNodeConverter(basePath,true));
             taxonomies = buildTaxonomies(result,nameParams,totalRecords);
         }
         return taxonomies;
+    }
+
+    private String buildNameSearchWhereStatement(NameRequestParams nameParams) {
+        return Stream.of(nameParams.getFieldNameQueryKeyword())
+                .map(fieldName -> "n."+fieldName+" "+nameParams.getSearchTypeQueryKeyword()+" $name ")
+                .collect(Collectors.joining(" OR "));
     }
 
     private Optional<Taxonomies> getTaxonomiesBaseNodeList(Map<String, Object> params, String query,PageRequestParams pageParams,int totalRecords) {
@@ -429,18 +434,12 @@ public class Neo4jTaxonomyDataAccess implements TaxonomyDataAccess{
         params.put( "name", nameParams.getTaxonomyName().toLowerCase() );
 
         String whereStatement = buildNameSearchWhereStatement(nameParams);
-        String query = GET_TAXONOMY_DETAILS_BY_NAME_TOTAL_RECORDS_CYPHER_QUERY.replace("{nameWhere}", whereStatement);
+        String query = GET_TAXONOMY_DETAILS_BY_NAME_TOTAL_RECORDS_CYPHER_QUERY.replace("$nameWhere", whereStatement);
         int result = getTotalRecords(query, params);
 
         long elapsed = System.currentTimeMillis() - startTime;
         logger.debug("NeoQuery Time for getTaxonomyDetailsByNameTotalRecords: "+elapsed+ FOR_LOGGER +nameParams);
         return result;
-    }
-
-    private String buildNameSearchWhereStatement(NameRequestParams nameParams) {
-        return Stream.of(nameParams.getFieldNameQueryKeyword())
-                .map(fieldName -> "n."+fieldName+" "+nameParams.getSearchTypeQueryKeyword()+" {name} ")
-                .collect(Collectors.joining(" OR "));
     }
 
     private int getTaxonomyPathNodesTotalRecords(String id,PathDirections direction,String depth) {
