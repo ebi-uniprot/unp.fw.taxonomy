@@ -55,6 +55,8 @@ public class FakeTaxonomyDataAccess extends Neo4jTaxonomyDataAccess implements A
         super(neo4jContainer.getBoltUrl(), "neo4j", "password");
         // Explicitly initialize the driver since the superclass constructor has not finished yet
         this.testDriver = GraphDatabase.driver(neo4jContainer.getBoltUrl(), AuthTokens.basic("neo4j", "password"));
+        // Initialize neo4jDb before importing data
+        this.neo4jDb = new Neo4JQueryExecutor(testDriver);
 
         try {
             // Import mock data
@@ -121,9 +123,16 @@ public class FakeTaxonomyDataAccess extends Neo4jTaxonomyDataAccess implements A
     }
 
     @Override
+    public void start() {
+        // Override start() to prevent the superclass from creating a new driver
+        // The neo4jDb is already initialized in the constructor
+    }
+    
+    @Override
     public void close() {
-        super.close();
-        testDriver.close();  // Close the explicitly created driver
+        if (testDriver != null) {
+            testDriver.close();
+        }
         neo4jContainer.stop();
     }
 }
