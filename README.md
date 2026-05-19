@@ -3,6 +3,12 @@ The Taxonomy REST API provides access to the UniProt taxonomy database. The serv
 
 See Taxonomy API documentation at http://www.ebi.ac.uk/proteins/api/doc/index.html#taxonomyApi
 
+# Generate a shade restful service jar
+
+```bash
+mvn clean package -pl taxonomy-restful -am -DskipTests
+```
+
 # Copyright
 Copyright 2017 EMBL - European Bioinformatics Institute
 
