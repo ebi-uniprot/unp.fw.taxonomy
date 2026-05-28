@@ -239,4 +239,29 @@
         </plugins>
     </build>
 
+    <repositories>
+        <repository>
+            <id>uniprot-artifactory-snapshots</id>
+            <name>UniProt Artifactory for Snapshots</name>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+                <checksumPolicy>warn</checksumPolicy>
+            </snapshots>
+            <url>${http-uniprot-private-url}/snapshot</url>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>uniprot-artifactory-deploy-snapshot</id>
+            <name>Uniprot Uniprot Maven Snapshot</name>
+            <url>${http-uniprot-private-url}/snapshot</url>
+        </snapshotRepository>
+    </distributionManagement>
+
 </project>
