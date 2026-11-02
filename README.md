@@ -3,6 +3,20 @@ The Taxonomy REST API provides access to the UniProt taxonomy database. The serv
 
 See Taxonomy API documentation at http://www.ebi.ac.uk/proteins/api/doc/index.html#taxonomyApi
 
+# Generate a shade restful service jar
+
+```bash
+mvn clean package -pl taxonomy-restful -am -DskipTests
+```
+
+# Deploy restful to artifactory
+
+```bash
+mvn deploy -pl taxonomy-restful -am -DskipTests
+```
+
+The `-am` flag ("also make") is required to ensure the parent POM (`taxonomy-service-restful`) is also deployed. Maven needs the parent POM available in the remote repository to resolve the submodule. Without `-am`, the build will fail in a fresh environment where the parent has not been previously deployed or cached locally.
+
 # Copyright
 Copyright 2017 EMBL - European Bioinformatics Institute
 
